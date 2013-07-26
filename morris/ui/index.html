@@ -3,17 +3,18 @@
     <title>Flax BBC Music Search Demo</title>
     <link rel="stylesheet" type="text/css" href="styles.css" />
 <body>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="map.js"></script>
     <script type="text/javascript" src="demo.js"></script>
     <script>
         $(document).ready(function(){
             demo_main();
         });        
     </script>
-    
+    <div id="map-canvas"></div>    
     <div id="bannerdiv">
     </div>
-    
 
     <div id="maindiv">
         <form id="searchform">
