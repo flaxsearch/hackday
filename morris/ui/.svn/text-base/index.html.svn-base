@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Flax BBC Music Search Demo</title>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+<body>
+    <script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="demo.js"></script>
+    <script>
+        $(document).ready(function(){
+            demo_main();
+        });        
+    </script>
+    
+    <div id="bannerdiv">
+    </div>
+    
+
+    <div id="maindiv">
+        <form id="searchform">
+            <input id="q" value=""/>
+            <input type="submit"/>
+        </form>
+        
+        <div id="summary"></div>
+        <div id="didyoumean"></div>
+        
+        <div class="pager">
+            <a class="first" href="#first">first</a> :
+            <a class="prev" href="#prev">previous</a> :
+            <a class="next" href="#next">next</a> 
+        </div>
+        
+        <div id="results"></div>
+        
+        <div class="pager">
+            <a class="first" href="#first">first</a> :
+            <a class="prev" href="#prev">previous</a> :
+            <a class="next" href="#next">next</a> 
+        </div>
+    </div>
+    <div id="sidediv">
+        <h3>Facets</h3>
+
+        <h4>Type</h4>
+        <div class="facdiv" id="facdoctypes">
+        </div>
+
+        <h4>Artist</h4>
+        <div class="facdiv" id="facartists">
+        </div>
+
+        <h4>Review Age</h4>
+        <div class="facdiv">
+            <div><a href="{!tag=revd}reviewdate:[NOW/DAY-7DAY TO NOW]" 
+                  class="facrevd" id="fac_7dy"> One week <span></span><a/></div>
+            <div><a href="{!tag=revd}reviewdate:[NOW/DAY-30DAY TO NOW]" 
+                  class="facrevd" id="fac_1mn"> One month <span></span><a/></div>
+            <div><a href="{!tag=revd}reviewdate:[NOW/DAY-365DAY TO NOW]"
+                  class="facrevd" id="fac_1yr"> One year <span></span><a/></div>
+            <div><a href="{!tag=revd}reviewdate:[NOW/DAY-730DAY TO NOW]" 
+                  class="facrevd" id="fac_2yr"> Two years <span></span><a/></div>
+            <div><a href="{!tag=revd}reviewdate:[NOW/DAY-1825DAY TO NOW]" 
+                  class="facrevd" id="fac_5yr"> Five years <span></span><a/></div>
+        </div>
+    </div>
+</body>
+</html>
