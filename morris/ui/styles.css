@@ -1,0 +1,78 @@
+body {
+    font-family: helvetica, arial, sans-serif;
+}
+
+#bannerdiv {
+    border-bottom: 1px solid lightgray;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    width: 996px;
+    height: 80px;
+    background-image: url('banner.png');
+}
+
+#maindiv {
+    position: absolute;
+    top: 110px;
+    left: 20px;
+    width:800px;
+}
+
+#sidediv {
+    border-left: 1px solid lightgray;
+    position: absolute;
+    top: 110px;
+    left: 856px;
+    width:200px;
+    padding-left: 10px;
+    padding-bottom: 20px;
+}
+
+#q {
+    margin-left: 24px;
+    width: 660px;
+}
+
+em {
+    font-style: normal;
+    font-weight: bold;
+}
+
+div.hit {
+    margin-bottom: 5px;
+}
+
+a {
+    text-decoration: none;
+    color: #0000D0;
+}
+
+.facon {
+    font-weight: bold;
+}
+
+.pager {
+    padding: 5px 0px 5px 0px;
+    margin: 5px 0px 5px 0px;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+}
+
+.hit {
+    margin: 10px 0px 10px; 0px;
+}
+
+.hittitle {
+    margin-bottom: 2px;
+}
+
+h4 {
+    margin-bottom: 5px;
+}
+
+.disabled {
+    color: grey;
+    cursor: default;
+    pointer-events: none;
+}
