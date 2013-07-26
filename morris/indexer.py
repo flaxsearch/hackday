@@ -1,11 +1,14 @@
 import sys
 import json
+import requests
+
 
 with open(sys.argv[1]) as f:
     tweets = json.load(f)
 
 mons = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
+count = 0
 for tweet in tweets:
     ents = tweet['entities']
     
@@ -31,4 +34,8 @@ for tweet in tweets:
         'created_at': '%s-%02d-%sT%sZ' % (yr, mn, dy, tm)
     }
     
-    print json.dumps(stweet, indent=2)
+    response = requests.post('http://192.168.1.34:8983/solr/update',
+                             headers={'content-type': 'application/json'},
+                             data=json.dumps([stweet]))
+    count += 1
+    print count, response.status_code
