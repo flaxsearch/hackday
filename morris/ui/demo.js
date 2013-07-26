@@ -140,6 +140,19 @@ function handle_response(data, filters) {
                 $("#facmentions a").last().addClass('facon');
             }
         }
+
+        $("#fachashtags").empty()
+        var facets = data.facet_counts.facet_fields.ent_hashtags;
+        for (var i = 0; i < facets.length; i += 2) {
+            $("#fachashtags").append(
+                '<div><a class="facfield" href="ent_hashtags:&quot;' + facets[i] + 
+                '&quot;">' + facets[i] + '</a> (' + facets[i+1] + ')</div>');
+
+            if (filters.indexOf('ent_hashtags:"' + facets[i] + '"') >= 0) {
+                $("#fachashtags a").last().addClass('facon');
+            }
+        }
+
                 
         $(".facfield").click(function() {
             console.log("facfield: " + $(this).attr('href'));
