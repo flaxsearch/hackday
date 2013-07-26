@@ -62,15 +62,15 @@ function do_search() {
     qchanged = false;
     
     var filters = [];
-    $(".facon").each(function() {
-        filters.push($(this).attr('href'));
-    });
+//    $(".facon").each(function() {
+//        filters.push($(this).attr('href'));
+//    });
     
-    console.log('filters: ' + filters);
+//    console.log('filters: ' + filters);
     
     $.ajax({
         'type': 'GET',
-        'url': 'http://localhost:8983/solr/select',
+        'url': 'http://192.168.1.34:8983/solr/morris',
         'data': { 'wt': 'json', 'q': $('#q').val(), 'start': start,
                 'fq': filters },
         'dataType': 'jsonp',
@@ -108,7 +108,8 @@ function handle_response(data, filters) {
         enable_link($(".prev"), start > 0);
         enable_link($(".next"), numFound > start + data.response.docs.length);
         $(".pager").show();
-        
+
+/*        
         // facets - reviewdate
         var fq = data.facet_counts.facet_queries;
         $("#fac_7dy span").text('(' + fq['{!ex=revd}reviewdate:[NOW/DAY-7DAY TO NOW]'] + ')');
@@ -153,31 +154,20 @@ function handle_response(data, filters) {
             do_search();
             return false;
         });
+*/
     } else {
         $(".pager").hide();
         $("#summary").html("No matching pages found");
-    }
-    
-    // spellcheck
-    var col = data.spellcheck.suggestions.indexOf("collation");
-    if (col >= 0) {
-        $("#didyoumean").html('Did you mean <a href="#">' + 
-            data.spellcheck.suggestions[col+1]).show() + '</a>?';
-    }
-    else {
-        $("#didyoumean").hide();
-    }
+    }    
 }
 
 function format_hit(doc, data) {
     var sample = '[description not available]';
     try {
-        sample = data.highlighting[doc.url].text.join('...');
+        sample = data.highlighting[doc.id].text.join('...');
     } catch (err) { }
     
-    return '<div class="hit"><div class="hittitle">' +
-        '<a target="bbc" href="' + doc.url + '">' + 
-        doc.title + '</a></div>' + '<div class="hittext">' +
+    return '<div class="hit"><div class="hittext">' +
         sample + '</div></div>';
 }
 
