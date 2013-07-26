@@ -1,0 +1,19 @@
+# HTTP-specific options
+http:
+
+  port: 8080
+  adminPort: 8081
+
+
+# Logging
+logging:
+
+  level: INFO
+
+  loggers:
+    # Set debug logging for our code
+    "uk.co.flax": DEBUG
+    
+classifier: classifiers/english.all.3class.distsim.crf.ser.gz
+
+  
