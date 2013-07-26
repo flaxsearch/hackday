@@ -983,6 +983,55 @@
      </arr>
   </requestHandler>
 
+  <requestHandler name="/morris" class="solr.SearchHandler">
+     <lst name="defaults">
+       <str name="echoParams">explicit</str>
+
+       <!-- VelocityResponseWriter settings -->
+       <!--str name="wt">velocity</str>
+       <str name="v.template">browse</str>
+       <str name="v.layout">layout</str>
+       <str name="title">Solritas</str-->
+
+       <!-- Query settings -->
+       <str name="defType">edismax</str>
+       <str name="qf">text</str>
+       <str name="pf">text</str>
+       <str name="mm">1</str>
+       <str name="rows">20</str>
+       <str name="fl">*,score</str>
+
+       <!-- Faceting defaults -->
+       <str name="facet">on</str>
+       <str name="facet.mincount">1</str>
+
+       <str name="facet.field">ent_mentions_full_name</str>
+       <str name="facet.field">ent_hashtags</str>
+       <str name="facet.field">ent_urls</str>
+       <str name="facet.field">retweeted</str>
+       <str name="facet.field">place_country</str>
+       <str name="facet.field">place_full_name</str>
+       <str name="facet.field">user_full_name</str>
+
+       <str name="facet.query">created_at:[NOW/DAY-1DAYS TO NOW/DAY]</str>
+       <str name="facet.query">created_at:[NOW/DAY-7DAYS TO NOW/DAY]</str>
+       <str name="facet.query">created_at:[NOW/DAY-30DAYS TO NOW/DAY]</str>
+       <str name="facet.query">created_at:[NOW/DAY-365DAYS TO NOW/DAY]</str>
+       <str name="facet.query">created_at:[NOW/DAY-730DAYS TO NOW/DAY]</str>
+
+       <!-- Highlighting defaults -->
+       <str name="hl">on</str>
+       <str name="hl.fl">text</str>
+       <str name="hl.encoder">html</str>
+       <str name="hl.simple.pre">&lt;b&gt;</str>
+       <str name="hl.simple.post">&lt;/b&gt;</str>
+       <str name="hl.snippets">1</str>
+       <str name="hl.fragsize">300</str>
+       <str name="hl.alternateField">text</str>
+     </lst>
+
+  </requestHandler>
+
 
   <!-- Update Request Handler.  
        
