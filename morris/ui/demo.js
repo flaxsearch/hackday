@@ -62,9 +62,9 @@ function do_search() {
     qchanged = false;
     
     var filters = [];
-//    $(".facon").each(function() {
-//        filters.push($(this).attr('href'));
-//    });
+    $(".facon").each(function() {
+        filters.push($(this).attr('href'));
+    });
     
 //    console.log('filters: ' + filters);
     
@@ -109,38 +109,35 @@ function handle_response(data, filters) {
         enable_link($(".next"), numFound > start + data.response.docs.length);
         $(".pager").show();
 
-/*        
         // facets - reviewdate
         var fq = data.facet_counts.facet_queries;
-        $("#fac_7dy span").text('(' + fq['{!ex=revd}reviewdate:[NOW/DAY-7DAY TO NOW]'] + ')');
-        $("#fac_1mn span").text('(' + fq['{!ex=revd}reviewdate:[NOW/DAY-30DAY TO NOW]'] + ')');
-        $("#fac_1yr span").text('(' + fq['{!ex=revd}reviewdate:[NOW/DAY-365DAY TO NOW]'] + ')');
-        $("#fac_2yr span").text('(' + fq['{!ex=revd}reviewdate:[NOW/DAY-730DAY TO NOW]'] + ')');
-        $("#fac_5yr span").text('(' + fq['{!ex=revd}reviewdate:[NOW/DAY-1825DAY TO NOW]'] + ')');
-        
-        // facets - artist
-        $("#facartists").empty()
-        var artists = data.facet_counts.facet_fields.artist;
-        for (var i = 0; i < artists.length; i += 2) {
-            $("#facartists").append(
-                '<div><a class="facfield" href="artist:&quot;' + artists[i] + 
-                '&quot;">' + artists[i] + '</a> (' + artists[i+1] + ')</div>');
+        $("#fac_1dy span").text('(' + fq['created_at:[NOW/DAY-1DAYS TO NOW/DAY]'] + ')');
+        $("#fac_7dy span").text('(' + fq['created_at:[NOW/DAY-7DAYS TO NOW/DAY]'] + ')');
+        $("#fac_1mn span").text('(' + fq['created_at:[NOW/DAY-30DAYS TO NOW/DAY]'] + ')');
+        $("#fac_1yr span").text('(' + fq['created_at:[NOW/DAY-365DAYS TO NOW/DAY]'] + ')');
+        $("#fac_2yr span").text('(' + fq['created_at:[NOW/DAY-730DAYS TO NOW/DAY]'] + ')');
 
-            if (filters.indexOf('artist:"' + artists[i] + '"') >= 0) {
-                $("#facartists a").last().addClass('facon');
+        $("#factweeter").empty()
+        var facets = data.facet_counts.facet_fields.user_full_name;
+        for (var i = 0; i < facets.length; i += 2) {
+            $("#factweeter").append(
+                '<div><a class="facfield" href="user_full_name:&quot;' + facets[i] + 
+                '&quot;">' + facets[i] + '</a> (' + facets[i+1] + ')</div>');
+
+            if (filters.indexOf('user_full_name:"' + facets[i] + '"') >= 0) {
+                $("#factweeter a").last().addClass('facon');
             }
         }
 
-        // facets - type
-        $("#facdoctypes").empty()
-        var doctypes = data.facet_counts.facet_fields.doctype;
-        for (var i = 0; i < doctypes.length; i += 2) {
-            $("#facdoctypes").append(
-                '<div><a class="facfield" href="doctype:&quot;' + doctypes[i] + 
-                '&quot;">' + doctypes[i].capitalize() + '</a> (' + doctypes[i+1] + ')</div>');
+        $("#facmentions").empty()
+        var facets = data.facet_counts.facet_fields.ent_mentions_full_name;
+        for (var i = 0; i < facets.length; i += 2) {
+            $("#facmentions").append(
+                '<div><a class="facfield" href="ent_mentions_full_name:&quot;' + facets[i] + 
+                '&quot;">' + facets[i] + '</a> (' + facets[i+1] + ')</div>');
 
-            if (filters.indexOf('doctype:"' + doctypes[i] + '"') >= 0) {
-                $("#facdoctypes a").last().addClass('facon');
+            if (filters.indexOf('ent_mentions_full_name:"' + facets[i] + '"') >= 0) {
+                $("#facmentions a").last().addClass('facon');
             }
         }
                 
@@ -154,7 +151,7 @@ function handle_response(data, filters) {
             do_search();
             return false;
         });
-*/
+
     } else {
         $(".pager").hide();
         $("#summary").html("No matching pages found");
@@ -167,7 +164,11 @@ function format_hit(doc, data) {
         sample = data.highlighting[doc.id].text.join('...');
     } catch (err) { }
     
-    return '<div class="hit"><div class="hittext">' +
-        sample + '</div></div>';
+    return '<div class="hit"><div class="hittext"><i>' +
+        doc.user_screen_name + 
+        ' : ' + doc.created_at + 
+        '</i><br/>' +
+        sample + 
+        '</i></div></div>';
 }
 
