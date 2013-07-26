@@ -43,12 +43,33 @@ public class Index {
 		
 		List<List<CoreLabel>> sentences = classifier.classify(text);
 		for (List<CoreLabel> sentence : sentences) {
+			// Current object and object type
+			String currObj = "";
+			String currType = "";
+			
 			for (CoreLabel word : sentence) {
 				String type = word.get(AnswerAnnotation.class);
-				if (!retMap.containsKey(type)) {
-					retMap.put(type, new ArrayList<String>());
+				String obj = word.word();
+				
+				// Ignore "O" annotations - these are general
+				if (type.equals(currType) && !type.equals("O")) {
+					// Append the current word to the previous one - join multi-word names
+					currObj = currObj + " " + obj;
+				} else {
+					// New type - if we have a current object, store it
+					if (currObj.length() > 0 && !currType.equals("O")) {
+						if (!retMap.containsKey(currType)) {
+							// New annotation type - add to the map
+							retMap.put(currType, new ArrayList<String>());
+						}
+
+						retMap.get(currType).add(currObj);
+					}
+					
+					// Hang on to the current type and object, use in the next iteration
+					currType = type;
+					currObj = obj;
 				}
-				retMap.get(type).add(word.word());
 			}
 		}
 
