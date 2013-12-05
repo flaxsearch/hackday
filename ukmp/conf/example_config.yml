@@ -1,0 +1,32 @@
+
+# Twitter details
+twitter:
+  consumer_key: xxx
+  consumer_secret: xxx
+  access_token_key: xxx
+  access_token_secret: xxx
+
+# Details of individual lists for party MPs.
+# Keys will be used by indexer to flag party affiliation.
+party_lists:
+  
+  Labour:
+    data_dir: ../data/labour
+    twitter_screen_name: tweetminster
+    twitter_list_slug: labour
+
+  Conservative:
+    data_dir: ../data/conservative
+    twitter_screen_name: tweetminster
+    twitter_list_slug: conservatives
+
+  LibDem:
+    data_dir: ../data/libdem
+    twitter_screen_name: tweetminster
+    twitter_list_slug: libdems
+
+  Other:
+    data_dir: ../data/other
+    twitter_screen_name: tweetminster
+    twitter_list_slug: others
+

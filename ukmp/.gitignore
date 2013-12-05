@@ -1,0 +1,11 @@
+# Do not want to store data directory
+data
+
+# Keep personal twitter data secret
+conf/matt_config.yml
+
+# Eclipse files
+.project
+.classpath
+.settings
+target
