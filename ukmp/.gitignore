@@ -9,3 +9,6 @@ conf/matt_config.yml
 .classpath
 .settings
 target
+
+# Vim swap files
+*.swp
