@@ -6,27 +6,51 @@ twitter:
   access_token_key: xxx
   access_token_secret: xxx
 
+  # Number of tweets to fetch
+  tweet_count: 200
+  # Time to sleep between requests
+  delay: 10
+
+# Directory to which data files will be written
+data_dir: ../data
+
+# Directory to which data files will be moved after indexing
+archive_dir: ../archive
+
 # Details of individual lists for party MPs.
 # Keys will be used by indexer to flag party affiliation.
 party_lists:
   
   Labour:
-    data_dir: ../data/labour
     twitter_screen_name: tweetminster
     twitter_list_slug: labour
 
   Conservative:
-    data_dir: ../data/conservative
     twitter_screen_name: tweetminster
     twitter_list_slug: conservatives
 
   LibDem:
-    data_dir: ../data/libdem
     twitter_screen_name: tweetminster
     twitter_list_slug: libdems
 
   Other:
-    data_dir: ../data/other
     twitter_screen_name: tweetminster
     twitter_list_slug: others
+
+
+# DropWizard configuration
+# HTTP-specific options
+http:
+
+  port: 8080
+  adminPort: 8081
+
+# Logging
+logging:
+
+  level: INFO
+
+  loggers:
+    # Set debug logging for our code
+    "uk.co.flax": TRACE
 
