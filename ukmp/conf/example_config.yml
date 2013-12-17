@@ -37,34 +37,3 @@ party_lists:
     twitter_screen_name: tweetminster
     twitter_list_slug: others
 
-
-# DropWizard configuration
-# HTTP-specific options
-http:
-
-  port: 8080
-  adminPort: 8081
-
-# Logging
-logging:
-
-  level: INFO
-
-  loggers:
-    # Set debug logging for our code
-    "uk.co.flax": TRACE
-
-# Solr configuration
-solr:
-
-  # The base URL for the solr server.
-  baseUrl: http://localhost:8983/solr/
-
-# The entity configuration
-entity:
-
-  # Java properties - need to be wrapped up this way to work properly
-  properties:
-    # The NER classifier to use - taken from the stanford-nlp-models.jar
-    loadClassifier: /edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
-
