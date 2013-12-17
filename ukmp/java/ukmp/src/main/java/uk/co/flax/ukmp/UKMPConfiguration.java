@@ -18,6 +18,8 @@ package uk.co.flax.ukmp;
 import java.util.Map;
 
 import uk.co.flax.ukmp.api.Party;
+import uk.co.flax.ukmp.config.EntityConfiguration;
+import uk.co.flax.ukmp.config.SolrConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.config.Configuration;
@@ -37,6 +39,11 @@ public class UKMPConfiguration extends Configuration {
 
 	@JsonProperty("party_lists")
 	private Map<String, Party> partyMap;
+
+	@JsonProperty("solr")
+	private SolrConfiguration solrConfiguration;
+	@JsonProperty("entity")
+	private EntityConfiguration entityConfiguration;
 
 	/**
 	 * @return the dataDir
@@ -64,6 +71,17 @@ public class UKMPConfiguration extends Configuration {
 	 */
 	public Map<String, Party> getPartyMap() {
 		return partyMap;
+	}
+
+	public SolrConfiguration getSolrConfiguration() {
+		return solrConfiguration;
+	}
+
+	/**
+	 * @return the entityConfiguration
+	 */
+	public EntityConfiguration getEntityConfiguration() {
+		return entityConfiguration;
 	}
 
 }
