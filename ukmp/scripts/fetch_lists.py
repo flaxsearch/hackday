@@ -14,8 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Script to read through the complete list of accounts and retrieve up to 200
-tweets per account.
+"""Script to read through the set of tweet lists and retrieve up to 200
+tweets per list.
 """
 import sys
 import os
@@ -46,15 +46,12 @@ def get_api(config):
         access_token_key=config['twitter']['access_token_key'],
         access_token_secret=config['twitter']['access_token_secret'])
 
-def handle_stats(data_dir, user, party, stats, since):
+def handle_stats(data_dir, user, stats, since):
     max_id = 0
     with open(os.path.join(data_dir, user + '.tweets'), 'a') as f:
         for s in stats:
             max_id = max(max_id, s.id)
-            s2 = dict(id=s.id, created=s.created_at, text=s.text,
-                favorited=s.favorited, reply=s.in_reply_to_screen_name,
-                location=s.location, party=party, user=s.user.AsDict())
-            f.write(json.dumps(s2) + '\n')
+            f.write(json.dumps(s.AsDict()) + '\n')
     if max_id > since:
         write_since(data_dir, user, max_id)
 
@@ -79,7 +76,7 @@ for party in config['party_lists']:
             owner_screen_name=party_config['twitter_screen_name'], 
             since_id=since, count=config['twitter']['tweet_count'])
         print "Got {2} tweets for {0} since {1}".format(slug, since, len(stats))
-        handle_stats(config['data_dir'], slug, party, stats, since)
+        handle_stats(config['data_dir'], slug, stats, since)
     except twitter.TwitterError as e:
         print "%s: Caught TwitterError '%s'" % (slug, e)
     time.sleep(config['twitter']['delay'])
