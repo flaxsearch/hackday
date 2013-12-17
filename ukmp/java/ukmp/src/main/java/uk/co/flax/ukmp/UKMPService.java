@@ -15,7 +15,11 @@
  */
 package uk.co.flax.ukmp;
 
+import uk.co.flax.ukmp.health.SolrHealthCheck;
+import uk.co.flax.ukmp.resources.EntityExtractor;
 import uk.co.flax.ukmp.resources.Index;
+import uk.co.flax.ukmp.search.SearchEngine;
+import uk.co.flax.ukmp.search.solr.SolrSearchEngine;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
@@ -37,7 +41,13 @@ public class UKMPService extends Service<UKMPConfiguration> {
 
 	@Override
 	public void run(UKMPConfiguration configuration, Environment environment) throws Exception {
+		SearchEngine engine = new SolrSearchEngine(configuration.getSolrConfiguration());
+
 		environment.addResource(new Index());
+		environment.addResource(new EntityExtractor(configuration.getEntityConfiguration()));
+
+		// Add health checks
+		environment.addHealthCheck(new SolrHealthCheck(engine));
 	}
 
 	public static void main(String[] args) throws Exception {
