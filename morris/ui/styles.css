@@ -12,6 +12,15 @@ body {
     background-image: url('banner.png');
 }
 
+#map-canvas {
+    border-bottom: 1px solid lightgray;
+    position: absolute;
+    top: 400px;
+    left: 870px;
+    width: 400px;
+    height: 300px;
+}
+
 #maindiv {
     position: absolute;
     top: 110px;
