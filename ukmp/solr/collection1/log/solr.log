@@ -14626,3 +14626,18 @@ INFO  - 2013-12-18 11:02:43.760; org.apache.solr.core.SolrCore; [collection1] we
 INFO  - 2013-12-18 11:02:43.988; org.apache.solr.core.SolrCore; [collection1] webapp=/solr path=/admin/ping params={action=status&_=1387364563562&wt=json} status=503 QTime=2 
 INFO  - 2013-12-18 11:02:43.989; org.apache.solr.core.SolrCore; [collection1] webapp=/solr path=/admin/file/ params={file=admin-extra.html&_=1387364563560} status=0 QTime=1 
 INFO  - 2013-12-18 11:02:56.944; org.apache.solr.core.SolrCore; [collection1] webapp=/solr path=/select params={indent=true&q=*:*&_=1387364576926&wt=json} hits=1293 status=0 QTime=1 
+INFO  - 2013-12-18 11:40:35.435; org.eclipse.jetty.server.Server; Graceful shutdown SocketConnector@0.0.0.0:8983
+INFO  - 2013-12-18 11:40:35.436; org.eclipse.jetty.server.Server; Graceful shutdown o.e.j.w.WebAppContext{/solr,file:/home/mlp/flax/solr-4.6.0/example/solr-webapp/webapp/},/home/mlp/flax/solr-4.6.0/example/webapps/solr.war
+INFO  - 2013-12-18 11:40:36.438; org.apache.solr.core.CoreContainer; Shutting down CoreContainer instance=1642587650
+INFO  - 2013-12-18 11:40:36.439; org.apache.solr.core.SolrCore; [collection1]  CLOSING SolrCore org.apache.solr.core.SolrCore@30ea6dbc
+INFO  - 2013-12-18 11:40:36.440; org.apache.solr.update.DirectUpdateHandler2; closing DirectUpdateHandler2{commits=4,autocommit maxTime=15000ms,autocommits=2,soft autocommits=2,optimizes=0,rollbacks=0,expungeDeletes=0,docsPending=0,adds=0,deletesById=0,deletesByQuery=0,errors=11,cumulative_adds=1304,cumulative_deletesById=0,cumulative_deletesByQuery=0,cumulative_errors=11}
+INFO  - 2013-12-18 11:40:36.441; org.apache.solr.update.SolrCoreState; Closing SolrCoreState
+INFO  - 2013-12-18 11:40:36.442; org.apache.solr.update.DefaultSolrCoreState; SolrCoreState ref count has reached 0 - closing IndexWriter
+INFO  - 2013-12-18 11:40:36.443; org.apache.solr.update.DefaultSolrCoreState; closing IndexWriter with IndexWriterCloser
+INFO  - 2013-12-18 11:40:36.447; org.apache.solr.core.SolrCore; [collection1] Closing main searcher on request.
+INFO  - 2013-12-18 11:40:36.449; org.apache.solr.core.CachingDirectoryFactory; Closing NRTCachingDirectoryFactory - 2 directories currently being tracked
+INFO  - 2013-12-18 11:40:36.451; org.apache.solr.core.CachingDirectoryFactory; looking to close /home/mlp/flax/hackday/ukmp/solr/collection1/data [CachedDir<<refCount=0;path=/home/mlp/flax/hackday/ukmp/solr/collection1/data;done=false>>]
+INFO  - 2013-12-18 11:40:36.451; org.apache.solr.core.CachingDirectoryFactory; Closing directory: /home/mlp/flax/hackday/ukmp/solr/collection1/data
+INFO  - 2013-12-18 11:40:36.452; org.apache.solr.core.CachingDirectoryFactory; looking to close /home/mlp/flax/hackday/ukmp/solr/collection1/data/index [CachedDir<<refCount=0;path=/home/mlp/flax/hackday/ukmp/solr/collection1/data/index;done=false>>]
+INFO  - 2013-12-18 11:40:36.452; org.apache.solr.core.CachingDirectoryFactory; Closing directory: /home/mlp/flax/hackday/ukmp/solr/collection1/data/index
+INFO  - 2013-12-18 11:40:36.457; org.eclipse.jetty.server.handler.ContextHandler; stopped o.e.j.w.WebAppContext{/solr,file:/home/mlp/flax/solr-4.6.0/example/solr-webapp/webapp/},/home/mlp/flax/solr-4.6.0/example/webapps/solr.war
