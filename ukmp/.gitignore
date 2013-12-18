@@ -1,6 +1,7 @@
 # Do not want to store data or archive directories
 data
 archive
+log
 
 # Keep personal twitter data secret
 matt_config.yml
