@@ -37,3 +37,8 @@ party_lists:
     twitter_screen_name: tweetminster
     twitter_list_slug: others
 
+entity:
+
+  # URL for the entity extractor - should be running as part of the webapp
+  extractor_url: http://localhost:8080/entityExtractor
+
