@@ -79,10 +79,7 @@ def get_party_from_filename(filename, config):
     party = None
 
     # Cut off the underscore, timestamp and .tweets extension
-    slug = filename[:-14]
-    # And cut off the directory path
-    slug = slug[slug.rindex(os.sep) + 1:]
-    print slug
+    slug = os.path.basename(filename)[:-14]
     if slug in slug_parties:
         party = slug_parties[slug]
     else:
