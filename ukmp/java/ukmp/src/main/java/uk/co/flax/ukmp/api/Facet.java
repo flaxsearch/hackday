@@ -15,30 +15,40 @@
  */
 package uk.co.flax.ukmp.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 /**
- * POJO holding party details.
+ * POJO representing a Solr facet (filter).
  */
-public class Party {
+public class Facet {
 
-	@JsonProperty("twitter_screen_name")
-	private String ownerScreenName;
-	@JsonProperty("twitter_list_slug")
-	private String listName;
+	private final String field;
+	private final String value;
+	private final int count;
 
-	/**
-	 * @return the ownerScreenName
-	 */
-	public String getOwnerScreenName() {
-		return ownerScreenName;
+	public Facet(String field, String value, int count) {
+		this.field = field;
+		this.value = value;
+		this.count = count;
 	}
 
 	/**
-	 * @return the listName
+	 * @return the field
 	 */
-	public String getListName() {
-		return listName;
+	public String getField() {
+		return field;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * @return the count
+	 */
+	public int getCount() {
+		return count;
 	}
 
 }
