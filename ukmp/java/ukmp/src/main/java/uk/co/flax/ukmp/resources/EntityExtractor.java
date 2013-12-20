@@ -24,13 +24,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import uk.co.flax.ukmp.api.Entity;
 import uk.co.flax.ukmp.config.EntityConfiguration;
@@ -47,6 +48,8 @@ import edu.stanford.nlp.ling.CoreLabel;
  */
 @Path("/entityExtractor")
 public class EntityExtractor {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(EntityExtractor.class);
 
 	/**
 	 * Regular expression for recognising entities. These are XML, of the form
@@ -72,12 +75,6 @@ public class EntityExtractor {
 		classifier.loadJarClassifier(classifierPath, config.getJavaProperties());
 	}
 
-	@GET
-	@Produces(MediaType.TEXT_PLAIN)
-	public String handleGet() {
-		return "POST text to this page!";
-	}
-
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public String handlePost(String text) {
@@ -99,7 +96,7 @@ public class EntityExtractor {
 			ObjectMapper mapper = new ObjectMapper();
 			retVal = mapper.writeValueAsString(retMap);
 		} catch (JsonProcessingException e) {
-			System.err.println("Cannot convert words to JSON: " + e.getMessage());
+			LOGGER.error("Cannot convert entity map to JSON: " + e.getMessage());
 		}
 
 		return retVal;

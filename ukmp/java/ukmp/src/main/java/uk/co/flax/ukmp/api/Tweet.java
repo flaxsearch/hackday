@@ -27,12 +27,13 @@ public class Tweet {
 	private long id;
 	private String text;
 	private String party;
-	private boolean favorited;
 	private Date created;
-	private String location;
+	private String country;
+	private String placeName;
+	private String userScreenName;
+	private String userName;
 	@JsonProperty("reply")
 	private String inReplyTo;
-	private User user;
 
 	/**
 	 * @return the id
@@ -77,20 +78,6 @@ public class Tweet {
 	}
 
 	/**
-	 * @return the favorited
-	 */
-	public boolean isFavorited() {
-		return favorited;
-	}
-
-	/**
-	 * @param favorited the favorited to set
-	 */
-	public void setFavorited(boolean favorited) {
-		this.favorited = favorited;
-	}
-
-	/**
 	 * @return the created
 	 */
 	public Date getCreated() {
@@ -102,20 +89,6 @@ public class Tweet {
 	 */
 	public void setCreated(Date created) {
 		this.created = created;
-	}
-
-	/**
-	 * @return the location
-	 */
-	public String getLocation() {
-		return location;
-	}
-
-	/**
-	 * @param location the location to set
-	 */
-	public void setLocation(String location) {
-		this.location = location;
 	}
 
 	/**
@@ -133,17 +106,59 @@ public class Tweet {
 	}
 
 	/**
-	 * @return the user
+	 * @return the country
 	 */
-	public User getUser() {
-		return user;
+	public String getCountry() {
+		return country;
 	}
 
 	/**
-	 * @param user the user to set
+	 * @param country the country to set
 	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	/**
+	 * @return the placeName
+	 */
+	public String getPlaceName() {
+		return placeName;
+	}
+
+	/**
+	 * @param placeName the placeName to set
+	 */
+	public void setPlaceName(String placeName) {
+		this.placeName = placeName;
+	}
+
+	/**
+	 * @return the userScreenName
+	 */
+	public String getUserScreenName() {
+		return userScreenName;
+	}
+
+	/**
+	 * @param userScreenName the userScreenName to set
+	 */
+	public void setUserScreenName(String userScreenName) {
+		this.userScreenName = userScreenName;
+	}
+
+	/**
+	 * @return the userName
+	 */
+	public String getUserName() {
+		return userName;
+	}
+
+	/**
+	 * @param userName the userName to set
+	 */
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 }
