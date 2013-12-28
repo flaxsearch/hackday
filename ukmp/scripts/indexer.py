@@ -61,7 +61,7 @@ def build_filelist(config, archive):
         for party in config["party_lists"]:
             tweetfile = config["party_lists"][party]["twitter_list_slug"] + ".tweets"
             tweetpath = os.path.join(config["data_dir"], tweetfile)
-            if os.path.exists(tweetpath):
+            if os.path.exists(tweetpath) and os.stat(tweetpath).st_size > 0:
                 archive = "{0}_{1}.tweets".format(tweetfile[:-7], tstamp)
                 destfile = os.path.join(today_dir, archive)
                 shutil.move(tweetpath, destfile)
