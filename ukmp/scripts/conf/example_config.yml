@@ -46,4 +46,8 @@ solr:
 
   # URL to post data to Solr
   update_url: http://localhost:8983/solr/update?commitWithin=15000
+  
+  # Headers
+  headers:
+    content-type: application/json
 
