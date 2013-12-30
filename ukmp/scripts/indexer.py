@@ -39,7 +39,7 @@ import requests
 mons = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-def build_filelist(config, archive):
+def build_filelist(config, archive, tweetdir):
     """Get the list of files to be indexed. If archive = True, will read all
     files from the archive directory (and ignore the current data), otherwise
     will move the current tweets to the archive directory and just index them.
@@ -52,6 +52,12 @@ def build_filelist(config, archive):
             for filename in filenames:
                 if filename.endswith(".tweets"):
                     filelist.append(os.path.join(parent, filename))
+    elif tweetdir:
+        # Change base directory
+        basedir = os.path.join(config["archive_dir"], tweetdir)
+        for filename in os.listdir(basedir):
+            if (filename.endswith(".tweets")):
+                filelist.append(os.path.join(basedir, filename))
     else:
         # Move current tweet files to archive directory
         today_dir = os.path.join(config["archive_dir"], time.strftime("%Y%m%d"))
@@ -113,10 +119,11 @@ def extract_entities(extract_url, text):
 p = optparse.OptionParser()
 p.add_option("--archive", action="store_true", dest="archive")
 p.add_option("-a", action="store_true", dest="archive")
+p.add_option("-d", dest="tweet_dir")
 opts, args = p.parse_args()
 
 if len(args) != 1:
-    print "Usage: indexer.py [--archive|-a] <configfile>"
+    print "Usage: indexer.py [--archive|-a] [-d <tweetdir>] <configfile>"
     raise SystemExit(1)
 
 # Read the config
@@ -124,7 +131,7 @@ with open(args[0]) as f:
     config = yaml.load(f)
 
 # Get the list of files to index
-tweetfiles = build_filelist(config, opts.archive)
+tweetfiles = build_filelist(config, opts.archive, opts.tweet_dir)
 entity_url = config["entity"]["extractor_url"]
 solr_url = config["solr"]["update_url"]
 
@@ -164,7 +171,17 @@ for tweetfile in tweetfiles:
             stweet.update(entities)
 
         response = requests.post(solr_url,
-            headers = { 'content-type': 'application/json'},
-            data = json.dumps([stweet]))
+            headers=dict(config["solr"]["headers"]),
+            data=json.dumps([stweet]))
         count += 1
     print "Indexed %d tweets from %s" % (count, tweetfile)
+
+# Send a hard commit
+response = requests.post(solr_url,
+    headers = dict(config["solr"]["headers"]),
+    data='{"commit":{}}')
+if response.status_code != 200:
+    print "Response error code from Solr: %s %s" % (
+        response.status_code, response.text)
+    raise Exception, 'FIXME'
+ 
