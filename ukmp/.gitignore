@@ -11,6 +11,7 @@ matt_config.yml
 .classpath
 .settings
 target
+.pydevproject
 
 # Vim swap files
 *.swp
