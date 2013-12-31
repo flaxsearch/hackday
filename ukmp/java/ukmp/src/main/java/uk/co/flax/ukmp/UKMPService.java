@@ -33,8 +33,8 @@ public class UKMPService extends Service<UKMPConfiguration> {
 
 	@Override
 	public void initialize(Bootstrap<UKMPConfiguration> bootstrap) {
-		// Add bundles for static asset directories
-		bootstrap.addBundle(new AssetsBundle("/static", "/static"));
+		// Add bundle for static asset directories
+		bootstrap.addBundle(new AssetsBundle("/static", "/", "index.html"));
 		// Add webjars AssetsBundle, to include bootstrap, etc.
 	    bootstrap.addBundle(new AssetsBundle("/META-INF/resources/webjars", "/webjars"));
 	}
