@@ -40,7 +40,7 @@ party_lists:
 entity:
 
   # URL for the entity extractor - should be running as part of the webapp
-  extractor_url: http://localhost:8080/entityExtractor
+  extractor_url: http://localhost:8080/service/entityExtractor
 
 solr:
 
