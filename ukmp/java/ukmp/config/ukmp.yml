@@ -4,6 +4,8 @@ http:
   port: 8080
   adminPort: 8081
 
+  rootPath: "/service"
+
 # Logging
 logging:
 
