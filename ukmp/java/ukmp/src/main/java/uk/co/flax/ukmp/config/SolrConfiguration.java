@@ -26,11 +26,21 @@ public class SolrConfiguration {
 	@Valid @NotNull
 	private String baseUrl;
 
+	@Valid @NotNull
+	private String queryHandler;
+
 	/**
 	 * @return the baseUrl
 	 */
 	public String getBaseUrl() {
 		return baseUrl;
+	}
+
+	/**
+	 * @return the default query handler to use.
+	 */
+	public String getQueryHandler() {
+		return queryHandler;
 	}
 
 }
