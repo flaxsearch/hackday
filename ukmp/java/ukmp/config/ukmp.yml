@@ -4,7 +4,7 @@ http:
   port: 8080
   adminPort: 8081
 
-  rootPath: "/service"
+  rootPath: /service/*
 
 # Logging
 logging:
@@ -20,6 +20,9 @@ solr:
 
   # The base URL for the solr server.
   baseUrl: http://localhost:8983/solr/
+  
+  # The default query handler
+  queryHandler: /morris
 
 # The entity configuration
 entity:

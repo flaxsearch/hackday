@@ -22,9 +22,9 @@ public class Facet {
 
 	private final String field;
 	private final String value;
-	private final int count;
+	private final long count;
 
-	public Facet(String field, String value, int count) {
+	public Facet(String field, String value, long count) {
 		this.field = field;
 		this.value = value;
 		this.count = count;
@@ -47,7 +47,7 @@ public class Facet {
 	/**
 	 * @return the count
 	 */
-	public int getCount() {
+	public long getCount() {
 		return count;
 	}
 
