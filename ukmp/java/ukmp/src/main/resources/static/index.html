@@ -1,9 +1,30 @@
-<html>
-<head><title>Test</title></head>
+<!DOCTYPE html>
+<html ng-app="ukmpApp">
+<head>
+	<title>Test</title>
+	<meta charset="utf-8" />
+	
+	<script src="/webjars/angularjs/1.2.2/angular.min.js"></script>
+	<script src="/webjars/angular-ui-bootstrap/0.6.0/ui-bootstrap.min.js"></script>
+	<script src="/js/controller.js"></script>
+	
+	<link rel="stylesheet" href="/webjars/bootstrap/3.0.2/css/bootstrap.css" />
+	<style>
+		.nav, .pagination, .carousel a { cursor: pointer; }	
+	</style>
+</head>
 
-<body>
+<body ng-controller="UKMPCtrl" ng-init="refreshTweets(0)">
 
-<p>This is a test page</p>
+	<ul>
+		<li ng-repeat="tweet in tweets">
+			{{tweet.text}}
+		</li>
+	</ul>
+	
+	<pagination boundary-links="true" total-items="totalItems" page="currentPage + 1" 
+		previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
+		last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
 
 </body>
 
