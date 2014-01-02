@@ -158,8 +158,13 @@ for tweetfile in tweetfiles:
         if 'geo' in tweet:
             stweet['place_location'] = tweet['geo']['coordinates']
         if 'user_mentions' in tweet:
-            stweet['ent_mentions_screen_name'] = [x['screen_name'] for x in tweet['user_mentions']]
-            stweet['ent_mentions_full_name'] = [x['name'] for x in tweet['user_mentions']]
+            stweet['ent_mentions_screen_name'] = []
+            stweet['ent_mentions_full_name'] = []
+            for mention in tweet['user_mentions']:
+                stweet['ent_mentions_screen_name'].append(mention['screen_name'])
+                # Not all user profiles have a full name
+                if 'name' in mention:
+                    tweet['ent_mentions_full_name'].append(mention['name'])
         if 'hashtags' in tweet:
             stweet['ent_hashtags'] = tweet['hashtags']
         if 'urls' in tweet:
