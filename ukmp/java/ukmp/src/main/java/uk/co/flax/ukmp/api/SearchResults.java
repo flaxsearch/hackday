@@ -24,12 +24,13 @@ import java.util.Map;
 public class SearchResults {
 
 	private final int start;
-	private final int numResults;
+	private final long numResults;
 	private final String query;
-	private final String sortOrder;
+	private final String sortField;
+	private final boolean sortAscending;
 
 	/** The facets that can be applied to this results list */
-	private final Map<String, Facet> facets;
+	private final Map<String, List<Facet>> facets;
 
 	/** The filters already applied */
 	private final Map<String, List<String>> appliedFilters;
@@ -37,23 +38,24 @@ public class SearchResults {
 	private final List<Tweet> tweets;
 	private final String errorMessage;
 
-	public SearchResults(int start, int numResults, List<Tweet> results, String query,
-			Map<String, List<String>> filters, String sortOrder, Map<String, Facet> facets) {
-		this(start, numResults, results, query, filters, sortOrder, facets, null);
+	public SearchResults(int start, long numResults, List<Tweet> results, String query,
+			Map<String, List<String>> filters, String sortOrder, boolean sortAsc, Map<String, List<Facet>> facets) {
+		this(start, numResults, results, query, filters, sortOrder, sortAsc, facets, null);
 	}
 
 	public SearchResults(String error) {
-		this(0, -1, null, null, null, null, null, error);
+		this(0, -1, null, null, null, null, false, null, error);
 	}
 
-	public SearchResults(int start, int numResults, List<Tweet> results, String query,
-			Map<String, List<String>> filters, String sortOrder, Map<String, Facet> facets, String error) {
+	public SearchResults(int start, long numResults, List<Tweet> results, String query,
+			Map<String, List<String>> filters, String sortOrder, boolean sortAsc, Map<String, List<Facet>> facets, String error) {
 		this.start = start;
 		this.numResults = numResults;
 		this.tweets = results;
 		this.query = query;
 		this.appliedFilters = filters;
-		this.sortOrder = sortOrder;
+		this.sortField = sortOrder;
+		this.sortAscending = sortAsc;
 		this.facets = facets;
 		this.errorMessage = error;
 	}
@@ -68,7 +70,7 @@ public class SearchResults {
 	/**
 	 * @return the total number of results for the search.
 	 */
-	public int getNumResults() {
+	public long getNumResults() {
 		return numResults;
 	}
 
@@ -89,8 +91,12 @@ public class SearchResults {
 	/**
 	 * @return the sort order of the search results.
 	 */
-	public String getSortOrder() {
-		return sortOrder;
+	public String getSortField() {
+		return sortField;
+	}
+
+	public boolean isSortAscending() {
+		return sortAscending;
 	}
 
 	/**
@@ -103,7 +109,7 @@ public class SearchResults {
 	/**
 	 * @return the facets that may be applied to this search.
 	 */
-	public Map<String, Facet> getFacets() {
+	public Map<String, List<Facet>> getFacets() {
 		return facets;
 	}
 

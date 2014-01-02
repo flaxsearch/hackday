@@ -15,6 +15,8 @@
  */
 package uk.co.flax.ukmp.search;
 
+import uk.co.flax.ukmp.api.SearchResults;
+
 
 /**
  * Interface defining search engine functionality.
@@ -36,5 +38,14 @@ public interface SearchEngine {
 	 * search engine. This does not include the search engine being off-line.
 	 */
 	public boolean isServerReady() throws SearchEngineException;
+
+	/**
+	 * Carry out a search and return the results.
+	 * @param query the query details.
+	 * @return the results of the search.
+	 * @throws SearchEngineException if there are problems executing the
+	 * search.
+	 */
+	public SearchResults search(Query query) throws SearchEngineException;
 
 }
