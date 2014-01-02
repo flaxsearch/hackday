@@ -25,6 +25,7 @@ public class SearchResults {
 
 	private final int start;
 	private final long numResults;
+	private final int pageSize;
 	private final String query;
 	private final String sortField;
 	private final boolean sortAscending;
@@ -38,19 +39,20 @@ public class SearchResults {
 	private final List<Tweet> tweets;
 	private final String errorMessage;
 
-	public SearchResults(int start, long numResults, List<Tweet> results, String query,
+	public SearchResults(int start, long numResults, int pageSize, List<Tweet> results, String query,
 			Map<String, List<String>> filters, String sortOrder, boolean sortAsc, Map<String, List<Facet>> facets) {
-		this(start, numResults, results, query, filters, sortOrder, sortAsc, facets, null);
+		this(start, numResults, pageSize, results, query, filters, sortOrder, sortAsc, facets, null);
 	}
 
 	public SearchResults(String error) {
-		this(0, -1, null, null, null, null, false, null, error);
+		this(0, -1, 0, null, null, null, null, false, null, error);
 	}
 
-	public SearchResults(int start, long numResults, List<Tweet> results, String query,
+	public SearchResults(int start, long numResults, int pageSize, List<Tweet> results, String query,
 			Map<String, List<String>> filters, String sortOrder, boolean sortAsc, Map<String, List<Facet>> facets, String error) {
 		this.start = start;
 		this.numResults = numResults;
+		this.pageSize = pageSize;
 		this.tweets = results;
 		this.query = query;
 		this.appliedFilters = filters;
@@ -72,6 +74,10 @@ public class SearchResults {
 	 */
 	public long getNumResults() {
 		return numResults;
+	}
+
+	public int getPageSize() {
+		return pageSize;
 	}
 
 	/**

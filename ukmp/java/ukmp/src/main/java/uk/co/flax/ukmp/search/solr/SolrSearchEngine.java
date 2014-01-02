@@ -136,8 +136,8 @@ public class SolrSearchEngine implements SearchEngine {
 		try {
 			QueryResponse response = server.query(sQuery);
 			SolrDocumentList docs = response.getResults();
-			results = new SearchResults(start, docs.getNumFound(), extractTweets(docs), query.getQuery(),
-					extractAppliedFilters(query), query.getSortField(), query.isSortAscending(),
+			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs),
+					query.getQuery(), extractAppliedFilters(query), query.getSortField(), query.isSortAscending(),
 					extractAvailableFilters(response));
 		} catch (SolrServerException e) {
 			LOGGER.error("Server exception caught for query {}: {}", sQuery.toString(), e.getMessage());
