@@ -16,6 +16,7 @@
 package uk.co.flax.ukmp;
 
 import uk.co.flax.ukmp.health.SolrHealthCheck;
+import uk.co.flax.ukmp.resources.BrowseResource;
 import uk.co.flax.ukmp.resources.EntityExtractor;
 import uk.co.flax.ukmp.resources.Index;
 import uk.co.flax.ukmp.search.SearchEngine;
@@ -45,6 +46,7 @@ public class UKMPService extends Service<UKMPConfiguration> {
 
 		environment.addResource(new Index());
 		environment.addResource(new EntityExtractor(configuration.getEntityConfiguration()));
+		environment.addResource(new BrowseResource(engine));
 
 		// Add health checks
 		environment.addHealthCheck(new SolrHealthCheck(engine));
