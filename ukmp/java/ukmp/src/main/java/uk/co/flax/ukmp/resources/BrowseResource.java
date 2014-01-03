@@ -15,11 +15,15 @@
  */
 package uk.co.flax.ukmp.resources;
 
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import org.apache.commons.lang3.StringUtils;
 
 import uk.co.flax.ukmp.api.SearchResults;
 import uk.co.flax.ukmp.search.Query;
@@ -41,12 +45,17 @@ public class BrowseResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResults handleGet(@QueryParam("p") int page) {
+	public SearchResults handleGet(@QueryParam("p") int page, @QueryParam("q") String queryString,
+			@QueryParam("fq") List<String> filters) {
 		SearchResults results;
 
 		try {
-			Query query = new Query(Query.DEFAULT_SEARCH, null, Query.DEFAULT_SORT_FIELD, false,
-					Query.DEFAULT_PAGE_SIZE, page);
+			String qString = queryString;
+			if (StringUtils.isBlank(qString)) {
+				qString = Query.DEFAULT_SEARCH;
+			}
+
+			Query query = new Query(qString, filters, Query.DEFAULT_SORT_FIELD, false, Query.DEFAULT_PAGE_SIZE, page);
 			results = searchEngine.search(query);
 		} catch (SearchEngineException e) {
 			results = new SearchResults(e.getMessage());
