@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.flax.ukmp.api.Facet;
 import uk.co.flax.ukmp.api.SearchResults;
+import uk.co.flax.ukmp.api.SearchState;
 import uk.co.flax.ukmp.api.Tweet;
 import uk.co.flax.ukmp.config.SolrConfiguration;
 import uk.co.flax.ukmp.search.Query;
@@ -136,9 +137,11 @@ public class SolrSearchEngine implements SearchEngine {
 		try {
 			QueryResponse response = server.query(sQuery);
 			SolrDocumentList docs = response.getResults();
-			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs),
-					query.getQuery(), extractAppliedFilters(query), query.getSortField(), query.isSortAscending(),
-					extractAvailableFilters(response));
+
+			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
+					query.getPageNumber(), extractAvailableFilters(response), extractAppliedFilters(query));
+
+			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs), search);
 		} catch (SolrServerException e) {
 			LOGGER.error("Server exception caught for query {}: {}", sQuery.toString(), e.getMessage());
 			throw new SearchEngineException(e);
