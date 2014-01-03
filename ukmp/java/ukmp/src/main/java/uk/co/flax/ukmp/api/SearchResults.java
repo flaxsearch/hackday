@@ -16,7 +16,6 @@
 package uk.co.flax.ukmp.api;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Set of results returned from a search.
@@ -26,39 +25,26 @@ public class SearchResults {
 	private final int start;
 	private final long numResults;
 	private final int pageSize;
-	private final String query;
-	private final String sortField;
-	private final boolean sortAscending;
 
-	/** The facets that can be applied to this results list */
-	private final Map<String, List<Facet>> facets;
-
-	/** The filters already applied */
-	private final Map<String, List<String>> appliedFilters;
+	private final SearchState searchState;
 
 	private final List<Tweet> tweets;
 	private final String errorMessage;
 
-	public SearchResults(int start, long numResults, int pageSize, List<Tweet> results, String query,
-			Map<String, List<String>> filters, String sortOrder, boolean sortAsc, Map<String, List<Facet>> facets) {
-		this(start, numResults, pageSize, results, query, filters, sortOrder, sortAsc, facets, null);
+	public SearchResults(int start, long numResults, int pageSize, List<Tweet> results, SearchState search) {
+		this(start, numResults, pageSize, results, search, null);
 	}
 
 	public SearchResults(String error) {
-		this(0, -1, 0, null, null, null, null, false, null, error);
+		this(0, -1, 0, null, null, error);
 	}
 
-	public SearchResults(int start, long numResults, int pageSize, List<Tweet> results, String query,
-			Map<String, List<String>> filters, String sortOrder, boolean sortAsc, Map<String, List<Facet>> facets, String error) {
+	public SearchResults(int start, long numResults, int pageSize, List<Tweet> results, SearchState search, String error) {
 		this.start = start;
 		this.numResults = numResults;
 		this.pageSize = pageSize;
 		this.tweets = results;
-		this.query = query;
-		this.appliedFilters = filters;
-		this.sortField = sortOrder;
-		this.sortAscending = sortAsc;
-		this.facets = facets;
+		this.searchState = search;
 		this.errorMessage = error;
 	}
 
@@ -76,33 +62,18 @@ public class SearchResults {
 		return numResults;
 	}
 
+	/**
+	 * @return the number of results per page.
+	 */
 	public int getPageSize() {
 		return pageSize;
 	}
 
 	/**
-	 * @return the query string for the search.
+	 * @return the current search state.
 	 */
-	public String getQuery() {
-		return query;
-	}
-
-	/**
-	 * @return the filters applied to the search results.
-	 */
-	public Map<String, List<String>> getAppliedFilters() {
-		return appliedFilters;
-	}
-
-	/**
-	 * @return the sort order of the search results.
-	 */
-	public String getSortField() {
-		return sortField;
-	}
-
-	public boolean isSortAscending() {
-		return sortAscending;
+	public SearchState getSearchState() {
+		return searchState;
 	}
 
 	/**
@@ -110,13 +81,6 @@ public class SearchResults {
 	 */
 	public List<Tweet> getTweets() {
 		return tweets;
-	}
-
-	/**
-	 * @return the facets that may be applied to this search.
-	 */
-	public Map<String, List<Facet>> getFacets() {
-		return facets;
 	}
 
 	/**

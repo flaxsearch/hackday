@@ -1,0 +1,16 @@
+/************************
+ * General page styling *
+ ************************/
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	/* Padding at the top to push body below title bar */
+	padding-top: 68px;
+	padding-bottom: 20px;
+}
+
+
+
+/* Override default bootstrap/angular styling */
+.nav,.pagination,.carousel a {
+	cursor: pointer;
+}
