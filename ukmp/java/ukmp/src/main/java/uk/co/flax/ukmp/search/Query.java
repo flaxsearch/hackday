@@ -27,7 +27,7 @@ public class Query {
 	/** Default sort order */
 	public static final String DEFAULT_SORT_FIELD = "created_at";
 	/** Default page size */
-	public static final int DEFAULT_PAGE_SIZE = 10;
+	public static final int DEFAULT_PAGE_SIZE = 25;
 
 	private final String query;
 	private final List<String> filters;
