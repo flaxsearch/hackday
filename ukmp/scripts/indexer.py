@@ -163,8 +163,8 @@ for tweetfile in tweetfiles:
             for mention in tweet['user_mentions']:
                 stweet['ent_mentions_screen_name'].append(mention['screen_name'])
                 # Not all user profiles have a full name
-                if name in mention:
-                    tweet['ent_mentions_full_name'].append(mention['name'])
+                if 'name' in mention:
+                    stweet['ent_mentions_full_name'].append(mention['name'])
         if 'hashtags' in tweet:
             stweet['ent_hashtags'] = tweet['hashtags']
         if 'urls' in tweet:
