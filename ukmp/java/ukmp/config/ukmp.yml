@@ -23,6 +23,15 @@ solr:
   
   # The default query handler
   queryHandler: /morris
+  
+  # The facet queries, with display labels
+  facetQueryFields:
+    created_at:
+      "[NOW/DAY-1DAYS TO NOW/DAY]": 'Today'
+      "[NOW/DAY-7DAYS TO NOW/DAY]": 'This week'
+      "[NOW/DAY-30DAYS TO NOW/DAY]": 'This month'
+      "[NOW/DAY-365DAYS TO NOW/DAY]": 'This year'
+      "[NOW/DAY-730DAYS TO NOW/DAY]": '2 years'
 
 # The entity configuration
 entity:

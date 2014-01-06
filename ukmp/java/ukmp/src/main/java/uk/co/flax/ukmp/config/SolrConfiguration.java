@@ -15,6 +15,8 @@
  */
 package uk.co.flax.ukmp.config;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +31,8 @@ public class SolrConfiguration {
 	@Valid @NotNull
 	private String queryHandler;
 
+	private Map<String, Map<String, String>> facetQueryFields;
+
 	/**
 	 * @return the baseUrl
 	 */
@@ -41,6 +45,10 @@ public class SolrConfiguration {
 	 */
 	public String getQueryHandler() {
 		return queryHandler;
+	}
+
+	public Map<String, Map<String, String>> getFacetQueryFields() {
+		return facetQueryFields;
 	}
 
 }
