@@ -32,16 +32,20 @@ public class SearchState {
 	/** The facets that can be applied to this results list */
 	private final Map<String, List<Facet>> facets;
 
+	/** The facet queries that can be applied to this results list */
+	private final List<FacetQuery> facetQueries;
+
 	/** The filters already applied */
 	private final Map<String, List<String>> appliedFilters;
 
 	public SearchState(String q, String sort, boolean sortAsc, int page, Map<String, List<Facet>> facets,
-			Map<String, List<String>> appliedFilters) {
+			List<FacetQuery> facetQueries, Map<String, List<String>> appliedFilters) {
 		this.query = q;
 		this.sortField = sort;
 		this.sortAscending = sortAsc;
 		this.pageNumber = page;
 		this.facets = facets;
+		this.facetQueries = facetQueries;
 		this.appliedFilters = appliedFilters;
 	}
 
@@ -78,6 +82,13 @@ public class SearchState {
 	 */
 	public Map<String, List<Facet>> getFacets() {
 		return facets;
+	}
+
+	/**
+	 * @return the facetQueries
+	 */
+	public List<FacetQuery> getFacetQueries() {
+		return facetQueries;
 	}
 
 	/**

@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.flax.ukmp.api.Facet;
+import uk.co.flax.ukmp.api.FacetQuery;
 import uk.co.flax.ukmp.api.SearchResults;
 import uk.co.flax.ukmp.api.SearchState;
 import uk.co.flax.ukmp.api.Tweet;
@@ -66,21 +67,21 @@ public class SolrSearchEngine implements SearchEngine {
 	 * running application.
 	 */
 	private static SolrServer server;
-	/** The default request handler for queries. */
-	private String queryHandler;
+	/** The Solr configuration details */
+	private SolrConfiguration config;
 
 	public SolrSearchEngine(SolrConfiguration config) {
 		initialiseServer(config);
-		this.queryHandler = config.getQueryHandler();
+		this.config = config;
 	}
 
 	/**
 	 * Unit testing constructor.
 	 * @param server mock server instance.
 	 */
-	SolrSearchEngine(SolrServer server, String queryHandler) {
+	SolrSearchEngine(SolrServer server, SolrConfiguration config) {
 		SolrSearchEngine.server = server;
-		this.queryHandler = queryHandler;
+		this.config = config;
 	}
 
 	/**
@@ -132,14 +133,15 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		// Set the request handler
-		sQuery.setRequestHandler(queryHandler);
+		sQuery.setRequestHandler(config.getQueryHandler());
 
 		try {
 			QueryResponse response = server.query(sQuery);
 			SolrDocumentList docs = response.getResults();
 
 			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
-					query.getPageNumber(), extractAvailableFilters(response), extractAppliedFilters(query));
+					query.getPageNumber(), extractAvailableFilters(response), extractFacetQueries(response),
+					extractAppliedFilters(query));
 
 			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs), search);
 		} catch (SolrServerException e) {
@@ -206,6 +208,30 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		return facets;
+	}
+
+	private List<FacetQuery> extractFacetQueries(QueryResponse response) {
+		List<FacetQuery> fQueries;
+
+		Map<String, Integer> facetQuery = response.getFacetQuery();
+		if (facetQuery == null) {
+			fQueries = new ArrayList<FacetQuery>();
+		} else {
+			fQueries = new ArrayList<FacetQuery>(facetQuery.size());
+			for (String query : facetQuery.keySet()) {
+				// Split into field, query
+				String[] fqParts = query.split(":");
+
+				Map<String, String> facetLabels = config.getFacetQueryFields().get(fqParts[0]);
+				String label = facetLabels.get(fqParts[1]);
+				if (label != null) {
+					FacetQuery fq = new FacetQuery(query, label, facetQuery.get(query));
+					fQueries.add(fq);
+				}
+			}
+		}
+
+		return fQueries;
 	}
 
 }
