@@ -21,7 +21,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
 			$scope.copyFilters(params);
-			params.fq.push(field + ":" + value)
+			params.fq.push(field + ':"' + value + '"')
 		}
 		
 		$http({
@@ -37,7 +37,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		var params = {}
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
-			$scope.copyFilters(params, field + ":" + value);
+			$scope.copyFilters(params, field + ':"' + value + '"');
 		}
 		
 		$http({
@@ -75,9 +75,9 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 				var field = fields[i];
 				var filters = $scope.searchState.appliedFilters[field];
 				for (var j = 0; j < filters.length; j ++) {
-					var fq = field + ":" + filters[j];
+					var fq = field + ':"' + filters[j] + '"';
 					if (fq !== skip) {
-						params.fq.push(field + ":" + filters[j]);
+						params.fq.push(fq);
 					}
 				}
 			}
