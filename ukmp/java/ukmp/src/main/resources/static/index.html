@@ -4,6 +4,7 @@
 	<title>UK MP Tweets</title>
 	<meta charset="utf-8" />
 	
+	<script src="/webjars/jquery/2.0.3/jquery.min.js"></script>
 	<script src="/webjars/angularjs/1.2.2/angular.min.js"></script>
 	<script src="/webjars/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 	<script src="/webjars/angular-ui-bootstrap/0.6.0/ui-bootstrap.min.js"></script>
@@ -45,6 +46,8 @@
 		<div id="tweets">
 			<ul class="tweet_listing">
 				<li ng-repeat="tweet in tweets">
+					<strong>@{{tweet.userScreenName}}</strong>
+					{{tweet.userName}} ({{tweet.party}})<br />
 					{{tweet.text}}
 				</li>
 			</ul>
@@ -52,6 +55,34 @@
 			<pagination boundary-links="true" total-items="totalItems" page="currentPage + 1" 
 				previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
 				last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
+		</div>
+		
+		<div id="facets">
+			<!-- 
+			<div id="facetQueries">
+				<ul class="fq_listing">
+					<li ng-repeat="query in searchState.facetQueries">
+						{{query.label}} ({{query.count}})
+					</li>
+				</ul>
+			</div>
+			-->
+			
+			<div id="party_facets">
+				<ul class="facet_listing">
+					<li ng-repeat="facet in searchState.facets.party">
+						<a href="" ng-click="filter(facet.field, facet.value)">{{facet.value}}</a> ({{facet.count}})
+					</li>
+				</ul>
+			</div>
+			
+			<div id="org_facets">
+				<ul class="facet_listing">
+					<li ng-repeat="facet in searchState.facets.organization_ner">
+						<a href="" ng-click="filter(facet.field, facet.value)">{{facet.value}}</a> ({{facet.count}})
+					</li>
+				</ul>
+			</div>
 		</div>
 	</div>
 
