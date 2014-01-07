@@ -1015,6 +1015,7 @@
        <str name="facet.field">organization_ner</str>
        <str name="facet.field">location_ner</str>
        <str name="facet.field">person_ner</str>
+       <str name="facet.field">party</str>
 
        <str name="facet.query">created_at:[NOW/DAY-1DAYS TO NOW/DAY]</str>
        <str name="facet.query">created_at:[NOW/DAY-7DAYS TO NOW/DAY]</str>
