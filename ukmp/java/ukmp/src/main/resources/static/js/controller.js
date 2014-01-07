@@ -33,6 +33,22 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		});
 	}
 	
+	$scope.remove_filter = function(field, value) {
+		var params = {}
+		if ($scope.searchState) {
+			params.q = $scope.searchState.query;
+			$scope.copyFilters(params, field + ":" + value);
+		}
+		
+		$http({
+			method: 'GET',
+			url: '/service/browse',
+			params: params
+		}).success(function(data) {
+			$scope.updateModel(data);
+		});
+	}
+	
 	$scope.refreshTweets = function(page) {
 		var params = {
 			p: page
@@ -51,7 +67,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		});
 	}
 	
-	$scope.copyFilters = function(params) {
+	$scope.copyFilters = function(params, skip) {
 		params.fq = [];
 		var fields = Object.keys($scope.searchState.appliedFilters)
 		if (fields.length > 0) {
@@ -59,7 +75,10 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 				var field = fields[i];
 				var filters = $scope.searchState.appliedFilters[field];
 				for (var j = 0; j < filters.length; j ++) {
-					params.fq.push(field + ":" + filters[j]);
+					var fq = field + ":" + filters[j];
+					if (fq !== skip) {
+						params.fq.push(field + ":" + filters[j]);
+					}
 				}
 			}
 		}
@@ -89,6 +108,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		if (Object.keys($scope.searchState.appliedFilters).length > 0) {
 			$scope.filtered = true;
 		}
+		$scope.displaySearch = $scope.searched || $scope.filtered;
 	}
 	
 });
