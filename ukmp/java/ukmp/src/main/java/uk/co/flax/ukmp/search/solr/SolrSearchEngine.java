@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -139,9 +140,13 @@ public class SolrSearchEngine implements SearchEngine {
 			QueryResponse response = server.query(sQuery);
 			SolrDocumentList docs = response.getResults();
 
+			Map<String, List<Facet>> availableFilters = extractAvailableFilters(response);
+			Map<String, List<String>> appliedFilters = extractAppliedFilters(query);
+			trimAvailableFilters(availableFilters, appliedFilters);
+
 			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
-					query.getPageNumber(), extractAvailableFilters(response), extractFacetQueries(response),
-					extractAppliedFilters(query));
+					query.getPageNumber(), availableFilters, extractFacetQueries(response),
+					appliedFilters);
 
 			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs), search);
 		} catch (SolrServerException e) {
@@ -208,6 +213,31 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		return facets;
+	}
+
+	/**
+	 * Trim filters that have already been applied from the set of available
+	 * filters. This is done in place on the passed availableFilters map.
+	 * @param availableFilters the available filters.
+	 * @param appliedFilters the filters already applied.
+	 */
+	private void trimAvailableFilters(Map<String, List<Facet>> availableFilters, Map<String, List<String>> appliedFilters) {
+		// Loop through the fields in the available filters map
+		for (Iterator<String> fieldIter = availableFilters.keySet().iterator(); fieldIter.hasNext(); ) {
+			String field = fieldIter.next();
+			if (appliedFilters.containsKey(field)) {
+				List<Facet> values = availableFilters.get(field);
+				List<String> applied = appliedFilters.get(field);
+				// Loop through each value, checking against the list of currently applied filters
+				for (Iterator<Facet> valueIter = values.iterator(); valueIter.hasNext(); ) {
+					Facet facet = valueIter.next();
+					if (applied.contains(facet.getValue())) {
+						// Filter has been applied - remove from the list
+						valueIter.remove();
+					}
+				}
+			}
+		}
 	}
 
 	private List<FacetQuery> extractFacetQueries(QueryResponse response) {
