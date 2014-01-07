@@ -9,6 +9,30 @@ body {
 }
 
 
+/* Searched for/filters applied styling */
+.results_header {
+	margin: 10px 0 10px;
+	font-size: small;
+}
+
+.applied_filters {
+	padding-left: 10px;
+}
+
+.applied_filters ul {
+	display: inline;
+	padding-left: 0;
+}
+
+.applied_filters li {
+	display: inline;
+	list-style-type: none;
+	font-size: small;
+}
+
+.remove_filter {
+	font-size: x-small;
+}
 
 /* Override default bootstrap/angular styling */
 .nav,.pagination,.carousel a {

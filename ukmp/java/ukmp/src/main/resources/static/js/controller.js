@@ -1,4 +1,4 @@
-var ukmpApp = angular.module('ukmpApp', [ 'ui.bootstrap' ]);
+var ukmpApp = angular.module('ukmpApp', [ 'ui.bootstrap', 'ngSanitize' ]);
 
 ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 	
@@ -7,13 +7,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 	}
 	
 	$scope.search = function() {
-		$http({ 
-			method: 'GET',
-			url: '/service/browse',
-			params: { q: this.query }
-		}).success(function(data) {
-			$scope.updateModel(data);
-		});
+		$scope.updateModel({ q : this.query });
 	}
 	
 	$scope.filter = function(field, value) {
@@ -24,13 +18,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 			params.fq.push(field + ':"' + value + '"')
 		}
 		
-		$http({
-			method: 'GET',
-			url: '/service/browse',
-			params: params
-		}).success(function(data) {
-			$scope.updateModel(data);
-		});
+		$scope.updateModel(params);
 	}
 	
 	$scope.remove_filter = function(field, value) {
@@ -40,13 +28,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 			$scope.copyFilters(params, field + ':"' + value + '"');
 		}
 		
-		$http({
-			method: 'GET',
-			url: '/service/browse',
-			params: params
-		}).success(function(data) {
-			$scope.updateModel(data);
-		});
+		$scope.updateModel(params);
 	}
 	
 	$scope.refreshTweets = function(page) {
@@ -58,13 +40,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 			$scope.copyFilters(params);
 		}
 		
-		$http({
-			method: 'GET',
-			url: '/service/browse',
-			params: params
-		}).success(function(data) {
-			$scope.updateModel(data);
-		});
+		$scope.updateModel(params);
 	}
 	
 	$scope.copyFilters = function(params, skip) {
@@ -84,31 +60,36 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		}
 	}
 	
-	$scope.updateModel = function(data) {
-		$scope.tweets = data.tweets;
-		$scope.searchState = data.searchState;
-		$scope.currentPage = $scope.searchState.pageNumber;
-		$scope.numPages = data.numResults / data.pageSize;
-		$scope.totalItems = data.numResults;
-		
-		rngStart = $scope.currentPage - 2;
-		if (rngStart < 0) {
-			rngStart = 0;
-		}
-		$scope.pgRange = [];
-		for (i = rngStart; i < rngStart + 5; i ++) {
-			$scope.pgRange.push(i);
-		}
-		
-		$scope.searched = false;
-		if ($scope.searchState.query !== "*") {
-			$scope.searched = true;
-		}
-		$scope.filtered = false;
-		if (Object.keys($scope.searchState.appliedFilters).length > 0) {
-			$scope.filtered = true;
-		}
-		$scope.displaySearch = $scope.searched || $scope.filtered;
+	$scope.updateModel = function(params) {
+		$http({
+			method: 'GET',
+			url: '/service/browse',
+			params: params
+		}).success(function(data) {
+			// Update the basic scope data
+			$scope.tweets = data.tweets;
+			$scope.searchState = data.searchState;
+			$scope.currentPage = $scope.searchState.pageNumber;
+			$scope.numPages = data.numResults / data.pageSize;
+			$scope.totalItems = data.numResults;
+			
+			// Set up a page range array - simplify the pagination component
+			var rngStart = ($scope.currentPage - 2 < 0 ? 0 : $scope.currentPage - 2);
+			$scope.pgRange = [];
+			for (i = rngStart; i < rngStart + 5; i ++) {
+				$scope.pgRange.push(i);
+			}
+
+			// Booleans indicating whether or not to display the searched/filtered by displays
+			$scope.searched = false;
+			if ($scope.searchState.query !== "*") {
+				$scope.searched = true;
+			}
+			$scope.filtered = false;
+			if (Object.keys($scope.searchState.appliedFilters).length > 0) {
+				$scope.filtered = true;
+			}
+		});
 	}
 	
 });
