@@ -44,6 +44,9 @@
 
 	<div class="container">
 		<div id="tweets">
+			<div id="results_count">
+				Found {{totalItems}} results.
+			</div>
 			<div ng-if="displaySearch">
 				<span ng-if="searched">Searched for: {{searchState.query}}</span>
 				<span ng-if="filtered">
