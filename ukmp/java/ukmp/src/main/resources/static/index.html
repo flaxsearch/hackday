@@ -6,6 +6,7 @@
 	
 	<script src="/webjars/jquery/2.0.3/jquery.min.js"></script>
 	<script src="/webjars/angularjs/1.2.2/angular.min.js"></script>
+	<script src="/webjars/angularjs/1.2.2/angular-sanitize.min.js"></script>
 	<script src="/webjars/bootstrap/3.0.2/js/bootstrap.min.js"></script>
 	<script src="/webjars/angular-ui-bootstrap/0.6.0/ui-bootstrap.min.js"></script>
 	<script src="/js/controller.js"></script>
@@ -43,66 +44,66 @@
 	</nav>
 
 	<div class="container">
-		<div id="tweets">
-			<div id="results_count">
-				Found {{totalItems}} results.
-			</div>
-			<div ng-if="displaySearch">
-				<span ng-if="searched">Searched for: {{searchState.query}}</span>
-				<span ng-if="filtered">
-					Filtered by:<br />
-					<ul>
-						<li ng-repeat="(field, values) in searchState.appliedFilters">
-							{{field}}:
-							<ul>
+		<div class="row">
+			<div id="tweets" class="col-md-9">
+				<div class="results_header">
+					<span>Found {{totalItems}} results.</span>
+					
+					<div ng-if="searched">Searched for: <em>{{searchState.query}}</em>.</div>
+					<div ng-if="filtered">
+						Filtered by:<br />
+						<div class="row applied_filters" ng-repeat="(field, values) in searchState.appliedFilters">
+							<div class="col-md-2">{{field}}:</div>
+							<div class="col-md-9"><ul>
 								<li ng-repeat="value in values">
-									{{value}}
-									<a href="" ng-click="remove_filter(field, value)">remove</a>
+									<span ng-bind-html="value"></span>
+									<a href="" ng-click="remove_filter(field, value)" class="remove_filter">[x]</a>
 								</li>
-							</ul>
+							</ul></div>
+						</div>
+					</div>
+				</div>
+			
+				<ul class="tweet_listing">
+					<li ng-repeat="tweet in tweets">
+						<strong>@{{tweet.userScreenName}}</strong>
+						{{tweet.userName}} ({{tweet.party}})<br />
+						<span ng-bind-html="tweet.text"></span>
+					</li>
+				</ul>
+	
+				<pagination boundary-links="true" total-items="totalItems" page="currentPage + 1" 
+					previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
+					last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
+			</div>
+			
+			<div id="facets" class="col-md-3">
+				<span>Filters</span>
+				<!-- 
+				<div id="facetQueries">
+					<ul class="fq_listing">
+						<li ng-repeat="query in searchState.facetQueries">
+							{{query.label}} ({{query.count}})
 						</li>
 					</ul>
-				</span>
-			</div>
-		
-			<ul class="tweet_listing">
-				<li ng-repeat="tweet in tweets">
-					<strong>@{{tweet.userScreenName}}</strong>
-					{{tweet.userName}} ({{tweet.party}})<br />
-					{{tweet.text}}
-				</li>
-			</ul>
-			
-			<pagination boundary-links="true" total-items="totalItems" page="currentPage + 1" 
-				previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
-				last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
-		</div>
-		
-		<div id="facets">
-			<!-- 
-			<div id="facetQueries">
-				<ul class="fq_listing">
-					<li ng-repeat="query in searchState.facetQueries">
-						{{query.label}} ({{query.count}})
-					</li>
-				</ul>
-			</div>
-			-->
-			
-			<div id="party_facets">
-				<ul class="facet_listing">
-					<li ng-repeat="facet in searchState.facets.party">
-						<a href="" ng-click="filter(facet.field, facet.value)">{{facet.value}}</a> ({{facet.count}})
-					</li>
-				</ul>
-			</div>
-			
-			<div id="org_facets">
-				<ul class="facet_listing">
-					<li ng-repeat="facet in searchState.facets.organization_ner">
-						<a href="" ng-click="filter(facet.field, facet.value)">{{facet.value}}</a> ({{facet.count}})
-					</li>
-				</ul>
+				</div>
+				-->
+				
+				<div id="party_facets">
+					<ul class="facet_listing">
+						<li ng-repeat="facet in searchState.facets.party">
+							<a href="" ng-click="filter(facet.field, facet.value)">{{facet.value}}</a> ({{facet.count}})
+						</li>
+					</ul>
+				</div>
+				
+				<div id="org_facets">
+					<ul class="facet_listing">
+						<li ng-repeat="facet in searchState.facets.organization_ner">
+							<a href="" ng-click="filter(facet.field, facet.value)" ng-bind-html="facet.value"></a> ({{facet.count}})
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</div>
