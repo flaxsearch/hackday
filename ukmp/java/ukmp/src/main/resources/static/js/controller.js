@@ -16,14 +16,53 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		});
 	}
 	
-	$scope.refreshTweets = function(page) {
+	$scope.filter = function(field, value) {
+		var params = {}
+		if ($scope.searchState) {
+			params.q = $scope.searchState.query;
+			$scope.copyFilters(params);
+			params.fq.push(field + ":" + value)
+		}
+		
 		$http({
 			method: 'GET',
 			url: '/service/browse',
-			params: { p: page }
+			params: params
 		}).success(function(data) {
 			$scope.updateModel(data);
 		});
+	}
+	
+	$scope.refreshTweets = function(page) {
+		var params = {
+			p: page
+		};
+		if ($scope.searchState) {
+			params.q = $scope.searchState.query;
+			$scope.copyFilters(params);
+		}
+		
+		$http({
+			method: 'GET',
+			url: '/service/browse',
+			params: params
+		}).success(function(data) {
+			$scope.updateModel(data);
+		});
+	}
+	
+	$scope.copyFilters = function(params) {
+		params.fq = [];
+		var fields = Object.keys($scope.searchState.appliedFilters)
+		if (fields.length > 0) {
+			for (var i = 0; i < fields.length; i ++) {
+				var field = fields[i];
+				var filters = $scope.searchState.appliedFilters[field];
+				for (var j = 0; j < filters.length; j ++) {
+					params.fq.push(field + ":" + filters[j]);
+				}
+			}
+		}
 	}
 	
 	$scope.updateModel = function(data) {
@@ -40,6 +79,15 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		$scope.pgRange = [];
 		for (i = rngStart; i < rngStart + 5; i ++) {
 			$scope.pgRange.push(i);
+		}
+		
+		$scope.searched = false;
+		if ($scope.searchState.query !== "*") {
+			$scope.searched = true;
+		}
+		$scope.filtered = false;
+		if (Object.keys($scope.searchState.appliedFilters).length > 0) {
+			$scope.filtered = true;
 		}
 	}
 	
