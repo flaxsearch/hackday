@@ -44,6 +44,24 @@
 
 	<div class="container">
 		<div id="tweets">
+			<div ng-if="displaySearch">
+				<span ng-if="searched">Searched for: {{searchState.query}}</span>
+				<span ng-if="filtered">
+					Filtered by:<br />
+					<ul>
+						<li ng-repeat="(field, values) in searchState.appliedFilters">
+							{{field}}:
+							<ul>
+								<li ng-repeat="value in values">
+									{{value}}
+									<a href="" ng-click="remove_filter(field, value)">remove</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</span>
+			</div>
+		
 			<ul class="tweet_listing">
 				<li ng-repeat="tweet in tweets">
 					<strong>@{{tweet.userScreenName}}</strong>
