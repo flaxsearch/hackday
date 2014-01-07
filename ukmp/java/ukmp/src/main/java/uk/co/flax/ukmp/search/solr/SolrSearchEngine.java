@@ -190,7 +190,9 @@ public class SolrSearchEngine implements SearchEngine {
 				if (!filters.containsKey(fqParts[0])) {
 					filters.put(fqParts[0], new ArrayList<String>());
 				}
-				filters.get(fqParts[0]).add(fqParts[1]);
+				// Need to strip quotes from around the value
+				String value = fqParts[1].substring(1, fqParts[1].length() - 1);
+				filters.get(fqParts[0]).add(value);
 			}
 		}
 
