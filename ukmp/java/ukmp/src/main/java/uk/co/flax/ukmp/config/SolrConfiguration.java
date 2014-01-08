@@ -31,6 +31,8 @@ public class SolrConfiguration {
 	@Valid @NotNull
 	private String queryHandler;
 
+	private Map<String, String> facetLabels;
+
 	private Map<String, Map<String, String>> facetQueryFields;
 
 	/**
@@ -45,6 +47,10 @@ public class SolrConfiguration {
 	 */
 	public String getQueryHandler() {
 		return queryHandler;
+	}
+
+	public Map<String, String> getFacetLabels() {
+		return facetLabels;
 	}
 
 	public Map<String, Map<String, String>> getFacetQueryFields() {
