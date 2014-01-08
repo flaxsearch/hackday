@@ -68,7 +68,8 @@
 					<li ng-repeat="tweet in tweets">
 						<strong>@{{tweet.userScreenName}}</strong>
 						{{tweet.userName}} ({{tweet.party}})<br />
-						<span ng-bind-html="tweet.text"></span>
+						<span ng-bind-html="tweet.text"></span><br />
+						<span class="tweet_date">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</span>
 					</li>
 				</ul>
 	
