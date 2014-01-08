@@ -89,21 +89,10 @@
 				</div>
 				-->
 				
-				<div id="party_facets">
-					<ul class="facet_listing">
-						<li ng-repeat="facet in searchState.facets.party">
-							<a href="" ng-click="filter(facet.field, facet.value)">{{facet.value}}</a> ({{facet.count}})
-						</li>
-					</ul>
-				</div>
+				<facet-list facets="searchState.facets.party" facet-click="filter(facet)"></facet-list>
 				
-				<div id="org_facets">
-					<ul class="facet_listing">
-						<li ng-repeat="facet in searchState.facets.organization_ner">
-							<a href="" ng-click="filter(facet.field, facet.value)" ng-bind-html="facet.value"></a> ({{facet.count}})
-						</li>
-					</ul>
-				</div>
+				<facet-list facets="searchState.facets.organization_ner" facet-click="filter(facet)"></facet-list>
+				
 			</div>
 		</div>
 	</div>
