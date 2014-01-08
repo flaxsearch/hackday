@@ -34,6 +34,12 @@ body {
 	font-size: x-small;
 }
 
+
+/* Tweet formatting */
+.tweet_date {
+	font-size: small;
+}
+
 /* Override default bootstrap/angular styling */
 .nav,.pagination,.carousel a {
 	cursor: pointer;
