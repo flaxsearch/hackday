@@ -2,7 +2,7 @@
 	{{facets.label}}
 	<ul class="facet_listing">
 		<li ng-repeat="facet in facets.facets">
-			<a href="" ng-click="click({ facet: facet })">{{facet.value}}</a> ({{facet.count}})
+			<a href="" ng-click="click({ facet: facet })" ng-bind-html="facet.value"></a> ({{facet.count}})
 		</li>
 	</ul>
 </div>
