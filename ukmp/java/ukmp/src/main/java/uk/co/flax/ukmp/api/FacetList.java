@@ -52,5 +52,17 @@ public class FacetList {
 	public List<Facet> getFacets() {
 		return facets;
 	}
+	
+	public boolean containsValue(String value) {
+		boolean ret = false;
+		for (Facet facet : facets) {
+			if (facet.getValue().equals(value)) {
+				ret = true;
+				break;
+			}
+		}
+		
+		return ret;
+	}
 
 }

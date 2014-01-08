@@ -142,7 +142,7 @@ public class SolrSearchEngine implements SearchEngine {
 			SolrDocumentList docs = response.getResults();
 
 			Map<String, FacetList> availableFilters = extractAvailableFilters(response);
-			Map<String, List<String>> appliedFilters = extractAppliedFilters(query);
+			Map<String, FacetList> appliedFilters = extractAppliedFilters(query);
 			trimAvailableFilters(availableFilters, appliedFilters);
 
 			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
@@ -182,7 +182,8 @@ public class SolrSearchEngine implements SearchEngine {
 		return tweets;
 	}
 
-	private Map<String, List<String>> extractAppliedFilters(Query query) {
+	private Map<String, FacetList> extractAppliedFilters(Query query) {
+		Map<String, FacetList> applied = new HashMap<String, FacetList>();
 		Map<String, List<String>> filters = new HashMap<String, List<String>>();
 
 		if (query.getFilters() != null) {
@@ -195,9 +196,20 @@ public class SolrSearchEngine implements SearchEngine {
 				String value = fqParts[1].substring(1, fqParts[1].length() - 1);
 				filters.get(fqParts[0]).add(value);
 			}
+
+			for (String field : filters.keySet()) {
+				List<String> fList = filters.get(field);
+				List<Facet> facets = new ArrayList<Facet>(fList.size());
+				for (String value : fList) {
+					Facet facet = new Facet(field, value, 0);
+					facets.add(facet);
+				}
+
+				applied.put(field, new FacetList(field, getFacetLabel(field), facets));
+			}
 		}
 
-		return filters;
+		return applied;
 	}
 
 	private Map<String, FacetList> extractAvailableFilters(QueryResponse response) {
@@ -233,18 +245,18 @@ public class SolrSearchEngine implements SearchEngine {
 	 * @param availableFilters the available filters.
 	 * @param appliedFilters the filters already applied.
 	 */
-	private void trimAvailableFilters(Map<String, FacetList> availableFilters, Map<String, List<String>> appliedFilters) {
+	private void trimAvailableFilters(Map<String, FacetList> availableFilters, Map<String, FacetList> appliedFilters) {
 		// Loop through the fields in the available filters map
 		for (Iterator<String> fieldIter = availableFilters.keySet().iterator(); fieldIter.hasNext(); ) {
 			String field = fieldIter.next();
 			if (appliedFilters.containsKey(field)) {
 				FacetList facetList = availableFilters.get(field);
 				List<Facet> values = facetList.getFacets();
-				List<String> applied = appliedFilters.get(field);
+				FacetList applied = appliedFilters.get(field);
 				// Loop through each value, checking against the list of currently applied filters
 				for (Iterator<Facet> valueIter = values.iterator(); valueIter.hasNext(); ) {
 					Facet facet = valueIter.next();
-					if (applied.contains(facet.getValue())) {
+					if (applied.containsValue(facet.getValue())) {
 						// Filter has been applied - remove from the list
 						valueIter.remove();
 					}

@@ -47,9 +47,9 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 		if (fields.length > 0) {
 			for (var i = 0; i < fields.length; i ++) {
 				var field = fields[i];
-				var filters = $scope.searchState.appliedFilters[field];
+				var filters = $scope.searchState.appliedFilters[field].facets;
 				for (var j = 0; j < filters.length; j ++) {
-					var fq = field + ':"' + filters[j] + '"';
+					var fq = field + ':"' + filters[j].value + '"';
 					if (fq !== skip) {
 						params.fq.push(fq);
 					}
