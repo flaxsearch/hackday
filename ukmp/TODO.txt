@@ -1,0 +1,6 @@
+1. can we have a choice of ranking by date or no. of retweets as before
+2. need to make @... a link both in title and message
+3. can we have a link to original tweet
+[4. search for 'yougov' shows stray &amp in filters - DONE]
+5. needs an About page and links to Flax all over the place
+
