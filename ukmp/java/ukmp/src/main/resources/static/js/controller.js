@@ -1,49 +1,47 @@
 var ukmpApp = angular.module('ukmpApp', [ 'ui.bootstrap', 'ngSanitize' ]);
 
-ukmpApp.controller('UKMPCtrl', function($scope, $http) {
+ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 	
-	$scope.setPage = function(pageNum) {
-		$scope.refreshTweets(pageNum - 1);
+	var self = this;
+	
+	$scope.setPage = function(page) {
+		var params = {
+				p: page - 1
+		};
+		if ($scope.searchState) {
+			params.q = $scope.searchState.query;
+			self.copyFilters(params);
+		}
+
+		self.updateModel(params);
 	}
 	
 	$scope.search = function() {
-		$scope.updateModel({ q : this.query });
+		self.updateModel({ q : this.query });
 	}
 	
 	$scope.filter = function(field, value) {
 		var params = {}
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
-			$scope.copyFilters(params);
+			self.copyFilters(params);
 			params.fq.push(field + ':"' + value + '"')
 		}
 		
-		$scope.updateModel(params);
+		self.updateModel(params);
 	}
 	
 	$scope.remove_filter = function(field, value) {
 		var params = {}
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
-			$scope.copyFilters(params, field + ':"' + value + '"');
+			self.copyFilters(params, field + ':"' + value + '"');
 		}
 		
-		$scope.updateModel(params);
+		self.updateModel(params);
 	}
 	
-	$scope.refreshTweets = function(page) {
-		var params = {
-			p: page
-		};
-		if ($scope.searchState) {
-			params.q = $scope.searchState.query;
-			$scope.copyFilters(params);
-		}
-		
-		$scope.updateModel(params);
-	}
-	
-	$scope.copyFilters = function(params, skip) {
+	this.copyFilters = function(params, skip) {
 		params.fq = [];
 		var fields = Object.keys($scope.searchState.appliedFilters)
 		if (fields.length > 0) {
@@ -60,7 +58,7 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 		}
 	}
 	
-	$scope.updateModel = function(params) {
+	this.updateModel = function(params) {
 		$http({
 			method: 'GET',
 			url: '/service/browse',
@@ -81,15 +79,15 @@ ukmpApp.controller('UKMPCtrl', function($scope, $http) {
 			}
 
 			// Booleans indicating whether or not to display the searched/filtered by displays
-			$scope.searched = false;
-			if ($scope.searchState.query !== "*") {
-				$scope.searched = true;
-			}
-			$scope.filtered = false;
-			if (Object.keys($scope.searchState.appliedFilters).length > 0) {
-				$scope.filtered = true;
-			}
+			$scope.searched = $scope.searchState.query !== "*";
+			$scope.filtered = Object.keys($scope.searchState.appliedFilters).length > 0;
 		});
 	}
 	
-});
+	this.init = function() {
+		$scope.setPage(1);
+	}
+	
+	self.init();
+	
+}]);
