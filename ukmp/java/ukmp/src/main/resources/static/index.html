@@ -52,12 +52,12 @@
 					<div ng-if="searched">Searched for: <em>{{searchState.query}}</em>.</div>
 					<div ng-if="filtered">
 						Filtered by:<br />
-						<div class="row applied_filters" ng-repeat="(field, values) in searchState.appliedFilters">
-							<div class="col-md-2">{{field}}:</div>
+						<div class="row applied_filters" ng-repeat="(field, facets) in searchState.appliedFilters">
+							<div class="col-md-2">{{facets.label}}:</div>
 							<div class="col-md-9"><ul>
-								<li ng-repeat="value in values">
-									<span ng-bind-html="value"></span>
-									<a href="" ng-click="remove_filter(field, value)" class="remove_filter">[x]</a>
+								<li ng-repeat="facet in facets.facets">
+									<span ng-bind-html="facet.value"></span>
+									<a href="" ng-click="remove_filter(field, facet.value)" class="remove_filter">[x]</a>
 								</li>
 							</ul></div>
 						</div>
@@ -91,7 +91,6 @@
 				-->
 				
 				<facet-list facets="searchState.facets.party" facet-click="filter(facet)"></facet-list>
-				
 				<facet-list facets="searchState.facets.organization_ner" facet-click="filter(facet)"></facet-list>
 				
 			</div>
