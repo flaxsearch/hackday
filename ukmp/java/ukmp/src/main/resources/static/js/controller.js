@@ -20,12 +20,12 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 		self.updateModel({ q : this.query });
 	}
 	
-	$scope.filter = function(field, value) {
+	$scope.filter = function(facet) {
 		var params = {}
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
 			self.copyFilters(params);
-			params.fq.push(field + ':"' + value + '"')
+			params.fq.push(facet.field + ':"' + facet.value + '"')
 		}
 		
 		self.updateModel(params);
@@ -91,3 +91,19 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 	self.init();
 	
 }]);
+
+ukmpApp.directive('facetList', function() {
+	return {
+		restrict: 'E',
+		scope: {
+			facets: '=facets',
+			click: '&facetClick'
+		},
+		templateUrl: 'template/facet_list.html',
+//		controller: function($scope) {
+//			$scope.click = function(facet) {
+//				$scope.clickFunction({ field: facet.field, value: facet.value });
+//			}
+//		}
+	};
+});
