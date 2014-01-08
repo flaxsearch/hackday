@@ -33,6 +33,19 @@ solr:
       "[NOW/DAY-365DAYS TO NOW/DAY]": 'This year'
       "[NOW/DAY-730DAYS TO NOW/DAY]": '2 years'
 
+  # Labels to use for the facets, when displayed
+  facetLabels:
+    party: "Party"
+    organization_ner: "Organisation"
+    person_ner: "Person"
+    location_ner: "Location"
+    ent_mentions_full_name: "Mentions"
+    ent_urls: "URL"
+    retweeted: "Retweeted"
+    place_country: "Country"
+    place_full_name: "Place"
+    user_full_name: "User name"
+
 # The entity configuration
 entity:
 
