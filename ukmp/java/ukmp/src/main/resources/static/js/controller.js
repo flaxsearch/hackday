@@ -99,11 +99,6 @@ ukmpApp.directive('facetList', function() {
 			facets: '=facets',
 			click: '&facetClick'
 		},
-		templateUrl: 'template/facet_list.html',
-//		controller: function($scope) {
-//			$scope.click = function(facet) {
-//				$scope.clickFunction({ field: facet.field, value: facet.value });
-//			}
-//		}
+		templateUrl: 'template/directive/facet_list.html'
 	};
 });
