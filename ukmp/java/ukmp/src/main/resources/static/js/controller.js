@@ -66,6 +66,7 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 		}).success(function(data) {
 			// Update the basic scope data
 			$scope.tweets = data.tweets;
+			self.addTweetTextLinks($scope.tweets);
 			$scope.searchState = data.searchState;
 			$scope.currentPage = $scope.searchState.pageNumber;
 			$scope.numPages = data.numResults / data.pageSize;
@@ -82,6 +83,17 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 			$scope.searched = $scope.searchState.query !== "*";
 			$scope.filtered = Object.keys($scope.searchState.appliedFilters).length > 0;
 		});
+	}
+	
+	this.addTweetTextLinks = function(tweets) {
+		// Regex for matching a twitter username
+		var usernameRx = /(@(\w+))/g;
+		// Loop through the text, adding links around each username found
+		for (var i = 0; i < tweets.length; i ++) {
+			var text = tweets[i].text;
+			var replaceText = text.replace(usernameRx, '<a href="http://twitter.com/$2" target="_tweets">$1</a>');
+			tweets[i].text = replaceText;
+		}
 	}
 	
 	this.init = function() {
