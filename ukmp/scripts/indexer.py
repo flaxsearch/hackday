@@ -144,7 +144,8 @@ for tweetfile in tweetfiles:
         stweet = {
             "id": tweet["id"],
             "text": tweet["text"],
-            'retweeted': tweet['retweeted'],
+            'retweet_count': tweet.get('retweet_count', 0),
+            'favorite_count': tweet.get('favorite_count', 0),
             'user_screen_name': tweet['user']['screen_name'],
             'user_full_name': tweet['user']['name'],
             'created_at': extract_date(tweet['created_at']),
