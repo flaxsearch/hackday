@@ -57,7 +57,7 @@ def handle_stats(data_dir, user, stats, since):
 
 
 if len(sys.argv) != 2:
-    print "Usage: fetch_tweets.py <configfile>"
+    print "Usage: fetch_lists.py <configfile>"
     raise SystemExit(1)
 
 # Read the config
