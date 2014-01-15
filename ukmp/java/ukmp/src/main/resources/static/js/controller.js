@@ -87,9 +87,9 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 	
 	this.addTweetTextLinks = function(tweets) {
 		// Regex for matching a twitter username
-		var usernameRx = /(@(\w+)[^…])/g;
+		var usernameRx = /(@(\w+))/g;
 		// Regex for matching a general link
-		var linkRx = /(http:\/\/[^…]+)\b/g;
+		var linkRx = /(http:\/\/\S+)\b/g;
 		// Loop through the text, adding links around each username found
 		for (var i = 0; i < tweets.length; i ++) {
 			var text = tweets[i].text;
