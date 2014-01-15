@@ -115,11 +115,29 @@ def extract_entities(extract_url, text):
 
     return json.loads(response.text)
 
+def get_full_text(tweet):
+    """Get the full tweet text. Re-tweeted text may be truncated with no
+    indication except for ending with a ... character, but the original 
+    text may be retrieved from the retweeted_status.
+    Returns the full message text where available, else the tweet text."""
+    text = tweet['text']
+    if text.endswith(u'\u2026') and 'retweeted_status' in tweet:
+        # Find the first word in the original text
+        rt_text = tweet['retweeted_status']['text']
+        spPos = rt_text.index(' ')
+        word = rt_text[:spPos]
+	# Locate the first word in the tweet text, and rebuild the text
+	# starting there
+        txtPos = text.index(word)
+        text = text[:txtPos] + rt_text
+    return text
+
 
 p = optparse.OptionParser()
 p.add_option("--archive", action="store_true", dest="archive")
 p.add_option("-a", action="store_true", dest="archive")
 p.add_option("-d", dest="tweet_dir")
+p.add_option("-f", dest="tweet_file")
 opts, args = p.parse_args()
 
 if len(args) != 1:
@@ -131,7 +149,10 @@ with open(args[0]) as f:
     config = yaml.load(f)
 
 # Get the list of files to index
-tweetfiles = build_filelist(config, opts.archive, opts.tweet_dir)
+if opts.tweet_file:
+    tweetfiles = [ opts.tweet_file ]
+else:
+    tweetfiles = build_filelist(config, opts.archive, opts.tweet_dir)
 entity_url = config["entity"]["extractor_url"]
 solr_url = config["solr"]["update_url"]
 
@@ -140,10 +161,11 @@ for tweetfile in tweetfiles:
     count = 0
     for line in open(tweetfile):
         tweet = json.loads(line)
+        tweet_text = get_full_text(tweet)
 
         stweet = {
             "id": tweet["id"],
-            "text": tweet["text"],
+            "text": tweet_text,
             'retweeted': tweet['retweeted'],
             'user_screen_name': tweet['user']['screen_name'],
             'user_full_name': tweet['user']['name'],
