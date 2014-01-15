@@ -45,7 +45,7 @@
 
 	<div class="container">
 		<div class="row">
-			<div id="tweets" class="col-md-9">
+			<div id="tweets" class="col-md-8">
 				<div class="results_header">
 					<span>Found {{totalItems}} results.</span>
 					
@@ -78,7 +78,7 @@
 					last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
 			</div>
 			
-			<div id="facets" class="col-md-3">
+			<div id="facets" class="col-md-2 col-md-offset-2">
 				<span>Filters</span>
 				<!-- 
 				<div id="facetQueries">
@@ -91,26 +91,38 @@
 				-->
 				
 				<div class="filter-panel">
-					<facet-list facets="searchState.facets.party" facet-click="filter(facet)"></facet-list>
-					
-					<accordion>
-						<accordion-group>
+					<accordion close-others="false">
+						<accordion-group is-open="true">
 							<accordion-heading>
-								Organisation <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+								Party <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
 							</accordion-heading>
-							<facet-list facets="searchState.facets.organization_ner" facet-click="filter(facet)"></facet-list>
+							<facet-list facets="searchState.facets.party" facet-click="filter(facet)"></facet-list>
 						</accordion-group>
+						
 						<accordion-group>
 							<accordion-heading>
-								Person <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+								Extracted entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
 							</accordion-heading>
-							<facet-list facets="searchState.facets.person_ner" facet-click="filter(facet)"></facet-list>
-						</accordion-group>
-						<accordion-group>
-							<accordion-heading>
-								Location <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
-							</accordion-heading>
-							<facet-list facets="searchState.facets.location_ner" facet-click="filter(facet)"></facet-list>
+							<accordion>
+								<accordion-group>
+									<accordion-heading>
+										Organisation <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+									</accordion-heading>
+									<facet-list facets="searchState.facets.organization_ner" facet-click="filter(facet)"></facet-list>
+								</accordion-group>
+								<accordion-group>
+									<accordion-heading>
+										Person <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+									</accordion-heading>
+									<facet-list facets="searchState.facets.person_ner" facet-click="filter(facet)"></facet-list>
+								</accordion-group>
+								<accordion-group>
+									<accordion-heading>
+										Location <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+									</accordion-heading>
+									<facet-list facets="searchState.facets.location_ner" facet-click="filter(facet)"></facet-list>
+								</accordion-group>
+							</accordion>
 						</accordion-group>
 					</accordion>
 				</div>
