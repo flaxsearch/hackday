@@ -160,6 +160,10 @@ for tweetfile in tweetfiles:
     party = get_party_from_filename(tweetfile, config)
     count = 0
     for line in open(tweetfile):
+	# Skip blank lines
+	if not line.strip():
+	    continue
+	
         tweet = json.loads(line)
         tweet_text = get_full_text(tweet)
 
