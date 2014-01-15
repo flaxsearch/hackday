@@ -34,6 +34,14 @@ body {
 	font-size: x-small;
 }
 
+.filter-panel {
+	font-size: 12px;
+}
+
+.filter-panel .panel-title {
+	font-size: 14px;
+}
+
 
 /* Tweet formatting */
 .tweet_date {
