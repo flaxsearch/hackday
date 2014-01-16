@@ -1,0 +1,51 @@
+
+# Twitter details
+twitter:
+  consumer_key: WVQFKCXyJrgBKv8BBSstQ
+  consumer_secret: modWA4FTc2Q2l3gAe2ZkOw6mf0mqhrnBh5CSJXI3Q
+  access_token_key: 297379686-dDM6jkC1JOLlSZ2sVZD8i5SM9GELcXXAcl8mmUfa
+  access_token_secret: rXvsxSPnxV4bfDh1jizpbK7SGC4vb0p97ZIyUvgLUdKM3
+
+  tweet_count: 200
+  delay: 10
+
+data_dir: ../../data
+
+archive_dir: ../../archive
+
+# Details of individual lists for party MPs.
+# Keys will be used by indexer to flag party affiliation.
+party_lists:
+  
+  Labour:
+    twitter_screen_name: tweetminster
+    twitter_list_slug: labour
+
+  Conservative:
+    twitter_screen_name: tweetminster
+    twitter_list_slug: conservatives
+
+  LibDem:
+    twitter_screen_name: tweetminster
+    twitter_list_slug: libdems
+
+  Other:
+    twitter_screen_name: tweetminster
+    twitter_list_slug: others
+
+reindexes: [-3, -2, -1]
+
+entity:
+
+  # URL for the entity extractor - should be running as part of the webapp
+  extractor_url: http://localhost:8080/service/entityExtractor
+
+solr:
+
+  # URL to post data to Solr
+  update_url: http://localhost:8983/solr/update?commitWithin=15000
+
+  # Headers
+  headers:
+    content-type: application/json
+
