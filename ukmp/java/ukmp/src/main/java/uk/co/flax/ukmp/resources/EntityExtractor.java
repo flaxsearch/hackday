@@ -43,7 +43,7 @@ public class EntityExtractor {
 	@Produces(MediaType.APPLICATION_JSON)
 	public StanfordData handlePost(String text) {
 		Map<String, List<String>> entityMap = entityService.getEntities(text);
-		return new StanfordData(entityMap, 0);
+		return new StanfordData(entityMap, null);
 	}
 
 }

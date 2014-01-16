@@ -15,6 +15,7 @@
  */
 package uk.co.flax.ukmp.services;
 
+import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.config.StanfordConfiguration;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
@@ -34,31 +35,33 @@ public class SentimentAnalysisService {
 	/**
 	 * Create a new SentimentAnalyzer using details from the Stanford
 	 * configuration properties.
-	 * @param config the configuration.
+	 *
+	 * @param config
+	 *            the configuration.
 	 */
 	public SentimentAnalysisService(StanfordConfiguration config) {
 		pipeline = new StanfordCoreNLP(config.getJavaSentimentProperties());
 	}
 
-	public int analyze(String text) {
-        int mainSentiment = 0;
+	public Sentiment analyze(String text) {
+		Sentiment mainSentiment = null;
 
-        if (text != null && text.length() > 0) {
-            int longest = 0;
-            Annotation annotation = pipeline.process(text);
-            for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
-                Tree tree = sentence.get(SentimentCoreAnnotations.AnnotatedTree.class);
-                int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
-                String partText = sentence.toString();
-                if (partText.length() > longest) {
-                    mainSentiment = sentiment;
-                    longest = partText.length();
-                }
+		if (text != null && text.length() > 0) {
+			int longest = 0;
+			Annotation annotation = pipeline.process(text);
+			for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+				String partText = sentence.toString();
+				if (partText.length() > longest) {
+					Tree tree = sentence.get(SentimentCoreAnnotations.AnnotatedTree.class);
+					int sentiment = RNNCoreAnnotations.getPredictedClass(tree);
+					mainSentiment = new Sentiment(sentence.get(SentimentCoreAnnotations.ClassName.class), sentiment);
+					longest = partText.length();
+				}
 
-            }
-        }
+			}
+		}
 
-        return mainSentiment;
+		return mainSentiment;
 	}
 
 }

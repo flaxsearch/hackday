@@ -15,38 +15,35 @@
  */
 package uk.co.flax.ukmp.api;
 
-import java.util.List;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * POJO representing data returned from the Stanford processors.
+ * POJO representing a sentiment analysis output.
  */
-public class StanfordData {
+public class Sentiment {
 
-	@JsonProperty("entities")
-	private final Map<String, List<String>> entities;
-	@JsonProperty("sentiment")
-	private final Sentiment sentiment;
+	@JsonProperty("class")
+	private final String sentimentClass;
+	@JsonProperty("value")
+	private final int sentimentValue;
 
-	public StanfordData(Map<String, List<String>> entities, Sentiment sentiment) {
-		this.entities = entities;
-		this.sentiment = sentiment;
+	public Sentiment(String classText, int value) {
+		this.sentimentClass = classText;
+		this.sentimentValue = value;
 	}
 
 	/**
-	 * @return the entities
+	 * @return the sentimentClass
 	 */
-	public Map<String, List<String>> getEntities() {
-		return entities;
+	public String getSentimentClass() {
+		return sentimentClass;
 	}
 
 	/**
-	 * @return the sentiment
+	 * @return the sentimentValue
 	 */
-	public Sentiment getSentiment() {
-		return sentiment;
+	public int getSentimentValue() {
+		return sentimentValue;
 	}
 
 }
