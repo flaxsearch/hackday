@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 Lemur Consulting Ltd.
+ * Copyright (c) 2014 Lemur Consulting Ltd.
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,27 +23,33 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.api.StanfordData;
 import uk.co.flax.ukmp.services.EntityExtractionService;
+import uk.co.flax.ukmp.services.SentimentAnalysisService;
 
 /**
- * Resource handling entity extraction - pass in text, returns a list of
- * entities.
+ * Resource handler for extracting entities and sentiment analysis from tweet
+ * text.
  */
-@Path("/entityExtractor")
-public class EntityExtractor {
+@Path("/stanford")
+public class StanfordNLP {
 
 	private final EntityExtractionService entityService;
+	private final SentimentAnalysisService sentimentService;
 
-	public EntityExtractor(EntityExtractionService entityService) {
-		this.entityService = entityService;
+	public StanfordNLP(EntityExtractionService entSvc, SentimentAnalysisService saSvc) {
+		this.entityService = entSvc;
+		this.sentimentService = saSvc;
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	public StanfordData handlePost(String text) {
-		Map<String, List<String>> entityMap = entityService.getEntities(text);
-		return new StanfordData(entityMap, null);
+		Map<String, List<String>> entities = entityService.getEntities(text);
+		Sentiment sentiment = sentimentService.analyze(text);
+
+		return new StanfordData(entities, sentiment);
 	}
 
 }
