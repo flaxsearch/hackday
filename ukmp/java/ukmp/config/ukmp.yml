@@ -46,11 +46,14 @@ solr:
     place_full_name: "Place"
     user_full_name: "User name"
 
-# The entity configuration
-entity:
+# The Stanford NLP configuration
+stanford:
 
-  # Java properties - need to be wrapped up this way to work properly
-  properties:
+  # Java properties for entity extraction - need to be wrapped up this way to work properly
+  entityProperties:
     # The NER classifier to use - taken from the stanford-nlp-models.jar
     loadClassifier: /edu/stanford/nlp/models/ner/english.all.3class.distsim.crf.ser.gz
 
+  # Java properties for sentiment analysis
+  sentimentProperties:
+    annotators: "tokenize, ssplit, parse, sentiment"

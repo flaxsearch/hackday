@@ -21,28 +21,37 @@ import java.util.Properties;
 /**
  * Configuration details for the entity extractor.
  */
-public class EntityConfiguration {
+public class StanfordConfiguration {
 
 	private static final String NER_CLASSIFIER_PROPERTY = "loadClassifier";
 
-	private Map<String, String> properties;
+	private Map<String, String> entityProperties;
+
+	private Map<String, String> sentimentProperties;
 
 	/**
 	 * @return the properties to set for NER.
 	 */
-	public Map<String, String> getProperties() {
-		return properties;
+	public Map<String, String> getEntityProperties() {
+		return entityProperties;
 	}
 
 	/**
-	 * Get the properties map as a Java Properties object.
+	 * @return the sentimentProperties
+	 */
+	public Map<String, String> getSentimentProperties() {
+		return sentimentProperties;
+	}
+
+	/**
+	 * Get the entity properties map as a Java Properties object.
 	 * @return a Java Properties object containing the properties.
 	 */
-	public Properties getJavaProperties() {
+	public Properties getJavaEntityProperties() {
 		Properties props = new Properties();
 
-		for (String key : properties.keySet()) {
-			props.put(key, properties.get(key));
+		for (String key : entityProperties.keySet()) {
+			props.put(key, entityProperties.get(key));
 		}
 
 		return props;
@@ -52,7 +61,21 @@ public class EntityConfiguration {
 	 * @return the path to the classifier file.
 	 */
 	public String getClassifierFile() {
-		return properties.get(NER_CLASSIFIER_PROPERTY);
+		return entityProperties.get(NER_CLASSIFIER_PROPERTY);
+	}
+
+	/**
+	 * Get the sentiment properties map as a Java Properties object.
+	 * @return the sentiment properties.
+	 */
+	public Properties getJavaSentimentProperties() {
+		Properties props = new Properties();
+
+		for (String key : sentimentProperties.keySet()) {
+			props.put(key, sentimentProperties.get(key));
+		}
+
+		return props;
 	}
 
 }
