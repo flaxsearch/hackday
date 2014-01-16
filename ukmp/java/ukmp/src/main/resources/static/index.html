@@ -8,7 +8,7 @@
 	<script src="/webjars/angularjs/1.2.8/angular.min.js"></script>
 	<script src="/webjars/angularjs/1.2.8/angular-sanitize.min.js"></script>
 	<script src="/webjars/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-	<script src="/webjars/angular-ui-bootstrap/0.9.0/ui-bootstrap.min.js"></script>
+	<script src="/webjars/angular-ui-bootstrap/0.9.0/ui-bootstrap-tpls.min.js"></script>
 	<script src="/js/controller.js"></script>
 	
 	<link rel="stylesheet" href="/webjars/bootstrap/3.0.3/css/bootstrap.css" />
@@ -73,13 +73,12 @@
 					</li>
 				</ul>
 	
-				<pagination boundary-links="true" total-items="totalItems" page="currentPage + 1" 
+				<pagination boundary-links="true" total-items="totalItems" page="currentPage" 
 					previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
 					last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
 			</div>
 			
 			<div id="facets" class="col-md-2 col-md-offset-2">
-				<span>Filters</span>
 				<!-- 
 				<div id="facetQueries">
 					<ul class="fq_listing">
@@ -91,37 +90,18 @@
 				-->
 				
 				<div class="filter-panel">
+					<div class="filter-panel-heading">Filters</div>
 					<accordion close-others="false">
-						<accordion-group is-open="true">
-							<accordion-heading>
-								Party <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
-							</accordion-heading>
-							<facet-list facets="searchState.facets.party" facet-click="filter(facet)"></facet-list>
-						</accordion-group>
+						<facet-accordion facets="searchState.facets.party" is-open="true" click="filter(facet)"></facet-accordion>
 						
 						<accordion-group>
 							<accordion-heading>
 								Extracted entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
 							</accordion-heading>
 							<accordion>
-								<accordion-group>
-									<accordion-heading>
-										Organisation <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
-									</accordion-heading>
-									<facet-list facets="searchState.facets.organization_ner" facet-click="filter(facet)"></facet-list>
-								</accordion-group>
-								<accordion-group>
-									<accordion-heading>
-										Person <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
-									</accordion-heading>
-									<facet-list facets="searchState.facets.person_ner" facet-click="filter(facet)"></facet-list>
-								</accordion-group>
-								<accordion-group>
-									<accordion-heading>
-										Location <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
-									</accordion-heading>
-									<facet-list facets="searchState.facets.location_ner" facet-click="filter(facet)"></facet-list>
-								</accordion-group>
+								<facet-accordion facets="searchState.facets.organization_ner" click="filter(facet)"></facet-accordion>
+								<facet-accordion facets="searchState.facets.person_ner" click="filter(facet)"></facet-accordion>
+								<facet-accordion facets="searchState.facets.location_ner" click="filter(facet)"></facet-accordion>
 							</accordion>
 						</accordion-group>
 					</accordion>
