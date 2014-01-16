@@ -34,6 +34,34 @@ body {
 	font-size: x-small;
 }
 
+.filter-panel {
+	font-size: 12px;
+	border-radius: 4px;
+	padding: 1px;
+}
+
+.filter-panel-heading {
+	background-color: #E0E0E0;
+	border: 1px solid #D0D0D0;
+	border-radius: 4px;
+	padding: 5px 0 5px 15px;
+	margin-bottom: 1px;
+	font-size: 16px;
+}
+
+.filter-panel .panel-title {
+	font-size: 14px;
+}
+
+.filter-panel ul {
+	padding-left: 0;
+	margin: 0;
+}
+
+.filter-panel li {
+	list-style-type: none;
+}
+
 
 /* Tweet formatting */
 .tweet_date {
