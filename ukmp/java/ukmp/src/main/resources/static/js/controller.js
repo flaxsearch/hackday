@@ -68,7 +68,8 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 			$scope.tweets = data.tweets;
 			self.addTweetTextLinks($scope.tweets);
 			$scope.searchState = data.searchState;
-			$scope.currentPage = $scope.searchState.pageNumber;
+			// Incoming page number is 0-indexed
+			$scope.currentPage = $scope.searchState.pageNumber + 1;
 			$scope.numPages = data.numResults / data.pageSize;
 			$scope.totalItems = data.numResults;
 			
@@ -117,4 +118,18 @@ ukmpApp.directive('facetList', function() {
 		},
 		templateUrl: 'template/directive/facet_list.html'
 	};
+})
+.directive('facetAccordion', function() {
+	return {
+		restrict: 'E',
+//		compile: function(element, attrs){
+//	       if (!attrs.isOpen) { attrs.isOpen = 'false'; }
+//	    },
+		scope: {
+			facets: '=',
+			isOpen: '=',
+			click: '&'
+		},
+		templateUrl: 'template/directive/facet_accordion_group.html'
+	}
 });
