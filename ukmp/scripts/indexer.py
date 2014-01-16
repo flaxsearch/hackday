@@ -108,8 +108,8 @@ def extract_date(datestring):
 
     return "%s-%02d-%sT%sZ" % (yr, mn, dy, tm)
 
-def extract_entities(extract_url, text):
-    response = requests.post(extract_url,
+def extract_stanford_data(stanford_url, text):
+    response = requests.post(stanford_url,
         headers = { "content-type": "text/plain" },
         data = json.dumps({'text': text}))
 
@@ -153,13 +153,17 @@ if opts.tweet_file:
     tweetfiles = [ opts.tweet_file ]
 else:
     tweetfiles = build_filelist(config, opts.archive, opts.tweet_dir)
-entity_url = config["entity"]["extractor_url"]
+stanford_url = config["stanford"]["handler_url"]
 solr_url = config["solr"]["update_url"]
 
 for tweetfile in tweetfiles:
     party = get_party_from_filename(tweetfile, config)
     count = 0
     for line in open(tweetfile):
+	# Skip blank lines
+	if not line.strip():
+	    continue
+	
         tweet = json.loads(line)
         tweet_text = get_full_text(tweet)
 
@@ -194,9 +198,11 @@ for tweetfile in tweetfiles:
             stweet['ent_urls'] = tweet['urls'].values()
         
         # Extract recognised entities from the text - note NOT tweet entities
-        entities = extract_entities(entity_url, tweet["text"])
-        if entities:
-            stweet.update(entities)
+        stanford_data = extract_stanford_data(stanford_url, tweet["text"])
+        stweet.update(stanford_data['entities'])
+        if 'value' in stanford_data['sentiment']:
+            stweet['sentiment'] = stanford_data['sentiment']['value']
+        
 
         response = requests.post(solr_url,
             headers=dict(config["solr"]["headers"]),

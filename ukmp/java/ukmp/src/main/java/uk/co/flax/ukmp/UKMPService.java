@@ -19,8 +19,12 @@ import uk.co.flax.ukmp.health.SolrHealthCheck;
 import uk.co.flax.ukmp.resources.BrowseResource;
 import uk.co.flax.ukmp.resources.EntityExtractor;
 import uk.co.flax.ukmp.resources.Index;
+import uk.co.flax.ukmp.resources.SentimentAnalyzer;
+import uk.co.flax.ukmp.resources.StanfordNLP;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.solr.SolrSearchEngine;
+import uk.co.flax.ukmp.services.EntityExtractionService;
+import uk.co.flax.ukmp.services.SentimentAnalysisService;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
@@ -42,10 +46,16 @@ public class UKMPService extends Service<UKMPConfiguration> {
 
 	@Override
 	public void run(UKMPConfiguration configuration, Environment environment) throws Exception {
+		// Create the search engine
 		SearchEngine engine = new SolrSearchEngine(configuration.getSolrConfiguration());
+		// Create the Stanford services
+		EntityExtractionService entityService = new EntityExtractionService(configuration.getStanfordConfiguration());
+		SentimentAnalysisService sentimentService = new SentimentAnalysisService(configuration.getStanfordConfiguration());
 
 		environment.addResource(new Index());
-		environment.addResource(new EntityExtractor(configuration.getEntityConfiguration()));
+		environment.addResource(new EntityExtractor(entityService));
+		environment.addResource(new SentimentAnalyzer(sentimentService));
+		environment.addResource(new StanfordNLP(entityService, sentimentService));
 		environment.addResource(new BrowseResource(engine));
 
 		// Add health checks

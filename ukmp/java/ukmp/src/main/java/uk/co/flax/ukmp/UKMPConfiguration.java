@@ -15,7 +15,7 @@
  */
 package uk.co.flax.ukmp;
 
-import uk.co.flax.ukmp.config.EntityConfiguration;
+import uk.co.flax.ukmp.config.StanfordConfiguration;
 import uk.co.flax.ukmp.config.SolrConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,18 +28,21 @@ public class UKMPConfiguration extends Configuration {
 
 	@JsonProperty("solr")
 	private SolrConfiguration solrConfiguration;
-	@JsonProperty("entity")
-	private EntityConfiguration entityConfiguration;
+	@JsonProperty("stanford")
+	private StanfordConfiguration stanfordConfiguration;
 
+	/**
+	 * @return the Solr configuration details.
+	 */
 	public SolrConfiguration getSolrConfiguration() {
 		return solrConfiguration;
 	}
 
 	/**
-	 * @return the entityConfiguration
+	 * @return the Stanford configuration details.
 	 */
-	public EntityConfiguration getEntityConfiguration() {
-		return entityConfiguration;
+	public StanfordConfiguration getStanfordConfiguration() {
+		return stanfordConfiguration;
 	}
 
 }
