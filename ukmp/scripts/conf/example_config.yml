@@ -47,3 +47,36 @@ solr:
   headers:
     content-type: application/json
 
+# unfortunately we must use numerical values for levels below
+# CRITICAL 50
+# ERROR    40
+# WARNING  30
+# INFO     20
+# DEBUG    10
+
+logging:
+  version: 1 
+  loggers: 
+    fetch:
+      handlers: [console, fetch_file]
+      level: 10
+    indexer:
+      handlers: [console, indexer_file]
+      level: 10
+  handlers:
+    console:
+      class: logging.StreamHandler
+      level: 20
+      stream: ext://sys.stdout
+    fetch_file:
+      class : logging.handlers.RotatingFileHandler
+      level: 10
+      filename: log/fetch.log
+      maxBytes: 1000000
+      backupCount: 10
+    indexer_file:
+      class : logging.handlers.RotatingFileHandler
+      level: 10
+      filename: log/indexer.log
+      maxBytes: 1000000
+      backupCount: 10
