@@ -64,6 +64,32 @@ body {
 
 
 /* Tweet formatting */
+.tweet_listing ul {
+	padding-left: 0;
+}
+
+.tweet_listing li {
+	list-style-type: none;
+	border: 1px solid #CCCCCC;
+	border-collapse: collapse;
+}
+
+.tweet {
+	padding: 5px 10px 5px 10px;
+}
+/* Negative sentiment */
+.tweet-sentiment-1 {
+	background-color: #FFD6CC;
+}
+/* Neutral sentiment */
+.tweet-sentiment-2 {
+	
+}
+/* Positive sentiment */
+.tweet-sentiment-3 {
+	background-color: #C8FFC8;
+}
+
 .tweet_date {
 	font-size: small;
 }
