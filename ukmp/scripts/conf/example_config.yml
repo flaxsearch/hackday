@@ -9,6 +9,8 @@ data_dir: ../../data
 
 archive_dir: ../../archive
 
+num_threads: 4
+
 # Details of individual lists for party MPs.
 # Keys will be used by indexer to flag party affiliation.
 party_lists:
