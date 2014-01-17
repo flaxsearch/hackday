@@ -211,8 +211,11 @@ public class SolrSearchEngine implements SearchEngine {
 				if (!filters.containsKey(fqParts[0])) {
 					filters.put(fqParts[0], new ArrayList<String>());
 				}
-				// Need to strip quotes from around the value
-				String value = fqParts[1].substring(1, fqParts[1].length() - 1);
+				String value = fqParts[1];
+				if (value.startsWith("\"")) {
+					// Need to strip quotes from around the value
+					value = fqParts[1].substring(1, fqParts[1].length() - 1);
+				}
 				filters.get(fqParts[0]).add(value);
 			}
 
@@ -220,8 +223,12 @@ public class SolrSearchEngine implements SearchEngine {
 				List<String> fList = filters.get(field);
 				List<Facet> facets = new ArrayList<Facet>(fList.size());
 				for (String value : fList) {
-					Facet facet = new Facet(field, value, 0);
-					facets.add(facet);
+					String label = value;
+					if (value.startsWith("[")) {
+						// This is a facetquery - need to get display label
+						label = config.getFacetQueryFields().get(field).get(value);
+					}
+					facets.add(new FacetQuery(field, value, 0, label));
 				}
 
 				applied.put(field, new FacetList(field, getFacetLabel(field), facets));
