@@ -200,7 +200,7 @@ for tweetfile in tweetfiles:
         # Extract recognised entities from the text - note NOT tweet entities
         stanford_data = extract_stanford_data(stanford_url, tweet["text"])
         stweet.update(stanford_data['entities'])
-        if 'value' in stanford_data['sentiment']:
+	if stanford_data['sentiment']:
             stweet['sentiment'] = stanford_data['sentiment']['value']
         
 
