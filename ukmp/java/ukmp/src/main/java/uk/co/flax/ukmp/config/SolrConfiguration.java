@@ -20,6 +20,8 @@ import java.util.Map;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Solr configuration details.
  */
@@ -34,6 +36,9 @@ public class SolrConfiguration {
 	private Map<String, String> facetLabels;
 
 	private Map<String, Map<String, String>> facetQueryFields;
+
+	@JsonProperty("terms")
+	private TermsConfiguration termsConfiguration;
 
 	/**
 	 * @return the baseUrl
@@ -55,6 +60,10 @@ public class SolrConfiguration {
 
 	public Map<String, Map<String, String>> getFacetQueryFields() {
 		return facetQueryFields;
+	}
+
+	public TermsConfiguration getTermsConfiguration() {
+		return termsConfiguration;
 	}
 
 }
