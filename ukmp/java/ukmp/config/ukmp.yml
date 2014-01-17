@@ -70,7 +70,7 @@ solr:
     user_full_name: "User name"
     created_at: "Created"
     retweet_count: "Retweet count"
-    favourite_count: "Favourite count"
+    favorite_count: "Favourite count"
     
   # Config for the terms component
   terms:
