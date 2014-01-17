@@ -146,11 +146,12 @@ public class SolrSearchEngine implements SearchEngine {
 			SolrDocumentList docs = response.getResults();
 
 			Map<String, FacetList> availableFilters = extractAvailableFilters(response);
+			availableFilters.putAll(extractFacetQueries(response));
 			Map<String, FacetList> appliedFilters = extractAppliedFilters(query);
 			trimAvailableFilters(availableFilters, appliedFilters);
 
 			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
-					query.getPageNumber(), availableFilters, extractFacetQueries(response),
+					query.getPageNumber(), availableFilters, null,
 					appliedFilters);
 
 			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs), search);
@@ -283,28 +284,36 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 	}
 
-	private List<FacetQuery> extractFacetQueries(QueryResponse response) {
-		List<FacetQuery> fQueries;
+	private Map<String, FacetList> extractFacetQueries(QueryResponse response) {
+		Map<String, FacetList> fQuery = new HashMap<String, FacetList>();
 
 		Map<String, Integer> facetQuery = response.getFacetQuery();
-		if (facetQuery == null) {
-			fQueries = new ArrayList<FacetQuery>();
-		} else {
-			fQueries = new ArrayList<FacetQuery>(facetQuery.size());
+		if (facetQuery != null) {
+			Map<String, List<Facet>> facetMap = new HashMap<String, List<Facet>>();
+
 			for (String query : facetQuery.keySet()) {
 				// Split into field, query
 				String[] fqParts = query.split(":");
 
+				if (!facetMap.containsKey(fqParts[0])) {
+					facetMap.put(fqParts[0], new ArrayList<Facet>());
+				}
+
 				Map<String, String> facetLabels = config.getFacetQueryFields().get(fqParts[0]);
 				String label = facetLabels.get(fqParts[1]);
 				if (label != null) {
-					FacetQuery fq = new FacetQuery(query, label, facetQuery.get(query));
-					fQueries.add(fq);
+					Facet fq = new FacetQuery(fqParts[0], fqParts[1], facetQuery.get(query), label);
+					facetMap.get(fqParts[0]).add(fq);
 				}
+			}
+
+			for (String field : facetMap.keySet()) {
+				FacetList fl = new FacetList(field, getFacetLabel(field), facetMap.get(field));
+				fQuery.put(field, fl);
 			}
 		}
 
-		return fQueries;
+		return fQuery;
 	}
 
 }

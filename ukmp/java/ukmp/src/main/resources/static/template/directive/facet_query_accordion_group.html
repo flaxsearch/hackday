@@ -1,0 +1,10 @@
+<accordion-group is-open="isOpen" ng-if="facets.facets">
+	<accordion-heading>
+		{{facets.label}} <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+	</accordion-heading>
+	<ul class="facet_listing">
+		<li ng-repeat="facet in facets.facets">
+			<a href="" ng-click="click({ facet: facet })" ng-bind-html="facet.label"></a> ({{facet.count}})
+		</li>
+	</ul>
+</accordion-group>
