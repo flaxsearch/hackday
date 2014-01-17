@@ -52,3 +52,16 @@ to
 was
 will
 with
+
+# Twitter-specific stopwords
+rt
+i
+you
+he
+she
+him
+her
+http
+t.co
+amp
+my

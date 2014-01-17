@@ -86,10 +86,12 @@
 					<accordion close-others="false">
 						<facet-accordion facets="searchState.facets.party" is-open="true" click="filter(facet)"></facet-accordion>
 						<facet-query-accordion facets="searchState.facets.created_at" is-open="true" click="filter(facet)"></facet-query-accordion>
+						<facet-query-accordion facets="searchState.facets.retweet_count" is-open="true" click="filter(facet)"></facet-query-accordion>
+						<facet-query-accordion facets="searchState.facets.favorite_count" is-open="true" click="filter(facet)"></facet-query-accordion>
 						
-						<accordion-group>
+						<accordion-group is-open="isOpen">
 							<accordion-heading>
-								Extracted entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isopen, 'glyphicon-plus-sign': !isopen}"></i>
+								Extracted entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isOpen, 'glyphicon-plus-sign': !isOpen}"></i>
 							</accordion-heading>
 							<accordion>
 								<facet-accordion facets="searchState.facets.organization_ner" click="filter(facet)"></facet-accordion>
