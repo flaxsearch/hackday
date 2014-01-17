@@ -71,6 +71,15 @@ solr:
     created_at: "Created"
     retweet_count: "Retweet count"
     favourite_count: "Favourite count"
+    
+  # Config for the terms component
+  terms:
+    # The request handler for the terms component
+    handler: /terms
+    # The field to use
+    field: text_terms
+    # The number of terms to fetch
+    limit: 30
 
 # The Stanford NLP configuration
 stanford:

@@ -15,7 +15,10 @@
  */
 package uk.co.flax.ukmp.search;
 
+import java.util.List;
+
 import uk.co.flax.ukmp.api.SearchResults;
+import uk.co.flax.ukmp.api.Term;
 
 
 /**
@@ -47,5 +50,12 @@ public interface SearchEngine {
 	 * search.
 	 */
 	public SearchResults search(Query query) throws SearchEngineException;
+
+	/**
+	 * Get a list of the top terms extracted from incoming tweets.
+	 * @return the list of terms.
+	 * @throws SearchEngineException if there are problems executing the search.
+	 */
+	public List<Term> getSearchTerms() throws SearchEngineException;
 
 }

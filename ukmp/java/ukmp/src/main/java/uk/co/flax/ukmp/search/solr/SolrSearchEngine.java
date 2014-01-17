@@ -32,8 +32,10 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
+import org.apache.solr.client.solrj.response.TermsResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.apache.solr.common.params.TermsParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,10 @@ import uk.co.flax.ukmp.api.FacetQuery;
 import uk.co.flax.ukmp.api.SearchResults;
 import uk.co.flax.ukmp.api.SearchState;
 import uk.co.flax.ukmp.api.Sentiment;
+import uk.co.flax.ukmp.api.Term;
 import uk.co.flax.ukmp.api.Tweet;
 import uk.co.flax.ukmp.config.SolrConfiguration;
+import uk.co.flax.ukmp.config.TermsConfiguration;
 import uk.co.flax.ukmp.search.Query;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.SearchEngineException;
@@ -321,6 +325,31 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		return fQuery;
+	}
+
+	@Override
+	public List<Term> getSearchTerms() throws SearchEngineException {
+		TermsConfiguration termsConfig = config.getTermsConfiguration();
+		List<Term> terms = new ArrayList<Term>(termsConfig.getLimit());
+
+		SolrQuery query = new SolrQuery();
+		query.setRequestHandler(termsConfig.getHandler());
+		query.set(TermsParams.TERMS_FIELD, termsConfig.getField());
+		query.set(TermsParams.TERMS_LIMIT, termsConfig.getLimit());
+
+		try {
+			QueryResponse response = server.query(query);
+			TermsResponse tResponse = response.getTermsResponse();
+			for (org.apache.solr.client.solrj.response.TermsResponse.Term t : tResponse.getTerms(termsConfig.getField())) {
+				Term term = new Term(t.getTerm(), t.getFrequency());
+				terms.add(term);
+			}
+
+		} catch (SolrServerException e) {
+			throw new SearchEngineException(e);
+		}
+
+		return terms;
 	}
 
 }
