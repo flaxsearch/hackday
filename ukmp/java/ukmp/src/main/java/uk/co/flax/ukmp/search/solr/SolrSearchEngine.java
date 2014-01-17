@@ -42,6 +42,7 @@ import uk.co.flax.ukmp.api.FacetList;
 import uk.co.flax.ukmp.api.FacetQuery;
 import uk.co.flax.ukmp.api.SearchResults;
 import uk.co.flax.ukmp.api.SearchState;
+import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.api.Tweet;
 import uk.co.flax.ukmp.config.SolrConfiguration;
 import uk.co.flax.ukmp.search.Query;
@@ -63,6 +64,9 @@ public class SolrSearchEngine implements SearchEngine {
 	public static final String PLACE_NAME = "place_full_name";
 	public static final String USER_SCREEN_NAME = "user_screen_name";
 	public static final String USER_FULL_NAME = "user_full_name";
+	public static final String SENTIMENT_FIELD = "sentiment";
+	public static final String RETWEET_COUNT_FIELD = "retweet_count";
+	public static final String FAVOURITE_COUNT_FIELD = "favourite_count";
 
 	/**
 	 * Static instance of the Solr server - should be only one of these per
@@ -166,15 +170,29 @@ public class SolrSearchEngine implements SearchEngine {
 		} else {
 			tweets = new ArrayList<Tweet>(docs.size());
 			for (SolrDocument doc : docs) {
+				Map<String, Object> fieldMap = doc.getFieldValueMap();
+
 				Tweet tweet = new Tweet();
-				tweet.setId((String)doc.getFieldValue(ID_FIELD));
-				tweet.setText((String)doc.getFieldValue(TEXT_FIELD));
-				tweet.setCreated((Date)doc.getFieldValue(CREATED_FIELD));
-				tweet.setCountry((String)doc.getFieldValue(COUNTRY_FIELD));
-				tweet.setPlaceName((String)doc.getFieldValue(PLACE_NAME));
-				tweet.setUserScreenName((String)doc.getFieldValue(USER_SCREEN_NAME));
-				tweet.setUserName((String)doc.getFieldValue(USER_FULL_NAME));
-				tweet.setParty((String)doc.getFieldValue(PARTY_FIELD));
+				tweet.setId((String)fieldMap.get(ID_FIELD));
+				tweet.setText((String)fieldMap.get(TEXT_FIELD));
+				tweet.setCreated((Date)fieldMap.get(CREATED_FIELD));
+				tweet.setCountry((String)fieldMap.get(COUNTRY_FIELD));
+				tweet.setPlaceName((String)fieldMap.get(PLACE_NAME));
+				tweet.setUserScreenName((String)fieldMap.get(USER_SCREEN_NAME));
+				tweet.setUserName((String)fieldMap.get(USER_FULL_NAME));
+				tweet.setParty((String)fieldMap.get(PARTY_FIELD));
+				if (fieldMap.containsKey(SENTIMENT_FIELD)) {
+					tweet.setSentiment((Integer)fieldMap.get(SENTIMENT_FIELD));
+				} else {
+					// Default sentiment value to neutral
+					tweet.setSentiment(Sentiment.SENTIMENT_NEUTRAL);
+				}
+				if (fieldMap.containsKey(RETWEET_COUNT_FIELD)) {
+					tweet.setRetweetCount((Integer)fieldMap.get(RETWEET_COUNT_FIELD));
+				}
+				if (fieldMap.containsKey(FAVOURITE_COUNT_FIELD)) {
+					tweet.setFavouriteCount((Integer)fieldMap.get(FAVOURITE_COUNT_FIELD));
+				}
 				tweets.add(tweet);
 			}
 		}

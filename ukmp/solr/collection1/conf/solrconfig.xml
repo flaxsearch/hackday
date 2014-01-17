@@ -1010,7 +1010,6 @@
        <str name="facet.field">ent_mentions_full_name</str>
        <str name="facet.field">ent_hashtags</str>
        <str name="facet.field">ent_urls</str>
-       <str name="facet.field">retweeted</str>
        <str name="facet.field">place_country</str>
        <str name="facet.field">place_full_name</str>
        <str name="facet.field">user_full_name</str>
