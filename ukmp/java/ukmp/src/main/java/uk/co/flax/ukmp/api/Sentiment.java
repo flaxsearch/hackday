@@ -22,6 +22,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class Sentiment {
 
+	public static final int SENTIMENT_POSITIVE = 3;
+	public static final int SENTIMENT_NEUTRAL = 2;
+	public static final int SENTIMENT_NEGATIVE = 1;
+
 	@JsonProperty("class")
 	private final String sentimentClass;
 	@JsonProperty("value")

@@ -56,7 +56,7 @@
 							<div class="col-md-2">{{facets.label}}:</div>
 							<div class="col-md-9"><ul>
 								<li ng-repeat="facet in facets.facets">
-									<span ng-bind-html="facet.value"></span>
+									<span ng-bind-html="facet.label"></span>
 									<a href="" ng-click="remove_filter(field, facet.value)" class="remove_filter">[x]</a>
 								</li>
 							</ul></div>
@@ -66,10 +66,12 @@
 			
 				<ul class="tweet_listing">
 					<li ng-repeat="tweet in tweets">
-						<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
-						{{tweet.userName}} ({{tweet.party}})<br />
-						<span ng-bind-html="tweet.text"></span><br />
-						<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
+						<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
+							<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
+							{{tweet.userName}} ({{tweet.party}})<br />
+							<span ng-bind-html="tweet.text"></span><br />
+							<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
+						</div>
 					</li>
 				</ul>
 	
@@ -79,20 +81,11 @@
 			</div>
 			
 			<div id="facets" class="col-md-2 col-md-offset-2">
-				<!-- 
-				<div id="facetQueries">
-					<ul class="fq_listing">
-						<li ng-repeat="query in searchState.facetQueries">
-							{{query.label}} ({{query.count}})
-						</li>
-					</ul>
-				</div>
-				-->
-				
 				<div class="filter-panel">
 					<div class="filter-panel-heading">Filters</div>
 					<accordion close-others="false">
 						<facet-accordion facets="searchState.facets.party" is-open="true" click="filter(facet)"></facet-accordion>
+						<facet-query-accordion facets="searchState.facets.created_at" is-open="true" click="filter(facet)"></facet-query-accordion>
 						
 						<accordion-group>
 							<accordion-heading>

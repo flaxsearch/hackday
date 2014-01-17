@@ -18,23 +18,13 @@ package uk.co.flax.ukmp.api;
 /**
  * POJO representing a facet query (ie. created date facets).
  */
-public class FacetQuery {
+public class FacetQuery extends Facet {
 
-	private final String query;
 	private final String label;
-	private final int count;
 
-	public FacetQuery(String query, String label, int count) {
-		this.query = query;
+	public FacetQuery(String field, String value, int count, String label) {
+		super(field, value, count);
 		this.label = label;
-		this.count = count;
-	}
-
-	/**
-	 * @return the query
-	 */
-	public String getQuery() {
-		return query;
 	}
 
 	/**
@@ -42,13 +32,6 @@ public class FacetQuery {
 	 */
 	public String getLabel() {
 		return label;
-	}
-
-	/**
-	 * @return the count
-	 */
-	public int getCount() {
-		return count;
 	}
 
 }

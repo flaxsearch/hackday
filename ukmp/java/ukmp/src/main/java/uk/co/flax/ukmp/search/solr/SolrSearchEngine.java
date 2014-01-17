@@ -42,6 +42,7 @@ import uk.co.flax.ukmp.api.FacetList;
 import uk.co.flax.ukmp.api.FacetQuery;
 import uk.co.flax.ukmp.api.SearchResults;
 import uk.co.flax.ukmp.api.SearchState;
+import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.api.Tweet;
 import uk.co.flax.ukmp.config.SolrConfiguration;
 import uk.co.flax.ukmp.search.Query;
@@ -63,6 +64,9 @@ public class SolrSearchEngine implements SearchEngine {
 	public static final String PLACE_NAME = "place_full_name";
 	public static final String USER_SCREEN_NAME = "user_screen_name";
 	public static final String USER_FULL_NAME = "user_full_name";
+	public static final String SENTIMENT_FIELD = "sentiment";
+	public static final String RETWEET_COUNT_FIELD = "retweet_count";
+	public static final String FAVOURITE_COUNT_FIELD = "favourite_count";
 
 	/**
 	 * Static instance of the Solr server - should be only one of these per
@@ -142,11 +146,12 @@ public class SolrSearchEngine implements SearchEngine {
 			SolrDocumentList docs = response.getResults();
 
 			Map<String, FacetList> availableFilters = extractAvailableFilters(response);
+			availableFilters.putAll(extractFacetQueries(response));
 			Map<String, FacetList> appliedFilters = extractAppliedFilters(query);
 			trimAvailableFilters(availableFilters, appliedFilters);
 
 			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
-					query.getPageNumber(), availableFilters, extractFacetQueries(response),
+					query.getPageNumber(), availableFilters, null,
 					appliedFilters);
 
 			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs), search);
@@ -166,15 +171,29 @@ public class SolrSearchEngine implements SearchEngine {
 		} else {
 			tweets = new ArrayList<Tweet>(docs.size());
 			for (SolrDocument doc : docs) {
+				Map<String, Object> fieldMap = doc.getFieldValueMap();
+
 				Tweet tweet = new Tweet();
-				tweet.setId((String)doc.getFieldValue(ID_FIELD));
-				tweet.setText((String)doc.getFieldValue(TEXT_FIELD));
-				tweet.setCreated((Date)doc.getFieldValue(CREATED_FIELD));
-				tweet.setCountry((String)doc.getFieldValue(COUNTRY_FIELD));
-				tweet.setPlaceName((String)doc.getFieldValue(PLACE_NAME));
-				tweet.setUserScreenName((String)doc.getFieldValue(USER_SCREEN_NAME));
-				tweet.setUserName((String)doc.getFieldValue(USER_FULL_NAME));
-				tweet.setParty((String)doc.getFieldValue(PARTY_FIELD));
+				tweet.setId((String)fieldMap.get(ID_FIELD));
+				tweet.setText((String)fieldMap.get(TEXT_FIELD));
+				tweet.setCreated((Date)fieldMap.get(CREATED_FIELD));
+				tweet.setCountry((String)fieldMap.get(COUNTRY_FIELD));
+				tweet.setPlaceName((String)fieldMap.get(PLACE_NAME));
+				tweet.setUserScreenName((String)fieldMap.get(USER_SCREEN_NAME));
+				tweet.setUserName((String)fieldMap.get(USER_FULL_NAME));
+				tweet.setParty((String)fieldMap.get(PARTY_FIELD));
+				if (fieldMap.containsKey(SENTIMENT_FIELD)) {
+					tweet.setSentiment((Integer)fieldMap.get(SENTIMENT_FIELD));
+				} else {
+					// Default sentiment value to neutral
+					tweet.setSentiment(Sentiment.SENTIMENT_NEUTRAL);
+				}
+				if (fieldMap.containsKey(RETWEET_COUNT_FIELD)) {
+					tweet.setRetweetCount((Integer)fieldMap.get(RETWEET_COUNT_FIELD));
+				}
+				if (fieldMap.containsKey(FAVOURITE_COUNT_FIELD)) {
+					tweet.setFavouriteCount((Integer)fieldMap.get(FAVOURITE_COUNT_FIELD));
+				}
 				tweets.add(tweet);
 			}
 		}
@@ -192,8 +211,11 @@ public class SolrSearchEngine implements SearchEngine {
 				if (!filters.containsKey(fqParts[0])) {
 					filters.put(fqParts[0], new ArrayList<String>());
 				}
-				// Need to strip quotes from around the value
-				String value = fqParts[1].substring(1, fqParts[1].length() - 1);
+				String value = fqParts[1];
+				if (value.startsWith("\"")) {
+					// Need to strip quotes from around the value
+					value = fqParts[1].substring(1, fqParts[1].length() - 1);
+				}
 				filters.get(fqParts[0]).add(value);
 			}
 
@@ -201,8 +223,12 @@ public class SolrSearchEngine implements SearchEngine {
 				List<String> fList = filters.get(field);
 				List<Facet> facets = new ArrayList<Facet>(fList.size());
 				for (String value : fList) {
-					Facet facet = new Facet(field, value, 0);
-					facets.add(facet);
+					String label = value;
+					if (value.startsWith("[")) {
+						// This is a facetquery - need to get display label
+						label = config.getFacetQueryFields().get(field).get(value);
+					}
+					facets.add(new FacetQuery(field, value, 0, label));
 				}
 
 				applied.put(field, new FacetList(field, getFacetLabel(field), facets));
@@ -265,28 +291,36 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 	}
 
-	private List<FacetQuery> extractFacetQueries(QueryResponse response) {
-		List<FacetQuery> fQueries;
+	private Map<String, FacetList> extractFacetQueries(QueryResponse response) {
+		Map<String, FacetList> fQuery = new HashMap<String, FacetList>();
 
 		Map<String, Integer> facetQuery = response.getFacetQuery();
-		if (facetQuery == null) {
-			fQueries = new ArrayList<FacetQuery>();
-		} else {
-			fQueries = new ArrayList<FacetQuery>(facetQuery.size());
+		if (facetQuery != null) {
+			Map<String, List<Facet>> facetMap = new HashMap<String, List<Facet>>();
+
 			for (String query : facetQuery.keySet()) {
 				// Split into field, query
 				String[] fqParts = query.split(":");
 
+				if (!facetMap.containsKey(fqParts[0])) {
+					facetMap.put(fqParts[0], new ArrayList<Facet>());
+				}
+
 				Map<String, String> facetLabels = config.getFacetQueryFields().get(fqParts[0]);
 				String label = facetLabels.get(fqParts[1]);
 				if (label != null) {
-					FacetQuery fq = new FacetQuery(query, label, facetQuery.get(query));
-					fQueries.add(fq);
+					Facet fq = new FacetQuery(fqParts[0], fqParts[1], facetQuery.get(query), label);
+					facetMap.get(fqParts[0]).add(fq);
 				}
+			}
+
+			for (String field : facetMap.keySet()) {
+				FacetList fl = new FacetList(field, getFacetLabel(field), facetMap.get(field));
+				fQuery.put(field, fl);
 			}
 		}
 
-		return fQueries;
+		return fQuery;
 	}
 
 }
