@@ -6,6 +6,16 @@ http:
 
   rootPath: /service/*
 
+  requestLog:
+    console:
+      enabled: false
+    
+    file:
+      enabled: true
+      currentLogFilename: log/access.log
+      archive: true
+      archivedLogFilenamePattern: log/access-%d.log
+
 # Logging
 logging:
 
