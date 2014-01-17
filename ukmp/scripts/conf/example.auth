@@ -1,0 +1,4 @@
+consumer_key: foo
+consumer_secret: bar
+access_token_key: spam
+access_token_secret: eggs
