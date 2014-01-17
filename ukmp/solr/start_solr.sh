@@ -9,5 +9,5 @@ cd $SOLR_ROOT/example
 
 java -Dsolr.solr.home=$APP_ROOT/solr \
 	-Dlog4j.configuration=file://$CONF_ROOT/log4j.properties \
-	-jar start.jar &
+	-jar start.jar 
 

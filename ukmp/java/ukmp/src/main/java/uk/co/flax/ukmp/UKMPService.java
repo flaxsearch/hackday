@@ -21,6 +21,7 @@ import uk.co.flax.ukmp.resources.EntityExtractor;
 import uk.co.flax.ukmp.resources.Index;
 import uk.co.flax.ukmp.resources.SentimentAnalyzer;
 import uk.co.flax.ukmp.resources.StanfordNLP;
+import uk.co.flax.ukmp.resources.TermsHandler;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.solr.SolrSearchEngine;
 import uk.co.flax.ukmp.services.EntityExtractionService;
@@ -56,7 +57,9 @@ public class UKMPService extends Service<UKMPConfiguration> {
 		environment.addResource(new EntityExtractor(entityService));
 		environment.addResource(new SentimentAnalyzer(sentimentService));
 		environment.addResource(new StanfordNLP(entityService, sentimentService));
+
 		environment.addResource(new BrowseResource(engine));
+		environment.addResource(new TermsHandler(engine));
 
 		// Add health checks
 		environment.addHealthCheck(new SolrHealthCheck(engine));
