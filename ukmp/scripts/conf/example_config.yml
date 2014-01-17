@@ -1,21 +1,13 @@
 
 # Twitter details
 twitter:
-  consumer_key: xxx
-  consumer_secret: xxx
-  access_token_key: xxx
-  access_token_secret: xxx
-
-  # Number of tweets to fetch
+  auth: conf/example.auth
   tweet_count: 200
-  # Time to sleep between requests
   delay: 10
 
-# Directory to which data files will be written
-data_dir: ../data
+data_dir: ../../data
 
-# Directory to which data files will be moved after indexing
-archive_dir: ../archive
+archive_dir: ../../archive
 
 # Details of individual lists for party MPs.
 # Keys will be used by indexer to flag party affiliation.
@@ -37,16 +29,18 @@ party_lists:
     twitter_screen_name: tweetminster
     twitter_list_slug: others
 
+reindexes: [-3, -2, -1]
+
 stanford:
 
-  # URL for the Stanford handler - should be running as part of the webapp
+  # URL for the entity extractor - should be running as part of the webapp
   handler_url: http://localhost:8080/service/stanford
 
 solr:
 
   # URL to post data to Solr
   update_url: http://localhost:8983/solr/update?commitWithin=15000
-  
+
   # Headers
   headers:
     content-type: application/json
