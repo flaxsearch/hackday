@@ -66,10 +66,12 @@
 			
 				<ul class="tweet_listing">
 					<li ng-repeat="tweet in tweets">
-						<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
-						{{tweet.userName}} ({{tweet.party}})<br />
-						<span ng-bind-html="tweet.text"></span><br />
-						<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
+						<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
+							<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
+							{{tweet.userName}} ({{tweet.party}})<br />
+							<span ng-bind-html="tweet.text"></span><br />
+							<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
+						</div>
 					</li>
 				</ul>
 	

@@ -73,13 +73,6 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 			$scope.numPages = data.numResults / data.pageSize;
 			$scope.totalItems = data.numResults;
 			
-			// Set up a page range array - simplify the pagination component
-			var rngStart = ($scope.currentPage - 2 < 0 ? 0 : $scope.currentPage - 2);
-			$scope.pgRange = [];
-			for (i = rngStart; i < rngStart + 5; i ++) {
-				$scope.pgRange.push(i);
-			}
-
 			// Booleans indicating whether or not to display the searched/filtered by displays
 			$scope.searched = $scope.searchState.query !== "*";
 			$scope.filtered = Object.keys($scope.searchState.appliedFilters).length > 0;
