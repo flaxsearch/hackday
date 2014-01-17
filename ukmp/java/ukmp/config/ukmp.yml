@@ -68,6 +68,9 @@ solr:
     place_country: "Country"
     place_full_name: "Place"
     user_full_name: "User name"
+    created_at: "Created"
+    retweet_count: "Retweet count"
+    favourite_count: "Favourite count"
 
 # The Stanford NLP configuration
 stanford:
