@@ -34,6 +34,9 @@ public class Tweet {
 	private String userName;
 	@JsonProperty("reply")
 	private String inReplyTo;
+	private int sentiment;
+	private int retweetCount;
+	private int favouriteCount;
 
 	/**
 	 * @return the id
@@ -159,6 +162,48 @@ public class Tweet {
 	 */
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	/**
+	 * @return the sentiment
+	 */
+	public int getSentiment() {
+		return sentiment;
+	}
+
+	/**
+	 * @param sentiment the sentiment to set
+	 */
+	public void setSentiment(int sentiment) {
+		this.sentiment = sentiment;
+	}
+
+	/**
+	 * @return the retweetCount
+	 */
+	public int getRetweetCount() {
+		return retweetCount;
+	}
+
+	/**
+	 * @param retweetCount the retweetCount to set
+	 */
+	public void setRetweetCount(int retweetCount) {
+		this.retweetCount = retweetCount;
+	}
+
+	/**
+	 * @return the favouriteCount
+	 */
+	public int getFavouriteCount() {
+		return favouriteCount;
+	}
+
+	/**
+	 * @param favouriteCount the favouriteCount to set
+	 */
+	public void setFavouriteCount(int favouriteCount) {
+		this.favouriteCount = favouriteCount;
 	}
 
 }
