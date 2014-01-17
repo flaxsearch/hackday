@@ -23,6 +23,8 @@ import twitter
 import json
 import yaml
 import time
+import logging, logging.config
+
 
 def read_since(datadir, username):
     """Read the user's since values from their since file in the data directory.
@@ -45,11 +47,11 @@ def write_since(datadir, username, since):
     with open(os.path.join(datadir, username + '.since'), 'w') as f:
         f.write('\n'.join(str(x) for x in since))
 
-def get_api(config):
-    return twitter.Api(consumer_key=config['twitter']['consumer_key'],
-        consumer_secret=config['twitter']['consumer_secret'],
-        access_token_key=config['twitter']['access_token_key'],
-        access_token_secret=config['twitter']['access_token_secret'])
+def get_api(auth):
+    return twitter.Api(consumer_key=auth['consumer_key'],
+        consumer_secret=auth['consumer_secret'],
+        access_token_key=auth['access_token_key'],
+        access_token_secret=auth['access_token_secret'])
 
 def handle_stats(data_dir, user, stats, since):
     max_id = 0
@@ -74,8 +76,14 @@ if len(sys.argv) != 2:
 with open(sys.argv[1]) as f:
     config = yaml.load(f)
 
+with open(config['twitter']['auth']) as f:
+    auth = yaml.load(f)
+
+logging.config.dictConfig(config['logging'])
+logger = logging.getLogger('fetch')
+
 # Initialise the API connection
-api = get_api(config)
+api = get_api(auth)
 
 for party in config['party_lists']:
     party_config = config['party_lists'][party]
@@ -97,7 +105,8 @@ for party in config['party_lists']:
                     since_id=since_id, 
                     count=config['twitter']['tweet_count'],
                 )
-                print "Got {2} tweets for {0} since {1}".format(slug, since_id, len(stats))
+                logger.info("Got {2} tweets for {0} since {1}".format(
+                    slug, since_id, len(stats)))
                 
                 # merge into all_stats
                 for s in stats:
@@ -111,6 +120,6 @@ for party in config['party_lists']:
             handle_stats(config['data_dir'], slug, all_stats.values(), since)
 
     except twitter.TwitterError as e:
-        print "%s: Caught TwitterError '%s'" % (slug, e)
+        logger.error("%s: Caught TwitterError '%s'" % (slug, e))
 
 

@@ -27,17 +27,85 @@ Requires:
 """
 import sys
 import json
-import requests
 import yaml
 import shutil
 import time
 import optparse
 import os
 import requests
+from threading import Thread
+import Queue
+import logging, logging.config
 
 
 mons = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
+class Indexer(Thread):
+    """Indexer thread class. Reads items from a queue, indexes
+    until None token is found.
+    """
+    # Shared update count
+    update_count = 0
+
+    def __init__(self, queue, config):
+        Thread.__init__(self)
+        self.queue = queue
+        self.config = config
+        self.stanford_url = config["stanford"]["handler_url"]
+        self.solr_url = config["solr"]["update_url"]
+
+    def run(self):
+        while True:
+            tweet = self.queue.get()
+            if tweet == None:
+                return
+
+            tweet_text = get_full_text(tweet)
+            stweet = {
+                "id": tweet["id"],
+                "text": tweet["text"],
+                'retweet_count': tweet.get('retweet_count', 0),
+                'favorite_count': tweet.get('favorite_count', 0),
+                'user_screen_name': tweet['user']['screen_name'],
+                'user_full_name': tweet['user']['name'],
+                'created_at': extract_date(tweet['created_at']),
+                'party': tweet['party']
+            }
+
+            # Handle the optional properties, as available
+            if 'place' in tweet:
+                stweet['place_country'] = tweet['place']['country']
+                stweet['place_full_name'] = tweet['place']['full_name']
+            if 'geo' in tweet:
+                stweet['place_location'] = tweet['geo']['coordinates']
+            if 'user_mentions' in tweet:
+                stweet['ent_mentions_screen_name'] = []
+                stweet['ent_mentions_full_name'] = []
+                for mention in tweet['user_mentions']:
+                    stweet['ent_mentions_screen_name'].append(mention['screen_name'])
+                    # Not all user profiles have a full name
+                    if 'name' in mention:
+                        stweet['ent_mentions_full_name'].append(mention['name'])
+            if 'hashtags' in tweet:
+                stweet['ent_hashtags'] = tweet['hashtags']
+            if 'urls' in tweet:
+                stweet['ent_urls'] = tweet['urls'].values()
+        
+            # Extract recognised entities from the text - note NOT tweet entities
+            stanford_data = extract_stanford_data(self.stanford_url, tweet["text"])
+            stweet.update(stanford_data['entities'])
+            if stanford_data['sentiment']:
+                stweet['sentiment'] = stanford_data['sentiment']['value']
+
+            response = requests.post(self.solr_url,
+                headers=dict(config["solr"]["headers"]),
+                data=json.dumps([stweet]))
+
+            Indexer.update_count += 1
+            self.queue.task_done()
+
 
 def build_filelist(config, archive, tweetdir):
     """Get the list of files to be indexed. If archive = True, will read all
@@ -73,7 +141,7 @@ def build_filelist(config, archive, tweetdir):
                 shutil.move(tweetpath, destfile)
                 filelist.append(destfile)
 
-    print "Found %d files to index" % len(filelist)
+    logger.info("Found %d files to index" % len(filelist))
     return filelist
 
 
@@ -132,90 +200,75 @@ def get_full_text(tweet):
         text = text[:txtPos] + rt_text
     return text
 
+def main(opts, config):
+    # Get the list of files to index
+    if opts.tweet_file:
+        tweetfiles = [ opts.tweet_file ]
+    else:
+        tweetfiles = build_filelist(config, opts.archive, opts.tweet_dir)
 
-p = optparse.OptionParser()
-p.add_option("--archive", action="store_true", dest="archive")
-p.add_option("-a", action="store_true", dest="archive")
-p.add_option("-d", dest="tweet_dir")
-p.add_option("-f", dest="tweet_file")
-opts, args = p.parse_args()
+    if not tweetfiles:
+        return
 
-if len(args) != 1:
-    print "Usage: indexer.py [--archive|-a] [-d <tweetdir>] <configfile>"
-    raise SystemExit(1)
+    solr_url = config["solr"]["update_url"]
 
-# Read the config
-with open(args[0]) as f:
-    config = yaml.load(f)
+    # create a queue
+    queue = Queue.Queue(100)
 
-# Get the list of files to index
-if opts.tweet_file:
-    tweetfiles = [ opts.tweet_file ]
-else:
-    tweetfiles = build_filelist(config, opts.archive, opts.tweet_dir)
-stanford_url = config["stanford"]["handler_url"]
-solr_url = config["solr"]["update_url"]
+    # create and start the indexer threads
+    indexers = []
+    for i in xrange(config['num_threads']):
+        logger.debug('Starting indexer thread {0}'.format(i))
+        indexer = Indexer(queue, config)
+        indexer.start()
+        indexers.append(indexer)
 
-for tweetfile in tweetfiles:
-    party = get_party_from_filename(tweetfile, config)
-    count = 0
-    for line in open(tweetfile):
-	# Skip blank lines
-	if not line.strip():
-	    continue
-	
-        tweet = json.loads(line)
-        tweet_text = get_full_text(tweet)
+    for tweetfile in tweetfiles:
+        party = get_party_from_filename(tweetfile, config)
+        count = 0
+        for line in open(tweetfile):
+            # Skip blank lines
+            if line.strip():
+                tweet = json.loads(line)
+                tweet['party'] = party
+                queue.put(tweet)
+                count += 1
+        logger.debug('queued {0} tweets from {1}'.format(count, tweetfile))
+            
+    # wait for the indexer threads to complete
+    for indexer in indexers:
+        queue.put(None)
+    for indexer in indexers:
+        indexer.join()
 
-        stweet = {
-            "id": tweet["id"],
-            "text": tweet["text"],
-            'retweet_count': tweet.get('retweet_count', 0),
-            'favorite_count': tweet.get('favorite_count', 0),
-            'user_screen_name': tweet['user']['screen_name'],
-            'user_full_name': tweet['user']['name'],
-            'created_at': extract_date(tweet['created_at']),
-            'party': party
-        }
+    # Send a hard commit
+    response = requests.post(solr_url,
+        headers = dict(config["solr"]["headers"]),
+        data='{"commit":{}}')
+    if response.status_code != 200:
+        logger.error('Response error code from Solr: {0} {1}'.format(
+            response.status_code, response.text))
+        raise Exception, 'FIXME'
 
-        # Handle the optional properties, as available
-        if 'place' in tweet:
-            stweet['place_country'] = tweet['place']['country']
-            stweet['place_full_name'] = tweet['place']['full_name']
-        if 'geo' in tweet:
-            stweet['place_location'] = tweet['geo']['coordinates']
-        if 'user_mentions' in tweet:
-            stweet['ent_mentions_screen_name'] = []
-            stweet['ent_mentions_full_name'] = []
-            for mention in tweet['user_mentions']:
-                stweet['ent_mentions_screen_name'].append(mention['screen_name'])
-                # Not all user profiles have a full name
-                if 'name' in mention:
-                    stweet['ent_mentions_full_name'].append(mention['name'])
-        if 'hashtags' in tweet:
-            stweet['ent_hashtags'] = tweet['hashtags']
-        if 'urls' in tweet:
-            stweet['ent_urls'] = tweet['urls'].values()
-        
-        # Extract recognised entities from the text - note NOT tweet entities
-        stanford_data = extract_stanford_data(stanford_url, tweet["text"])
-        stweet.update(stanford_data['entities'])
-	if stanford_data['sentiment']:
-            stweet['sentiment'] = stanford_data['sentiment']['value']
-        
+    logger.info('indexed {0} tweets in total'.format(Indexer.update_count))
+     
 
-        response = requests.post(solr_url,
-            headers=dict(config["solr"]["headers"]),
-            data=json.dumps([stweet]))
-        count += 1
-    print "Indexed %d tweets from %s" % (count, tweetfile)
+if __name__ == '__main__':
+    p = optparse.OptionParser()
+    p.add_option("--archive", action="store_true", dest="archive")
+    p.add_option("-a", action="store_true", dest="archive")
+    p.add_option("-d", dest="tweet_dir")
+    p.add_option("-f", dest="tweet_file")
+    opts, args = p.parse_args()
 
-# Send a hard commit
-response = requests.post(solr_url,
-    headers = dict(config["solr"]["headers"]),
-    data='{"commit":{}}')
-if response.status_code != 200:
-    print "Response error code from Solr: %s %s" % (
-        response.status_code, response.text)
-    raise Exception, 'FIXME'
- 
+    if len(args) != 1:
+        print "Usage: indexer.py [--archive|-a] [-d <tweetdir>] <configfile>"
+        raise SystemExit(1)
+
+    # Read the config
+    with open(args[0]) as f:
+        config = yaml.load(f)
+
+    logging.config.dictConfig(config['logging'])
+    logger = logging.getLogger('indexer')
+    main(opts, config)
