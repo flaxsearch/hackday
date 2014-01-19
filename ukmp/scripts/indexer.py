@@ -65,7 +65,7 @@ class Indexer(Thread):
             tweet_text = get_full_text(tweet)
             stweet = {
                 "id": tweet["id"],
-                "text": tweet["text"],
+                "text": tweet_text,
                 'retweet_count': tweet.get('retweet_count', 0),
                 'favorite_count': tweet.get('favorite_count', 0),
                 'user_screen_name': tweet['user']['screen_name'],
