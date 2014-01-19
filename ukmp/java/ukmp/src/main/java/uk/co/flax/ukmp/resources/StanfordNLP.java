@@ -25,6 +25,7 @@ import javax.ws.rs.core.MediaType;
 
 import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.api.StanfordData;
+import uk.co.flax.ukmp.api.StanfordRequest;
 import uk.co.flax.ukmp.services.EntityExtractionService;
 import uk.co.flax.ukmp.services.SentimentAnalysisService;
 
@@ -45,7 +46,9 @@ public class StanfordNLP {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public StanfordData handlePost(String text) {
+	public StanfordData handlePost(StanfordRequest req) {
+		String text = req.getText();
+
 		Map<String, List<String>> entities = entityService.getEntities(text);
 		Sentiment sentiment = sentimentService.analyze(text);
 
