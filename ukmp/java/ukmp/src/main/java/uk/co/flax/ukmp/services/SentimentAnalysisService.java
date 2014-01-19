@@ -68,7 +68,6 @@ public class SentimentAnalysisService {
 
 		if (text != null && text.length() > 0) {
 			String psText = preprocessText(text);
-			LOGGER.trace("Analysing text: {}", psText);
 
 			int longest = 0;
 			Annotation annotation = pipeline.process(psText);
@@ -82,7 +81,7 @@ public class SentimentAnalysisService {
 				}
 			}
 
-			LOGGER.trace("Got sentiment '{}'", mainSentiment.getSentimentClass());
+			LOGGER.trace("Got '{}' sentiment from '{}'", mainSentiment.getSentimentClass(), psText);
 		}
 
 		return mainSentiment;
