@@ -24,7 +24,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import uk.co.flax.ukmp.api.StanfordData;
-import uk.co.flax.ukmp.api.StanfordRequest;
 import uk.co.flax.ukmp.services.EntityExtractionService;
 
 /**
@@ -42,9 +41,7 @@ public class EntityExtractor {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public StanfordData handlePost(StanfordRequest req) {
-		String text = req.getText();
-
+	public StanfordData handlePost(String text) {
 		Map<String, List<String>> entityMap = entityService.getEntities(text);
 		return new StanfordData(entityMap, null);
 	}
