@@ -1,5 +1,9 @@
 var ukmpControllers = angular.module('ukmpControllers', [ 'ui.bootstrap', 'ngSanitize' ]);
 
+/*
+ * Search Controller. Handles all functions on the search page, plus
+ * access through the search form in the navbar.
+ */
 ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
 	
 	var self = this;
@@ -145,3 +149,11 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		templateUrl: 'template/directive/facet_query_accordion_group.html'
 	}
 });
+
+
+/*
+ * About controller. Controls the About page. 
+ */
+ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', function($scope) {
+	
+}]);
