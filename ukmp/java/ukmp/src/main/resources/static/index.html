@@ -6,104 +6,55 @@
 	
 	<script src="/webjars/jquery/2.0.3/jquery.min.js"></script>
 	<script src="/webjars/angularjs/1.2.8/angular.min.js"></script>
+	<script src="/webjars/angularjs/1.2.8/angular-route.min.js"></script>
 	<script src="/webjars/angularjs/1.2.8/angular-sanitize.min.js"></script>
 	<script src="/webjars/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 	<script src="/webjars/angular-ui-bootstrap/0.9.0/ui-bootstrap-tpls.min.js"></script>
+	<script src="/js/app.js"></script>
 	<script src="/js/controller.js"></script>
 	
 	<link rel="stylesheet" href="/webjars/bootstrap/3.0.3/css/bootstrap.css" />
 	<link rel="stylesheet" href="/css/ukmp.css" />
 </head>
 
-<body ng-controller="UKMPCtrl">
+<body>
 
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="container">
-		<!-- Brand and toggle get grouped for better mobile display -->
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse"
-				data-target="#bs-example-navbar-collapse-1">
-				<span class="sr-only">Toggle navigation</span> 
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-			<a class="navbar-brand" href="#">UK MP Tweets</a>
-		</div>
-		<p class="navbar-text">Searchable tweets from the UK's Parliament</p>
-		
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<form class="navbar-form navbar-right" role="search" ng-submit="search()">
-				<div class="form-group">
-					<input type="text" class="form-control" placeholder="Search" name="query" ng-model="query">
-				</div>
-				<button type="submit" class="btn btn-default">Submit</button>
-			</form>
-		</div>
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span> 
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/#/about" title="Searchable tweets from the UK's Parliament">UK MP Tweets</a>
+			</div>
+			
+			<!-- Navigation links -->
+			<ul class="nav navbar-nav">
+				<li><a href="/#/about">About</a></li>
+				<li><a href="/#/search">Browse</a></li>
+			</ul>
+			
+			<!-- Search form -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				<form class="navbar-form navbar-right" role="search" ng-submit="search(query)" ng-controller="UKMP_SearchCtrl">
+					<div class="form-group">
+						<input type="text" class="form-control" placeholder="Search" name="query" ng-model="query">
+					</div>
+					<button type="submit" class="btn btn-default">Submit</button>
+				</form>
+			</div>
 		</div>
 	</nav>
 
 	<div class="container">
-		<div class="row">
-			<div id="tweets" class="col-md-8">
-				<div class="results_header">
-					<span>Found {{totalItems}} results.</span>
-					
-					<div ng-if="searched">Searched for: <em>{{searchState.query}}</em>.</div>
-					<div ng-if="filtered">
-						Filtered by:<br />
-						<div class="row applied_filters" ng-repeat="(field, facets) in searchState.appliedFilters">
-							<div class="col-md-2">{{facets.label}}:</div>
-							<div class="col-md-9"><ul>
-								<li ng-repeat="facet in facets.facets">
-									<span ng-bind-html="facet.label"></span>
-									<a href="" ng-click="remove_filter(field, facet.value)" class="remove_filter">[x]</a>
-								</li>
-							</ul></div>
-						</div>
-					</div>
-				</div>
-			
-				<ul class="tweet_listing">
-					<li ng-repeat="tweet in tweets">
-						<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
-							<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
-							{{tweet.userName}} ({{tweet.party}})<br />
-							<span ng-bind-html="tweet.text"></span><br />
-							<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
-						</div>
-					</li>
-				</ul>
 	
-				<pagination boundary-links="true" total-items="totalItems" page="currentPage" 
-					previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
-					last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
-			</div>
-			
-			<div id="facets" class="col-md-2 col-md-offset-2">
-				<div class="filter-panel">
-					<div class="filter-panel-heading">Filters</div>
-					<accordion close-others="false">
-						<facet-accordion facets="searchState.facets.party" is-open="true" click="filter(facet)"></facet-accordion>
-						<facet-query-accordion facets="searchState.facets.created_at" is-open="true" click="filter(facet)"></facet-query-accordion>
-						<facet-query-accordion facets="searchState.facets.retweet_count" is-open="true" click="filter(facet)"></facet-query-accordion>
-						<facet-query-accordion facets="searchState.facets.favorite_count" is-open="true" click="filter(facet)"></facet-query-accordion>
-						
-						<accordion-group is-open="isOpen">
-							<accordion-heading>
-								Extracted entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isOpen, 'glyphicon-plus-sign': !isOpen}"></i>
-							</accordion-heading>
-							<accordion>
-								<facet-accordion facets="searchState.facets.organization_ner" click="filter(facet)"></facet-accordion>
-								<facet-accordion facets="searchState.facets.person_ner" click="filter(facet)"></facet-accordion>
-								<facet-accordion facets="searchState.facets.location_ner" click="filter(facet)"></facet-accordion>
-							</accordion>
-						</accordion-group>
-					</accordion>
-				</div>
-				
-			</div>
-		</div>
+		<div ng-view></div>
+	
 	</div>
 
 </body>
