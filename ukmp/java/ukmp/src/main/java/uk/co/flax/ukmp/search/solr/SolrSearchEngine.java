@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServer;
@@ -336,6 +337,14 @@ public class SolrSearchEngine implements SearchEngine {
 		query.setRequestHandler(termsConfig.getHandler());
 		query.set(TermsParams.TERMS_FIELD, termsConfig.getField());
 		query.set(TermsParams.TERMS_LIMIT, termsConfig.getLimit());
+
+		// Check if we should set the sort order
+		if (StringUtils.isNotBlank(termsConfig.getSortOrder())) {
+			String sort = termsConfig.getSortOrder();
+			if (TermsParams.TERMS_SORT_COUNT.equals(sort) || TermsParams.TERMS_SORT_INDEX.equals(sort)) {
+				query.set(TermsParams.TERMS_SORT, sort);
+			}
+		}
 
 		try {
 			QueryResponse response = server.query(query);
