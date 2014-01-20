@@ -56,6 +56,11 @@ solr:
 
 logging:
   version: 1 
+  formatters:
+    standard:
+      format: "%(asctime)s %(levelname)s %(message)s"
+    simple:
+      format: "%(levelname)s %(message)s"
   loggers: 
     fetch:
       handlers: [console, fetch_file]
@@ -68,15 +73,18 @@ logging:
       class: logging.StreamHandler
       level: 20
       stream: ext://sys.stdout
+      formatter: simple
     fetch_file:
       class : logging.handlers.RotatingFileHandler
       level: 10
+      formatter: standard
       filename: log/fetch.log
       maxBytes: 1000000
       backupCount: 10
     indexer_file:
       class : logging.handlers.RotatingFileHandler
       level: 10
+      formatter: standard
       filename: log/indexer.log
       maxBytes: 1000000
       backupCount: 10
