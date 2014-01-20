@@ -10,7 +10,7 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	
 	$scope.setPage = function(page) {
 		var params = {
-				p: page - 1
+			p: page - 1
 		};
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
@@ -110,7 +110,10 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		if ($routeParams.query) {
 			self.updateModel({ q: $routeParams.query });
 		} else {
-			$scope.setPage(1);
+			var path = $location.path();
+			if (path.match(/^\/search.*/)) {
+				$scope.setPage(1);
+			}
 		}
 	}
 	
