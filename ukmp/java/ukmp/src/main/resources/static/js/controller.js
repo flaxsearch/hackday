@@ -24,6 +24,9 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	
 	$scope.search = function(query) {
 		if ($location.path().match(/^\/search.*/)) {
+			if ($location.path().match(/^\/search\/.*/)) {
+				$location.path('/search');
+			}
 			var params = { q: query };
 			if ($scope.searchState) {
 				params.sortby = $scope.searchState.sortField;
