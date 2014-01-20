@@ -1,6 +1,10 @@
-var ukmpApp = angular.module('ukmpApp', [ 'ui.bootstrap', 'ngSanitize' ]);
+var ukmpControllers = angular.module('ukmpControllers', [ 'ui.bootstrap', 'ngSanitize' ]);
 
-ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
+/*
+ * Search Controller. Handles all functions on the search page, plus
+ * access through the search form in the navbar.
+ */
+ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
 	
 	var self = this;
 	
@@ -16,8 +20,8 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 		self.updateModel(params);
 	}
 	
-	$scope.search = function() {
-		self.updateModel({ q : this.query });
+	$scope.search = function(query) {
+		$location.path('/search/' + query);
 	}
 	
 	$scope.filter = function(facet) {
@@ -49,15 +53,17 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 	
 	this.copyFilters = function(params, skip) {
 		params.fq = [];
-		var fields = Object.keys($scope.searchState.appliedFilters)
-		if (fields.length > 0) {
-			for (var i = 0; i < fields.length; i ++) {
-				var field = fields[i];
-				var filters = $scope.searchState.appliedFilters[field].facets;
-				for (var j = 0; j < filters.length; j ++) {
-					var fq = field + ':"' + filters[j].value + '"';
-					if (fq !== skip) {
-						params.fq.push(fq);
+		if ($scope.searchState.appliedFilters) {
+			var fields = Object.keys($scope.searchState.appliedFilters)
+			if (fields.length > 0) {
+				for (var i = 0; i < fields.length; i ++) {
+					var field = fields[i];
+					var filters = $scope.searchState.appliedFilters[field].facets;
+					for (var j = 0; j < filters.length; j ++) {
+						var fq = field + ':"' + filters[j].value + '"';
+						if (fq !== skip) {
+							params.fq.push(fq);
+						}
 					}
 				}
 			}
@@ -101,14 +107,17 @@ ukmpApp.controller('UKMPCtrl', [ '$scope', '$http', function($scope, $http) {
 	}
 	
 	this.init = function() {
-		$scope.setPage(1);
+		if ($routeParams.query) {
+			self.updateModel({ q: $routeParams.query });
+		} else {
+			$scope.setPage(1);
+		}
 	}
 	
 	self.init();
 	
-}]);
-
-ukmpApp.directive('facetList', function() {
+}])
+.directive('facetList', function() {
 	return {
 		restrict: 'E',
 		scope: {
@@ -140,3 +149,11 @@ ukmpApp.directive('facetList', function() {
 		templateUrl: 'template/directive/facet_query_accordion_group.html'
 	}
 });
+
+
+/*
+ * About controller. Controls the About page. 
+ */
+ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', function($scope) {
+	
+}]);

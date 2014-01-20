@@ -22,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 
 import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.api.StanfordData;
+import uk.co.flax.ukmp.api.StanfordRequest;
 import uk.co.flax.ukmp.services.SentimentAnalysisService;
 
 /**
@@ -38,7 +39,9 @@ public class SentimentAnalyzer {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public StanfordData handlePost(String text) {
+	public StanfordData handlePost(StanfordRequest req) {
+		String text = req.getText();
+
 		Sentiment sentiment = sentimentService.analyze(text);
 		return new StanfordData(null, sentiment);
 	}

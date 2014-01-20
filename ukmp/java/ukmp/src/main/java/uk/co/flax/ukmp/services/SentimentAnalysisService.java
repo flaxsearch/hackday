@@ -15,6 +15,9 @@
  */
 package uk.co.flax.ukmp.services;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import uk.co.flax.ukmp.api.Sentiment;
 import uk.co.flax.ukmp.config.StanfordConfiguration;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -38,6 +41,8 @@ public class SentimentAnalysisService {
 
 	private static final String LINK_REGEX = "(https?://\\S+)";
 	private static final String USERNAME_REGEX = "(@(\\w+))";
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SentimentAnalysisService.class);
 
 	private final StanfordCoreNLP pipeline;
 
@@ -74,8 +79,9 @@ public class SentimentAnalysisService {
 					mainSentiment = new Sentiment(sentence.get(SentimentCoreAnnotations.ClassName.class), sentiment);
 					longest = partText.length();
 				}
-
 			}
+
+			LOGGER.trace("Got '{}' sentiment from '{}'", mainSentiment.getSentimentClass(), psText);
 		}
 
 		return mainSentiment;
@@ -91,7 +97,7 @@ public class SentimentAnalysisService {
 		// Convert usernames to USERNAME
 		ret = ret.replaceAll(USERNAME_REGEX, "USERNAME");
 
-		return text;
+		return ret;
 	}
 
 }

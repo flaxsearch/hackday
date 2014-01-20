@@ -65,7 +65,7 @@ class Indexer(Thread):
             tweet_text = get_full_text(tweet)
             stweet = {
                 "id": tweet["id"],
-                "text": tweet["text"],
+                "text": tweet_text,
                 'retweet_count': tweet.get('retweet_count', 0),
                 'favorite_count': tweet.get('favorite_count', 0),
                 'user_screen_name': tweet['user']['screen_name'],
@@ -94,7 +94,7 @@ class Indexer(Thread):
                 stweet['ent_urls'] = tweet['urls'].values()
         
             # Extract recognised entities from the text - note NOT tweet entities
-            stanford_data = extract_stanford_data(self.stanford_url, tweet["text"])
+            stanford_data = extract_stanford_data(self.stanford_url, tweet_text)
             stweet.update(stanford_data['entities'])
             if stanford_data['sentiment']:
                 stweet['sentiment'] = stanford_data['sentiment']['value']
@@ -178,8 +178,8 @@ def extract_date(datestring):
 
 def extract_stanford_data(stanford_url, text):
     response = requests.post(stanford_url,
-        headers = { "content-type": "text/plain" },
-        data = json.dumps({'text': text}))
+        headers = { "content-type": "application/json" },
+        data = json.dumps({ 'text': text }))
 
     return json.loads(response.text)
 

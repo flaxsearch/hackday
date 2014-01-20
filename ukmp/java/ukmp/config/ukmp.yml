@@ -24,6 +24,27 @@ logging:
   loggers:
     # Set debug logging for our code
     "uk.co.flax": TRACE
+    
+  console:
+    enabled: false
+    
+  file:
+    enabled: true
+    
+    # The file to which statements will be logged.
+    currentLogFilename: log/ukmp.log
+
+    # If true, log files are rotated and archived.
+    archive: true
+
+    # When the log file rolls over, the file will be archived to
+    # app-2012-03-15.log, example.log will be truncated,
+    # and new statements written to it.
+    # To automatically gzip archive, add .gz to end of filename
+    #
+    # If archive is true, this must be specified.
+    archivedLogFilenamePattern: log/api-%d.log
+
 
 # Solr configuration
 solr:
