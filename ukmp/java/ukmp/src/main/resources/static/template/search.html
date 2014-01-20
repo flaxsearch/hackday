@@ -17,7 +17,11 @@
 				</div>
 			</div>
 		</div>
-	
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-8">
 		<ul class="tweet_listing">
 			<li ng-repeat="tweet in tweets">
 				<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
@@ -37,7 +41,7 @@
 	</div>
 	
 	<div id="facets" class="col-md-2 col-md-offset-2">
-		<div class="filter-panel">
+		<div class="filter-panel sortby-panel">
 			Sort by
 			<select ng-model="sortdetails" ng-change="changeSortOrder(sortdetails)">
 				<option value="created_at desc" ng-selected="sortDetails == 'created_at desc'">Creation date</option>
