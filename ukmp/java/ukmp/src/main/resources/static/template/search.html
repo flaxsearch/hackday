@@ -1,5 +1,4 @@
 <div class="row">
-
 	<div id="tweets" class="col-md-8">
 		<div class="results_header">
 			<span>Found {{totalItems}} results.</span>
@@ -22,8 +21,10 @@
 		<ul class="tweet_listing">
 			<li ng-repeat="tweet in tweets">
 				<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
+					<img src="img/{{tweet.party}}.jpg" class="logo"/>
 					<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
-					{{tweet.userName}} ({{tweet.party}})<br />
+					{{tweet.userName}} ({{tweet.party}}) 
+					<br />
 					<span ng-bind-html="tweet.text"></span><br />
 					<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
 				</div>
