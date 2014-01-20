@@ -1,5 +1,5 @@
 <div class="row">
-	<div id="tweets" class="col-md-8">
+	<div id="tweets" class="col-md-8 col-md-offset-1">
 		<div class="results_header">
 			<span>Found {{totalItems}} results.</span>
 			
@@ -21,7 +21,7 @@
 </div>
 
 <div class="row">
-	<div class="col-md-8">
+	<div class="col-md-8 col-md-offset-1">
 		<ul class="tweet_listing">
 			<li ng-repeat="tweet in tweets">
 				<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
@@ -40,7 +40,7 @@
 			last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
 	</div>
 	
-	<div id="facets" class="col-md-2 col-md-offset-2">
+	<div id="facets" class="col-md-2">
 		<div class="filter-panel sortby-panel">
 			Sort by
 			<select ng-model="sortdetails" ng-change="changeSortOrder(sortdetails)">
