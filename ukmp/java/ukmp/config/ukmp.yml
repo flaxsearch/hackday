@@ -101,6 +101,10 @@ solr:
     field: text_terms
     # The number of terms to fetch
     limit: 30
+    # The filter to use to limit the terms
+    # filterBy: "created_at:[NOW/DAY-1DAYS TO NOW/DAY]"
+    # The sort order to use - either count or index
+    sortOrder: count
 
 # The Stanford NLP configuration
 stanford:
