@@ -94,6 +94,17 @@ body {
 	font-size: small;
 }
 
+
+/*
+ * About page styling
+ */
+.about_page {
+	width: 75%;
+	padding-left: 100px;
+}
+
+
+
 /* Override default bootstrap/angular styling */
 .nav,.pagination,.carousel a {
 	cursor: pointer;
