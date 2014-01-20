@@ -3,8 +3,7 @@ var ukmpApp = angular.module('ukmpApp', [ 'ngRoute', 'ukmpControllers' ]);
 ukmpApp.config([ '$routeProvider', 
 	function($routeProvider) {
 		$routeProvider.when('/search', {
-			templateUrl : 'template/search.html',
-			controller : 'UKMP_SearchCtrl'
+			templateUrl : 'template/search.html'
 		}).when('/search/:query', {
 			templateUrl : 'template/search.html',
 			controller : 'UKMP_SearchCtrl'
