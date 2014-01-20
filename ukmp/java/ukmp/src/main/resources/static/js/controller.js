@@ -157,7 +157,7 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 /*
  * About controller. Controls the About page. 
  */
-ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', '$http', function($scope, $http) {
+ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', '$http', '$location', function($scope, $http) {
 
 	var self = this;
 
@@ -222,7 +222,7 @@ ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', '$http', function($scop
 		// Get the terms data
 		$http({
 			'method' : 'GET',
-			'url' : 'http://localhost:8080/service/terms'
+			'url' : '/service/terms'
 		}).success(function(data) {
 			$scope.terms = data.terms;
 			self.initialiseCloud();
