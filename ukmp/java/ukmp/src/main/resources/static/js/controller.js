@@ -10,7 +10,7 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	
 	$scope.setPage = function(page) {
 		var params = {
-				p: page - 1
+			p: page - 1
 		};
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
@@ -110,7 +110,10 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		if ($routeParams.query) {
 			self.updateModel({ q: $routeParams.query });
 		} else {
-			$scope.setPage(1);
+			var path = $location.path();
+			if (path.match(/^\/search.*/)) {
+				$scope.setPage(1);
+			}
 		}
 	}
 	
@@ -154,6 +157,78 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 /*
  * About controller. Controls the About page. 
  */
-ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', function($scope) {
+ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', '$http', '$location', function($scope, $http) {
+
+	var self = this;
+
+	this.initialiseCloud = function() {
+		var fill = d3.scale.category20();
+
+		d3.layout.cloud()
+			.size([ 750, 300 ])
+			.words($scope.terms.map(function(term, idx, arr) {
+				return {
+					text : term.term,
+					size : 10 + (((arr.length - idx) / arr.length) * 60)
+				};
+			}))
+			.padding(1)
+			.rotate(function() {
+				return ~~(Math.random() * 2) * 90;
+			})
+			.font("Impact")
+			.fontSize(function(d) {
+				return d.size;
+			})
+			.spiral("rectangular")
+			.on("end", draw)
+			.start();
+
+		function draw(words) {
+			d3.select("#word_cloud").append("svg")
+				.attr("width", 750)
+				.attr("height", 300)
+				.append("g")
+				.attr("transform", "translate(370,150)")
+				.selectAll("text")
+				.data(words)
+				.enter()
+				.append("a")
+				.attr("xlink:href", function(d) {
+					return "/#/search/" + d.text;
+				})
+				.style("text-decoration", "none")
+				.append("text")
+				.style("font-size", function(d) {
+					return d.size + "px";
+				})
+				.style("font-family", "Impact")
+				.style("fill", function(d, i) {
+					var colours = [ 'Black', 'Red', 'Blue', 'Orange', 'Green', 'Purple' ];
+					return colours[~~(Math.random() * colours.length)];
+				})
+				.attr("text-anchor", "middle")
+				.attr("transform", function(d) {
+					return "translate(" + [ d.x, d.y ] + ")rotate(" + d.rotate + ")";
+				})
+				.text(function(d) {
+					return d.text;
+				});
+		}
+
+	}
+
+	this.init = function() {
+		// Get the terms data
+		$http({
+			'method' : 'GET',
+			'url' : '/service/terms'
+		}).success(function(data) {
+			$scope.terms = data.terms;
+			self.initialiseCloud();
+		});
+	}
 	
-}]);
+	self.init();
+
+} ]);
