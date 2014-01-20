@@ -193,6 +193,11 @@ ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', '$http', function($scop
 				.selectAll("text")
 				.data(words)
 				.enter()
+				.append("a")
+				.attr("xlink:href", function(d) {
+					return "/#/search/" + d.text;
+				})
+				.style("text-decoration", "none")
 				.append("text")
 				.style("font-size", function(d) {
 					return d.size + "px";

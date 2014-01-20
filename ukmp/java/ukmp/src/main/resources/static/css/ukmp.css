@@ -109,6 +109,7 @@ body {
 	background-color: #E7E7E7;
 }
 
+
 /* Override default bootstrap/angular styling */
 .nav,.pagination,.carousel a {
 	cursor: pointer;
