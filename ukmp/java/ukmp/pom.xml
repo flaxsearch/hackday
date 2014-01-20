@@ -121,5 +121,10 @@
 			<artifactId>angular-ui-bootstrap</artifactId>
 			<version>0.9.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>d3js</artifactId>
+			<version>3.3.5</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -94,6 +94,22 @@ body {
 	font-size: small;
 }
 
+
+/*
+ * About page styling
+ */
+.about_page {
+	width: 75%;
+	padding-left: 100px;
+}
+
+#word_cloud svg {
+	border: 4px solid #E7E7E7;
+	border-radius: 12px;
+	background-color: #E7E7E7;
+}
+
+
 /* Override default bootstrap/angular styling */
 .nav,.pagination,.carousel a {
 	cursor: pointer;

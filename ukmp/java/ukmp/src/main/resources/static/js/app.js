@@ -10,7 +10,7 @@ ukmpApp.config([ '$routeProvider',
 			controller : 'UKMP_SearchCtrl'
 		}).when('/about', {
 			templateUrl : 'template/about.html',
-			controller : 'UKMP_AboutController'
+			controller : 'UKMP_AboutCtrl'
 		}).otherwise({
 			redirectTo : '/about'
 		});
