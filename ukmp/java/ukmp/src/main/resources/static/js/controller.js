@@ -14,6 +14,8 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		};
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
+			params.sortby = $scope.searchState.sortField;
+			params.sortasc = $scope.searchState.sortAscending;
 			self.copyFilters(params);
 		}
 
@@ -21,13 +23,40 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	}
 	
 	$scope.search = function(query) {
-		$location.path('/search/' + query);
+		if ($location.path().match(/^\/search.*/)) {
+			var params = { q: query };
+			if ($scope.searchState) {
+				params.sortby = $scope.searchState.sortField;
+				params.sortasc = $scope.searchState.sortAscending;
+			}
+			self.updateModel(params);
+		} else {
+			// Coming in from another page - reload with the query
+			$location.path('/search/' + query);
+		}
+	}
+	
+	$scope.changeSortOrder = function(sortdetails) {
+		var details = sortdetails.split(/\s+/);
+		var sortAscending = (details[1] == 'asc');
+		
+		var params = {
+			sortby: details[0],
+			sortasc: sortAscending
+		}
+		if ($scope.searchState) {
+			params.q = $scope.searchState.query;
+		}
+		
+		self.updateModel(params);
 	}
 	
 	$scope.filter = function(facet) {
 		var params = {}
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
+			params.sortby = $scope.searchState.sortField;
+			params.sortasc = $scope.searchState.sortAscending;
 			self.copyFilters(params);
 			if (facet.value.charAt(0) == '[') {
 				// This is a facetQuery - don't quote the terms
@@ -45,6 +74,8 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		var params = {}
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
+			params.sortby = $scope.searchState.sortField;
+			params.sortasc = $scope.searchState.sortAscending;
 			self.copyFilters(params, field + ':"' + value + '"');
 		}
 		
@@ -84,6 +115,8 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 			$scope.currentPage = $scope.searchState.pageNumber + 1;
 			$scope.numPages = data.numResults / data.pageSize;
 			$scope.totalItems = data.numResults;
+			$scope.sortDetails = $scope.searchState.sortField  
+				+ ($scope.searchState.sortAscending ? ' asc' : ' desc');
 			
 			// Booleans indicating whether or not to display the searched/filtered by displays
 			$scope.searched = $scope.searchState.query !== "*";

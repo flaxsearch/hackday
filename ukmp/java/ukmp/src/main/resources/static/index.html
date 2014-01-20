@@ -20,7 +20,7 @@
 	<link rel="stylesheet" href="/css/ukmp.css" />
 </head>
 
-<body>
+<body ng-controller="UKMP_SearchCtrl">
 
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 		<div class="container">
@@ -44,7 +44,7 @@
 			
 			<!-- Search form -->
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-				<form class="navbar-form navbar-right" role="search" ng-submit="search(query)" ng-controller="UKMP_SearchCtrl">
+				<form class="navbar-form navbar-right" role="search" ng-submit="search(query)">
 					<div class="form-group">
 						<input type="text" class="form-control" placeholder="Search" name="query" ng-model="query">
 					</div>
