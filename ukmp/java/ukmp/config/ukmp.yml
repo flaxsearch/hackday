@@ -66,16 +66,16 @@ solr:
       
     retweet_count:
        "0" : "No retweets"
-       "[1 TO 10]" : "Up to 10"
-       "[11 TO 100]" : "Up to 100"
-       "[101 TO 1000]" : "Up to 1000"
+       "[1 TO 10]" : "1 - 10"
+       "[11 TO 100]" : "11 - 100"
+       "[101 TO 1000]" : "101 - 1000"
        "[1000 TO *]" : "Over 1000"
 
     favorite_count:
        "0" : "No favorites"
-       "[1 TO 10]" : "Up to 10"
-       "[11 TO 100]" : "Up to 100"
-       "[101 TO 1000]" : "Up to 1000"
+       "[1 TO 10]" : "1 - 10"
+       "[11 TO 100]" : "11 - 100"
+       "[101 TO 1000]" : "101 - 1000"
        "[1000 TO *]" : "Over 1000"
 
   # Labels to use for the facets, when displayed
