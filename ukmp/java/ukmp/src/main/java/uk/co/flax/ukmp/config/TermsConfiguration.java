@@ -25,12 +25,12 @@ public class TermsConfiguration {
 
 	@Valid @NotNull
 	private String handler;
-
 	@Valid @NotNull
 	private String field;
-
 	@Valid @NotNull
 	private int limit;
+
+	private String sortOrder;
 
 	/**
 	 * @return the handler
@@ -51,6 +51,10 @@ public class TermsConfiguration {
 	 */
 	public int getLimit() {
 		return limit;
+	}
+
+	public String getSortOrder() {
+		return sortOrder;
 	}
 
 }
