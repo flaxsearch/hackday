@@ -64,7 +64,7 @@ body {
 
 
 /* Tweet formatting */
-.tweet_listing ul {
+ul.tweet_listing {
 	padding-left: 0;
 }
 
@@ -92,6 +92,12 @@ body {
 
 .tweet_date {
 	font-size: small;
+}
+
+.sortby-panel {
+	background-color: #F5F5F5;
+	border: 1px solid #D0D0D0;
+	padding: 10px;
 }
 
 
