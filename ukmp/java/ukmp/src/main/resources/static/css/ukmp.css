@@ -70,24 +70,12 @@ ul.tweet_listing {
 
 .tweet_listing li {
 	list-style-type: none;
-	border: 1px solid #CCCCCC;
+	margin-bottom: 5px;
 	border-collapse: collapse;
 }
 
 .tweet {
 	padding: 5px 10px 5px 10px;
-}
-/* Negative sentiment */
-.tweet-sentiment-1 {
-	background-color: #FFD6CC;
-}
-/* Neutral sentiment */
-.tweet-sentiment-2 {
-	
-}
-/* Positive sentiment */
-.tweet-sentiment-3 {
-	background-color: #C8FFC8;
 }
 
 .tweet_date {
@@ -122,7 +110,12 @@ ul.tweet_listing {
 }
 
 .logo {
-    width: 20px;
-    height: 20px;
-    border: 3px solid white;
+    width: 25px;
+    height: 25px;
+    border: 1px solid white;
+}
+
+.sentiment {
+	width: 10px;
+	height: 10px;
 }
