@@ -15,6 +15,8 @@
  */
 package uk.co.flax.ukmp.config;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -31,6 +33,8 @@ public class TermsConfiguration {
 	private int limit;
 
 	private String sortOrder;
+
+	private List<String> stopWords;
 
 	/**
 	 * @return the handler
@@ -55,6 +59,15 @@ public class TermsConfiguration {
 
 	public String getSortOrder() {
 		return sortOrder;
+	}
+
+	/**
+	 * Stopwords contains a list of words which we don't want to pass through
+	 * to the application, but which weren't filtered out when indexing.
+	 * @return the list of stopwords.
+	 */
+	public List<String> getStopWords() {
+		return stopWords;
 	}
 
 }
