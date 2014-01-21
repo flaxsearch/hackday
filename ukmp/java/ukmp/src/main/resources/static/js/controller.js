@@ -157,6 +157,11 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		// (we are coming in from another page via the search event)
 		if ($scope.query) {
 			self.updateModel({ q: $scope.query });
+		} else if ($routeParams.query) {
+			// Incoming link with query included (most likely from word cloud)
+			// - set query in form, redirect to /search.
+			$scope.$parent.query = $routeParams.query;
+			$location.path('/search');
 		} else {
 			// User has clicked the browse link - just grab first page of tweets
 			$scope.setPage(1);
