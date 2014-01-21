@@ -97,6 +97,10 @@ ul.tweet_listing {
 	padding-left: 100px;
 }
 
+.about_page h4 {
+	margin-top: 20px;
+}
+
 #word_cloud svg {
 	border: 4px solid #E7E7E7;
 	border-radius: 12px;
