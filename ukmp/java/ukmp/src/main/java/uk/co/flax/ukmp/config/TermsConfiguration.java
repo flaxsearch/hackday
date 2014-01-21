@@ -15,6 +15,7 @@
  */
 package uk.co.flax.ukmp.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -64,9 +65,13 @@ public class TermsConfiguration {
 	/**
 	 * Stopwords contains a list of words which we don't want to pass through
 	 * to the application, but which weren't filtered out when indexing.
-	 * @return the list of stopwords.
+	 * @return the list of stopwords. Never <code>null</code> - if not set
+	 * in the config file, an empty list will be returned.
 	 */
 	public List<String> getStopWords() {
+		if (stopWords == null) {
+			stopWords = new ArrayList<String>();
+		}
 		return stopWords;
 	}
 
