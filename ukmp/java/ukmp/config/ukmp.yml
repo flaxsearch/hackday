@@ -106,6 +106,15 @@ solr:
     # The sort order to use - either count or index
     sortOrder: count
 
+    # A list of words we don't want to appear in the terms list.
+    # Some of these should be filtered by Solr at indexing time, so this is
+    # a second level of filtering
+    stopWords: [
+      "1", "2", "4", "says", "has", "being", "it's", "so", "very", "christmas",
+      "one", "can", "just", "get", "from", "about", "here",
+      "our", "http", "https", "we", "have", "his", "her", "their"
+    ]
+
 # The Stanford NLP configuration
 stanford:
 
