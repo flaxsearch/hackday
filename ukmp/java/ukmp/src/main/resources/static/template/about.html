@@ -14,12 +14,24 @@
 <a href="http://www.meetup.com/Enterprise-Search-Cambridge-UK/">Enterprise Search
 Meetup</a> for Cambridge in the UK. During the day, the participants split into
 groups working on a number of different activities, two of them using a sample
-of Twitter data from members of the UK Parliament's
+of <a href="https://twitter.com/">Twitter</a> data from members of the UK Parliament's
 <a href="http://www.parliament.uk/business/commons/">House of Commons</a>. 
 By the end of the day,
 both groups had small web applications available which used the data in slightly
 different ways. Both of those applications have been used in the construction
 of this site.</p>
+
+<p>
+The content is gathered from four Twitter lists: one for each of the 
+<a href="https://twitter.com/tweetminster/lists/conservatives">Conservative</a>,
+<a href="https://twitter.com/tweetminster/lists/labour">Labour</a> and 
+<a href="https://twitter.com/tweetminster/lists/libdems">Liberal Democrat</a> parties, 
+and a <a href="https://twitter.com/tweetminster/lists/others">further list</a> for the smaller parties.
+We extract the relevant data, and use the Stanford NLP software to extract entities (organisations,
+people and locations) mentioned in the tweet, and feed the tweets into a Solr
+search engine. The tweets are then made available to view, filter and search 
+on the <a href="/#/search">Browse</a> page.
+</p>
 
 <h4>Credit where it's due...</h4>
 <p>The UKMP application is built using a number of Open Source technologies,
@@ -39,5 +51,9 @@ including:</p>
 	<li>Jason Davies' <a href="https://github.com/jasondavies/d3-cloud">D3-Cloud</a>,
 	generating the word cloud above.</li>
 </ul>
+
+<p>In addition, the tweets themselves could not be gathered without the lists
+generated and maintained by <a href="https://twitter.com/tweetminster">@tweetminster</a>
+(<a href="http://tweetminster.co.uk/">tweetminster.co.uk</a>).</p>
 
 </div><!-- .about_page -->
