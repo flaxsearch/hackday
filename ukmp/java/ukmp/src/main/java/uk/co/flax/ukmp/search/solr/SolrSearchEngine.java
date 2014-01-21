@@ -71,7 +71,7 @@ public class SolrSearchEngine implements SearchEngine {
 	public static final String USER_FULL_NAME = "user_full_name";
 	public static final String SENTIMENT_FIELD = "sentiment";
 	public static final String RETWEET_COUNT_FIELD = "retweet_count";
-	public static final String FAVOURITE_COUNT_FIELD = "favourite_count";
+	public static final String FAVOURITE_COUNT_FIELD = "favorite_count";
 
 	/**
 	 * Static instance of the Solr server - should be only one of these per
