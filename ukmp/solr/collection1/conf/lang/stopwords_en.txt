@@ -57,11 +57,15 @@ with
 rt
 i
 you
+we
 he
 she
 him
+his
 her
+our
 http
+https
 t.co
 amp
 my
