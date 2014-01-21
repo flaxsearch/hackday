@@ -94,10 +94,15 @@ class Indexer(Thread):
                 stweet['ent_urls'] = tweet['urls'].values()
         
             # Extract recognised entities from the text - note NOT tweet entities
-            stanford_data = extract_stanford_data(self.stanford_url, tweet_text)
-            stweet.update(stanford_data['entities'])
-            if stanford_data['sentiment']:
-                stweet['sentiment'] = stanford_data['sentiment']['value']
+            try:
+                stanford_data = extract_stanford_data(self.stanford_url, tweet_text)
+                stweet.update(stanford_data['entities'])
+                if stanford_data['sentiment']:
+                    stweet['sentiment'] = stanford_data['sentiment']['value']
+            except Exception as e:
+                # Abort if the webapp won't respond
+                logger.error("Caught exception getting Stanford data: %s" % e)
+                break
 
             response = requests.post(self.solr_url,
                 headers=dict(config["solr"]["headers"]),
@@ -200,6 +205,21 @@ def get_full_text(tweet):
         text = text[:txtPos] + rt_text
     return text
 
+def check_indexers(indexers):
+    """Check if all the indexer threads are running, returning false if all
+    are dead.
+    
+    Parameters:
+    - indexers - the array of indexer threads.
+    """
+    live_count = 0
+    for indexer in indexers:
+        if indexer.is_alive():
+            live_count += 1
+    if live_count != len(indexers):
+        logger.warn("%d/%d indexers running" % (live_count, len(indexers)))
+    return live_count > 0
+
 def main(opts, config):
     # Get the list of files to index
     if opts.tweet_file:
@@ -231,6 +251,9 @@ def main(opts, config):
             if line.strip():
                 tweet = json.loads(line)
                 tweet['party'] = party
+                if (queue.full() and not check_indexers(indexers)):
+                    # No indexers running - abort!
+                    raise RuntimeError("Indexers not running")
                 queue.put(tweet)
                 count += 1
         logger.debug('queued {0} tweets from {1}'.format(count, tweetfile))
