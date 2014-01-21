@@ -36,7 +36,9 @@ reindexes: [-3, -2, -1]
 stanford:
 
   # URL for the entity extractor - should be running as part of the webapp
-  handler_url: http://localhost:8080/service/stanford
+  handler_url: http://localhost:8080/service/entityExtractor
+  # COMMENTED - alternative URL with built-in sentiment filtering
+  # handler_url: http://localhost:8080/service/stanford
 
 solr:
 
