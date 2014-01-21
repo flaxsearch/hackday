@@ -331,12 +331,14 @@ public class SolrSearchEngine implements SearchEngine {
 	@Override
 	public List<Term> getSearchTerms() throws SearchEngineException {
 		TermsConfiguration termsConfig = config.getTermsConfiguration();
+		List<String> stopWords = termsConfig.getStopWords();
 		List<Term> terms = new ArrayList<Term>(termsConfig.getLimit());
 
 		SolrQuery query = new SolrQuery();
 		query.setRequestHandler(termsConfig.getHandler());
 		query.set(TermsParams.TERMS_FIELD, termsConfig.getField());
-		query.set(TermsParams.TERMS_LIMIT, termsConfig.getLimit());
+		// Limit should disregard the stopwords list size
+		query.set(TermsParams.TERMS_LIMIT, termsConfig.getLimit() + stopWords.size());
 
 		// Check if we should set the sort order
 		if (StringUtils.isNotBlank(termsConfig.getSortOrder())) {
@@ -349,9 +351,20 @@ public class SolrSearchEngine implements SearchEngine {
 		try {
 			QueryResponse response = server.query(query);
 			TermsResponse tResponse = response.getTermsResponse();
+
+			int count = 0;
 			for (org.apache.solr.client.solrj.response.TermsResponse.Term t : tResponse.getTerms(termsConfig.getField())) {
-				Term term = new Term(t.getTerm(), t.getFrequency());
-				terms.add(term);
+				if (!stopWords.contains(t.getTerm())) {
+					Term term = new Term(t.getTerm(), t.getFrequency());
+					terms.add(term);
+
+					// Keep track of the number of words we've got - rendering
+					// of terms takes time, so don't want to exceed limit
+					count ++;
+					if (count == termsConfig.getLimit()) {
+						break;
+					}
+				}
 			}
 
 		} catch (SolrServerException e) {
