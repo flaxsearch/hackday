@@ -997,7 +997,7 @@
        <str name="defType">edismax</str>
        <str name="qf">text</str>
        <str name="pf">text</str>
-       <str name="mm">1</str>
+       <str name="mm">3</str>
        <str name="rows">20</str>
        <str name="fl">*,score</str>
        <!-- Get errors when down to single result unless df is also set -->
