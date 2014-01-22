@@ -15,7 +15,6 @@
  */
 package uk.co.flax.ukmp.config;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -35,7 +34,15 @@ public class TermsConfiguration {
 
 	private String sortOrder;
 
-	private List<String> stopWords;
+	@Valid @NotNull
+	private int batchSize;
+	@Valid @NotNull
+	private List<String> filters;
+	@Valid @NotNull
+	private String stopWordsFile;
+	@Valid @NotNull
+	private int refreshMinutes;
+
 
 	/**
 	 * @return the handler
@@ -63,16 +70,31 @@ public class TermsConfiguration {
 	}
 
 	/**
-	 * Stopwords contains a list of words which we don't want to pass through
-	 * to the application, but which weren't filtered out when indexing.
-	 * @return the list of stopwords. Never <code>null</code> - if not set
-	 * in the config file, an empty list will be returned.
+	 * @return the batchSize
 	 */
-	public List<String> getStopWords() {
-		if (stopWords == null) {
-			stopWords = new ArrayList<String>();
-		}
-		return stopWords;
+	public int getBatchSize() {
+		return batchSize;
+	}
+
+	/**
+	 * @return the filters
+	 */
+	public List<String> getFilters() {
+		return filters;
+	}
+
+	/**
+	 * @return the stopWordsFile
+	 */
+	public String getStopWordsFile() {
+		return stopWordsFile;
+	}
+
+	/**
+	 * @return the refreshMinutes
+	 */
+	public int getRefreshMinutes() {
+		return refreshMinutes;
 	}
 
 }

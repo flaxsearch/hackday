@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServer;
@@ -33,10 +32,8 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SolrPingResponse;
-import org.apache.solr.client.solrj.response.TermsResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.TermsParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +43,6 @@ import uk.co.flax.ukmp.api.FacetQuery;
 import uk.co.flax.ukmp.api.SearchResults;
 import uk.co.flax.ukmp.api.SearchState;
 import uk.co.flax.ukmp.api.Sentiment;
-import uk.co.flax.ukmp.api.Term;
 import uk.co.flax.ukmp.api.Tweet;
 import uk.co.flax.ukmp.config.SolrConfiguration;
 import uk.co.flax.ukmp.config.TermsConfiguration;
@@ -329,49 +325,35 @@ public class SolrSearchEngine implements SearchEngine {
 	}
 
 	@Override
-	public List<Term> getSearchTerms() throws SearchEngineException {
+	public SearchResults getTextBatch(int batchNum) throws SearchEngineException {
+		SearchResults results;
 		TermsConfiguration termsConfig = config.getTermsConfiguration();
-		List<String> stopWords = termsConfig.getStopWords();
-		List<Term> terms = new ArrayList<Term>(termsConfig.getLimit());
 
-		SolrQuery query = new SolrQuery();
+		SolrQuery query = new SolrQuery("*:*");
 		query.setRequestHandler(termsConfig.getHandler());
-		query.set(TermsParams.TERMS_FIELD, termsConfig.getField());
-		// Limit should disregard the stopwords list size
-		query.set(TermsParams.TERMS_LIMIT, termsConfig.getLimit() + stopWords.size());
-
-		// Check if we should set the sort order
-		if (StringUtils.isNotBlank(termsConfig.getSortOrder())) {
-			String sort = termsConfig.getSortOrder();
-			if (TermsParams.TERMS_SORT_COUNT.equals(sort) || TermsParams.TERMS_SORT_INDEX.equals(sort)) {
-				query.set(TermsParams.TERMS_SORT, sort);
-			}
-		}
+		query.setFields(termsConfig.getField());
+		query.setRows(termsConfig.getBatchSize());
+		query.setStart(batchNum * termsConfig.getBatchSize());
+		query.addFilterQuery(termsConfig.getFilters().toArray(new String[0]));
 
 		try {
 			QueryResponse response = server.query(query);
-			TermsResponse tResponse = response.getTermsResponse();
+			SolrDocumentList docs = response.getResults();
 
-			int count = 0;
-			for (org.apache.solr.client.solrj.response.TermsResponse.Term t : tResponse.getTerms(termsConfig.getField())) {
-				if (!stopWords.contains(t.getTerm())) {
-					Term term = new Term(t.getTerm(), t.getFrequency());
-					terms.add(term);
-
-					// Keep track of the number of words we've got - rendering
-					// of terms takes time, so don't want to exceed limit
-					count ++;
-					if (count == termsConfig.getLimit()) {
-						break;
-					}
-				}
+			List<Tweet> tweets = new ArrayList<Tweet>(docs.size());
+			for (SolrDocument doc : docs) {
+				Tweet tweet = new Tweet();
+				tweet.setText((String) doc.getFieldValue(termsConfig.getField()));
+				tweets.add(tweet);
 			}
 
+			results = new SearchResults(query.getStart(), docs.getNumFound(), query.getRows(), tweets, null);
 		} catch (SolrServerException e) {
+			LOGGER.error("Server exception caught getting text batch {}: {}", batchNum, e.getMessage());
 			throw new SearchEngineException(e);
 		}
 
-		return terms;
+		return results;
 	}
 
 }

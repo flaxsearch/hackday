@@ -15,10 +15,8 @@
  */
 package uk.co.flax.ukmp.search;
 
-import java.util.List;
-
 import uk.co.flax.ukmp.api.SearchResults;
-import uk.co.flax.ukmp.api.Term;
+import uk.co.flax.ukmp.config.TermsConfiguration;
 
 
 /**
@@ -52,10 +50,16 @@ public interface SearchEngine {
 	public SearchResults search(Query query) throws SearchEngineException;
 
 	/**
-	 * Get a list of the top terms extracted from incoming tweets.
-	 * @return the list of terms.
+	 * Get a batch of tweets from the search engine, using a minimal handler
+	 * that only returns the tweet text. This is expected to be used to generate
+	 * the list of terms for the word cloud.
+	 *
+	 * <p>Most search parameters will be filled in from the {@link TermsConfiguration},
+	 * with only the batch number required to set the search start point.</p>
+	 * @param batchNum the number of the batch to look up, starting from 0.
+	 * @return a list of search results, comprising tweets with text only.
 	 * @throws SearchEngineException if there are problems executing the search.
 	 */
-	public List<Term> getSearchTerms() throws SearchEngineException;
+	public SearchResults getTextBatch(int batchNum) throws SearchEngineException;
 
 }

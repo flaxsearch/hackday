@@ -24,8 +24,7 @@ import javax.ws.rs.core.MediaType;
 
 import uk.co.flax.ukmp.api.Term;
 import uk.co.flax.ukmp.api.TermsResponse;
-import uk.co.flax.ukmp.search.SearchEngine;
-import uk.co.flax.ukmp.search.SearchEngineException;
+import uk.co.flax.ukmp.services.TermsManager;
 
 /**
  * Resource handler dealing with the search compopnent.
@@ -33,10 +32,10 @@ import uk.co.flax.ukmp.search.SearchEngineException;
 @Path("/terms")
 public class TermsHandler {
 
-	private final SearchEngine searchEngine;
+	private final TermsManager termsManager;
 
-	public TermsHandler(SearchEngine engine) {
-		this.searchEngine = engine;
+	public TermsHandler(TermsManager termsManager) {
+		this.termsManager = termsManager;
 	}
 
 	@GET
@@ -44,12 +43,8 @@ public class TermsHandler {
 	public TermsResponse handleGet() {
 		TermsResponse ret;
 
-		try {
-			List<Term> terms = searchEngine.getSearchTerms();
-			ret = new TermsResponse(terms);
-		} catch (SearchEngineException e) {
-			ret = new TermsResponse(e.getMessage());
-		}
+		List<Term> terms = termsManager.getTerms();
+		ret = new TermsResponse(terms);
 
 		return ret;
 	}

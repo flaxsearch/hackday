@@ -96,24 +96,24 @@ solr:
   # Config for the terms component
   terms:
     # The request handler for the terms component
-    handler: /terms
+    handler: /query
     # The field to use
-    field: text_terms
+    field: text
     # The number of terms to fetch
     limit: 75
-    # The filter to use to limit the terms
-    # filterBy: "created_at:[NOW/DAY-1DAYS TO NOW/DAY]"
     # The sort order to use - either count or index
     sortOrder: count
-
-    # A list of words we don't want to appear in the terms list.
-    # Some of these should be filtered by Solr at indexing time, so this is
-    # a second level of filtering
-    stopWords: [
-      "1", "2", "4", "says", "has", "being", "it's", "so", "very", "christmas",
-      "one", "can", "just", "get", "from", "about", "here",
-      "our", "http", "https", "we", "have", "his", "her", "their"
+    # The size of the batch to fetch
+    batchSize: 1000
+    # The filters to apply
+    filters: [
+      "created_at:[NOW/DAY-1DAYS TO NOW/DAY]"
     ]
+    # The stopwords file
+    stopWordsFile: config/terms_stopwords.txt
+    # The delay between updates (in minutes)
+    refreshMinutes: 10
+    
 
 # The Stanford NLP configuration
 stanford:
