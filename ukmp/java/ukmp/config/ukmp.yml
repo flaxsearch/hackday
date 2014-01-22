@@ -90,8 +90,8 @@ solr:
     place_full_name: "Place"
     user_full_name: "User name"
     created_at: "Created"
-    retweet_count: "Retweet count"
-    favorite_count: "Favourite count"
+    retweet_count: "Retweets"
+    favorite_count: "Favourites"
     
   # Config for the terms component
   terms:
