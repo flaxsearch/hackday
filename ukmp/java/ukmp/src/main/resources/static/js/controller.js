@@ -49,6 +49,18 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		self.updateModel(params);
 	});
 	
+	// Event handler to catch browse link - reset search
+	$scope.$on('Browse', function() {
+		$scope.searchState = {};
+		$scope.setPage(1);
+		// Reset the search form
+		if ($scope.query) {
+			// Have to reset the query in the parent scope...
+			$scope.$parent.query = "";
+			$scope.searchForm.$setPristine();
+		}
+	});
+	
 	$scope.changeSortOrder = function(sortdetails) {
 		var details = sortdetails.split(/\s+/);
 		var sortAscending = (details[1] == 'asc');
