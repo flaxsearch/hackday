@@ -1,10 +1,26 @@
 var ukmpControllers = angular.module('ukmpControllers', [ 'ui.bootstrap', 'ngSanitize' ]);
 
+ukmpControllers.controller('UKMP_PageCtrl', [ '$scope', '$location', function($scope, $location) {
+	
+	$scope.searchForm = {};
+	
+	// Event handler to catch search from nav bar - only want this to do
+	// something when *not* on search page
+	$scope.$on('Search', function(evt, query) {
+		if (!$location.path().match(/^\/search.*/)) {
+			// Redirect to the search page
+			$location.path('/search');
+		}
+	});
+	
+}]);
+
 /*
  * Search Controller. Handles all functions on the search page, plus
  * access through the search form in the navbar.
  */
-ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', '$routeParams', function($scope, $http, $location, $routeParams) {
+ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', '$routeParams', 
+                                                function($scope, $http, $location, $routeParams) {
 	
 	var self = this;
 	
@@ -22,22 +38,16 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		self.updateModel(params);
 	}
 	
-	$scope.search = function(query) {
-		if ($location.path().match(/^\/search.*/)) {
-			if ($location.path().match(/^\/search\/.*/)) {
-				$location.path('/search');
-			}
-			var params = { q: query };
-			if ($scope.searchState) {
-				params.sortby = $scope.searchState.sortField;
-				params.sortasc = $scope.searchState.sortAscending;
-			}
-			self.updateModel(params);
-		} else {
-			// Coming in from another page - reload with the query
-			$location.path('/search/' + query);
+	// Event handler to catch search from nav bar when already on search page
+	$scope.$on('Search', function(evt, query) {
+		var params = { q: query };
+		if ($scope.searchState) {
+			// Pass the sortby values into the query
+			params.sortby = $scope.searchState.sortField;
+			params.sortasc = $scope.searchState.sortAscending;
 		}
-	}
+		self.updateModel(params);
+	});
 	
 	$scope.changeSortOrder = function(sortdetails) {
 		var details = sortdetails.split(/\s+/);
@@ -143,13 +153,18 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	}
 	
 	this.init = function() {
-		if ($routeParams.query) {
-			self.updateModel({ q: $routeParams.query });
+		// Check for a value in the search form - if present, search on it
+		// (we are coming in from another page via the search event)
+		if ($scope.query) {
+			self.updateModel({ q: $scope.query });
+		} else if ($routeParams.query) {
+			// Incoming link with query included (most likely from word cloud)
+			// - set query in form, redirect to /search.
+			$scope.$parent.query = $routeParams.query;
+			$location.path('/search');
 		} else {
-			var path = $location.path();
-			if (path.match(/^\/search.*/)) {
-				$scope.setPage(1);
-			}
+			// User has clicked the browse link - just grab first page of tweets
+			$scope.setPage(1);
 		}
 	}
 	
@@ -263,6 +278,13 @@ ukmpControllers.controller('UKMP_AboutCtrl', [ '$scope', '$http', '$location', f
 			$scope.terms = data.terms;
 			self.initialiseCloud();
 		});
+		
+		// Reset the search form
+		if ($scope.query) {
+			// Have to reset the query in the parent scope...
+			$scope.$parent.query = "";
+			$scope.searchForm.$setPristine();
+		}
 	}
 	
 	self.init();

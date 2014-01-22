@@ -20,17 +20,20 @@
 	</div>
 </div>
 
-<div class="row" ng-if="tweets.length > 0">
+<div class="row" ng-if="tweets.length != 0">
 	<div class="col-md-8 col-md-offset-1">
 		<ul class="tweet_listing">
 			<li ng-repeat="tweet in tweets">
-				<div class="tweet tweet-sentiment-{{tweet.sentiment}}">
-					<img src="img/{{tweet.party}}_20x20.jpg" class="logo"/>
-					<strong><a href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
+				<div class="tweet">
+					<img ng-src="img/{{tweet.party}}_20x20.jpg" class="logo" ng-if="tweet.party != 'Other'"/>
+					<strong><a ng-href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
 					{{tweet.userName}} ({{tweet.party}}) 
 					<br />
 					<span ng-bind-html="tweet.text"></span><br />
-					<span class="tweet_date"><a href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
+					<span class="tweet_date"><a ng-href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
+					{{tweet.retweetCount}} retweets, 
+					{{tweet.favouriteCount}} favourites.
+					<!--img src="img/sentiment_tweet.sentiment.jpg" class="sentiment"/-->
 				</div>
 			</li>
 		</ul>
@@ -59,7 +62,7 @@
 				
 				<accordion-group is-open="isOpen">
 					<accordion-heading>
-						Extracted entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isOpen, 'glyphicon-plus-sign': !isOpen}"></i>
+						Entities <i class="glyphicon" ng-class="{'glyphicon-minus-sign': isOpen, 'glyphicon-plus-sign': !isOpen}"></i>
 					</accordion-heading>
 					<accordion>
 						<facet-accordion facets="searchState.facets.organization_ner" click="filter(facet)"></facet-accordion>
