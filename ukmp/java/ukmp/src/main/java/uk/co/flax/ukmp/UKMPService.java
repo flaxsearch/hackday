@@ -26,6 +26,7 @@ import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.solr.SolrSearchEngine;
 import uk.co.flax.ukmp.services.EntityExtractionService;
 import uk.co.flax.ukmp.services.SentimentAnalysisService;
+import uk.co.flax.ukmp.services.TermsManager;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
@@ -53,13 +54,18 @@ public class UKMPService extends Service<UKMPConfiguration> {
 		EntityExtractionService entityService = new EntityExtractionService(configuration.getStanfordConfiguration());
 		SentimentAnalysisService sentimentService = new SentimentAnalysisService(configuration.getStanfordConfiguration());
 
+		// Create the terms manager
+		// Uses the environment's lifecycle management to start/shutdown the threads.
+		TermsManager termsManager = new TermsManager(engine, configuration.getSolrConfiguration().getTermsConfiguration());
+		environment.manage(termsManager);
+
 		environment.addResource(new Index());
 		environment.addResource(new EntityExtractor(entityService));
 		environment.addResource(new SentimentAnalyzer(sentimentService));
 		environment.addResource(new StanfordNLP(entityService, sentimentService));
 
 		environment.addResource(new BrowseResource(engine));
-		environment.addResource(new TermsHandler(engine));
+		environment.addResource(new TermsHandler(termsManager));
 
 		// Add health checks
 		environment.addHealthCheck(new SolrHealthCheck(engine));

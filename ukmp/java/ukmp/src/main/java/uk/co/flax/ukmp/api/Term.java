@@ -18,7 +18,7 @@ package uk.co.flax.ukmp.api;
 /**
  * POJO representing a term, as returned from the terms component search.
  */
-public class Term {
+public class Term implements Comparable<Term> {
 
 	private final String term;
 	private final long count;
@@ -40,6 +40,21 @@ public class Term {
 	 */
 	public long getCount() {
 		return count;
+	}
+
+	@Override
+	public int compareTo(Term t) {
+		int ret = Long.compare(count, t.count);
+		if (ret == 0) {
+			ret = term.compareTo(t.term);
+		}
+
+		return ret;
+	}
+
+	@Override
+	public String toString() {
+		return term + " [" + count + "]";
 	}
 
 }
