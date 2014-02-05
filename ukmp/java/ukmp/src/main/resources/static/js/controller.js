@@ -152,20 +152,37 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 			url: '/service/browse',
 			params: params
 		}).success(function(data) {
-			// Update the basic scope data
-			$scope.tweets = data.tweets;
-			self.addTweetTextLinks($scope.tweets);
-			$scope.searchState = data.searchState;
-			// Incoming page number is 0-indexed
-			$scope.currentPage = $scope.searchState.pageNumber + 1;
-			$scope.numPages = data.numResults / data.pageSize;
-			$scope.totalItems = data.numResults;
-			$scope.sortDetails = $scope.searchState.sortField  
-				+ ($scope.searchState.sortAscending ? ' asc' : ' desc');
-			
-			// Booleans indicating whether or not to display the searched/filtered by displays
-			$scope.searched = $scope.searchState.query !== "*";
-			$scope.filtered = Object.keys($scope.searchState.appliedFilters).length > 0;
+			if (data.errorMessage) {
+				if (window.console) {
+					console.log(data.errorMessage);
+				}
+				
+				// Error state - show an error message, hide the search results
+				$scope.error = 'A server error has occurred - try again later.';
+				$('#error-message').show();
+				$('#search-status').hide();
+				$('#search-results').hide();
+			} else {
+				// Everything is okay - hide the error block, display the search results
+				$('#error-message').hide();
+				$('#search-status').show();
+				$('#search-results').show();
+				
+				// Update the basic scope data
+				$scope.tweets = data.tweets;
+				self.addTweetTextLinks($scope.tweets);
+				$scope.searchState = data.searchState;
+				// Incoming page number is 0-indexed
+				$scope.currentPage = $scope.searchState.pageNumber + 1;
+				$scope.numPages = data.numResults / data.pageSize;
+				$scope.totalItems = data.numResults;
+				$scope.sortDetails = $scope.searchState.sortField  
+					+ ($scope.searchState.sortAscending ? ' asc' : ' desc');
+				
+				// Booleans indicating whether or not to display the searched/filtered by displays
+				$scope.searched = $scope.searchState.query !== "*";
+				$scope.filtered = Object.keys($scope.searchState.appliedFilters).length > 0;
+			}
 		});
 	}
 	
