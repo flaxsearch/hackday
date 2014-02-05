@@ -62,6 +62,10 @@ body {
 	list-style-type: none;
 }
 
+.filter-panel input[type=checkbox] {
+	vertical-align: text-bottom;
+}
+
 
 /* Tweet formatting */
 ul.tweet_listing {
@@ -86,6 +90,10 @@ ul.tweet_listing {
 	background-color: #F5F5F5;
 	border: 1px solid #D0D0D0;
 	padding: 10px;
+}
+
+span.hl {
+	background-color: #FFFF00;
 }
 
 

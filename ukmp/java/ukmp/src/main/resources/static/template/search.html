@@ -50,7 +50,9 @@
 				<option value="created_at desc" ng-selected="sortDetails == 'created_at desc'">Creation date</option>
 				<option value="retweet_count desc" ng-selected="sortDetails == 'retweet_count desc'">Retweet count</option>
 				<option value="favorite_count desc" ng-selected="sortDetails == 'favorite_count desc'">Favourite count</option>
-			</select>
+			</select><br />
+			<input type="checkbox" ng-model="searchState.highlightingEnabled" ng-change="change_highlighting()" />
+			<span class="checkbox_label">Enable highlighting</span>
 		</div>
 		<div class="filter-panel">
 			<div class="filter-panel-heading">Filters</div>

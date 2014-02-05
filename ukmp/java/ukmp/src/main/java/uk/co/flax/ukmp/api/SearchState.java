@@ -38,8 +38,11 @@ public class SearchState {
 	/** The filters already applied */
 	private final Map<String, FacetList> appliedFilters;
 
+	/** Is highlighting enabled */
+	private final boolean highlightingEnabled;
+
 	public SearchState(String q, String sort, boolean sortAsc, int page, Map<String, FacetList> facets,
-			List<FacetQuery> facetQueries, Map<String, FacetList> appliedFilters) {
+			List<FacetQuery> facetQueries, Map<String, FacetList> appliedFilters, boolean hl) {
 		this.query = q;
 		this.sortField = sort;
 		this.sortAscending = sortAsc;
@@ -47,6 +50,7 @@ public class SearchState {
 		this.facets = facets;
 		this.facetQueries = facetQueries;
 		this.appliedFilters = appliedFilters;
+		this.highlightingEnabled = hl;
 	}
 
 	/**
@@ -96,6 +100,13 @@ public class SearchState {
 	 */
 	public Map<String, FacetList> getAppliedFilters() {
 		return appliedFilters;
+	}
+
+	/**
+	 * @return the highlightingEnabled
+	 */
+	public boolean isHighlightingEnabled() {
+		return highlightingEnabled;
 	}
 
 }

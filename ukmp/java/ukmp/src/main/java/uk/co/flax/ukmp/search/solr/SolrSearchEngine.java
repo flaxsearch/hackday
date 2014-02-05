@@ -153,9 +153,10 @@ public class SolrSearchEngine implements SearchEngine {
 
 			SearchState search = new SearchState(query.getQuery(), query.getSortField(), query.isSortAscending(),
 					query.getPageNumber(), availableFilters, null,
-					appliedFilters);
+					appliedFilters, query.isHighlightingEnabled());
+			List<Tweet> tweets = extractTweets(docs, response.getHighlighting(), query.isHighlightingEnabled());
 
-			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), extractTweets(docs), search);
+			results = new SearchResults(start, docs.getNumFound(), query.getPageSize(), tweets, search);
 		} catch (SolrServerException e) {
 			LOGGER.error("Server exception caught for query {}: {}", sQuery.toString(), e.getMessage());
 			throw new SearchEngineException(e);
@@ -164,7 +165,7 @@ public class SolrSearchEngine implements SearchEngine {
 		return results;
 	}
 
-	private List<Tweet> extractTweets(SolrDocumentList docs) {
+	private List<Tweet> extractTweets(SolrDocumentList docs, Map<String, Map<String, List<String>>> highlightMap, boolean highlighting) {
 		List<Tweet> tweets;
 
 		if (docs == null) {
@@ -175,8 +176,15 @@ public class SolrSearchEngine implements SearchEngine {
 				Map<String, Object> fieldMap = doc.getFieldValueMap();
 
 				Tweet tweet = new Tweet();
-				tweet.setId((String)fieldMap.get(ID_FIELD));
-				tweet.setText((String)fieldMap.get(TEXT_FIELD));
+				String id = (String)fieldMap.get(ID_FIELD);
+				tweet.setId(id);
+
+				String text = (String)fieldMap.get(TEXT_FIELD);
+				if (highlighting) {
+					text = getHighlight(text, TEXT_FIELD, highlightMap.get(id));
+				}
+
+				tweet.setText(text);
 				tweet.setCreated((Date)fieldMap.get(CREATED_FIELD));
 				tweet.setCountry((String)fieldMap.get(COUNTRY_FIELD));
 				tweet.setPlaceName((String)fieldMap.get(PLACE_NAME));
@@ -200,6 +208,16 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		return tweets;
+	}
+
+	private String getHighlight(String base, String fieldName, Map<String, List<String>> itemHighlights) {
+		String ret = base;
+
+		if (itemHighlights != null && itemHighlights.containsKey(fieldName)) {
+			ret = itemHighlights.get(fieldName).get(0);
+		}
+
+		return ret;
 	}
 
 	private Map<String, FacetList> extractAppliedFilters(Query query) {

@@ -107,6 +107,19 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		self.updateModel(params);
 	}
 	
+	$scope.change_highlighting = function() {
+		var params = {}
+		if ($scope.searchState) {
+			params.q = $scope.searchState.query;
+			params.p = $scope.searchState.pageNumber;
+			params.sortby = $scope.searchState.sortField;
+			params.sortasc = $scope.searchState.sortAscending;
+			self.copyFilters(params);
+		}
+		
+		self.updateModel(params);
+	}
+	
 	this.copyFilters = function(params, skip) {
 		params.fq = [];
 		if ($scope.searchState.appliedFilters) {
@@ -127,6 +140,11 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	}
 	
 	this.updateModel = function(params) {
+		// Copy common params
+		if ($scope.searchState) {
+			params.hl = $scope.searchState.highlightingEnabled;
+		}
+		
 		$http({
 			method: 'GET',
 			url: '/service/browse',
