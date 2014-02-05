@@ -1,4 +1,9 @@
-<div class="row">
+
+<div class="row" id="error-message">
+	<div class="col-md-8 col-md-offset-1">{{error}}</div>
+</div>
+
+<div class="row" id="search-status">
 	<div id="tweets" class="col-md-8 col-md-offset-1">
 		<div class="results_header">
 			<span>Found {{totalItems}} results.</span>
@@ -20,7 +25,7 @@
 	</div>
 </div>
 
-<div class="row" ng-if="tweets.length != 0">
+<div class="row" id="search-results" ng-if="tweets.length != 0">
 	<div class="col-md-8 col-md-offset-1">
 		<ul class="tweet_listing">
 			<li ng-repeat="tweet in tweets">

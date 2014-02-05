@@ -131,11 +131,13 @@ public class TermsManagerThread extends Thread {
 
 						terms = termList.subList(0, end);
 					}
-
-					lastRunTime = System.currentTimeMillis();
 				} catch (SearchEngineException e) {
 					LOGGER.error("Terms update failed - not updating terms list: {}", e.getMessage());
 				}
+
+				// Reset last run time outside try-catch block, save looping continuously if
+				// Solr goes down.
+				lastRunTime = System.currentTimeMillis();
 			}
 
 			try {
