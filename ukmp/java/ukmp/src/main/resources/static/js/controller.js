@@ -109,15 +109,17 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	
 	$scope.change_highlighting = function() {
 		var params = {}
-		if ($scope.searchState) {
+		// Only re-run search if we have a query defined - otherwise there will
+		// be no highlighting in the tweets, so no need to refresh
+		if ($scope.searchState && $scope.searchState.query !== '*') {
 			params.q = $scope.searchState.query;
 			params.p = $scope.searchState.pageNumber;
 			params.sortby = $scope.searchState.sortField;
 			params.sortasc = $scope.searchState.sortAscending;
 			self.copyFilters(params);
+			
+			self.updateModel(params);
 		}
-		
-		self.updateModel(params);
 	}
 	
 	this.copyFilters = function(params, skip) {
