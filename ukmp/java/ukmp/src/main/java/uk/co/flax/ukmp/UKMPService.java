@@ -18,7 +18,7 @@ package uk.co.flax.ukmp;
 import uk.co.flax.ukmp.health.SolrHealthCheck;
 import uk.co.flax.ukmp.resources.BrowseResource;
 import uk.co.flax.ukmp.resources.EntityExtractor;
-import uk.co.flax.ukmp.resources.Index;
+import uk.co.flax.ukmp.resources.Ping;
 import uk.co.flax.ukmp.resources.SentimentAnalyzer;
 import uk.co.flax.ukmp.resources.StanfordNLP;
 import uk.co.flax.ukmp.resources.TermsHandler;
@@ -59,7 +59,7 @@ public class UKMPService extends Service<UKMPConfiguration> {
 		TermsManager termsManager = new TermsManager(engine, configuration.getSolrConfiguration().getTermsConfiguration());
 		environment.manage(termsManager);
 
-		environment.addResource(new Index());
+		environment.addResource(new Ping());
 		environment.addResource(new EntityExtractor(entityService));
 		environment.addResource(new SentimentAnalyzer(sentimentService));
 		environment.addResource(new StanfordNLP(entityService, sentimentService));
