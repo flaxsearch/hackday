@@ -220,7 +220,33 @@ def check_indexers(indexers):
         logger.warn("%d/%d indexers running" % (live_count, len(indexers)))
     return live_count > 0
 
+def check_webapp(config):
+    """Check if the webapp is available and running, returning false if not."""
+    try:
+        response = requests.get(config['stanford']['check_url'])
+        return response.status_code == 200
+    except Exception as e:
+        logger.error("Exception from WebApp ping request: %s" % e)
+        return False
+
+def check_solr(config):
+    """Check if Solr is available and running, returning false if not."""
+    try:
+        response = requests.get(config['solr']['check_url'])
+        return response.status_code == 200
+    except Exception as e:
+        logger.error("Exception from Solr ping request: %s" % e)
+        return False
+
 def main(opts, config):
+    # Check if the WebApp and Solr are both available before doing anything else
+    if not check_webapp(config):
+        logger.error("Web App not available - aborting indexer")
+        raise SystemExit(1)
+    elif not check_solr(config):
+        logger.error("Solr not available - aborting indexer")
+        raise SystemExit(1)
+    
     # Get the list of files to index
     if opts.tweet_file:
         tweetfiles = [ opts.tweet_file ]

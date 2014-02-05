@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013 Lemur Consulting Ltd.
+ * Copyright (c) 2014 Lemur Consulting Ltd.
  * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /**
- * Index page resource handler.
+ * Handler class to return "OK" if service is alive.
  */
-@Path("/")
-public class Index {
+@Path("/ping")
+public class Ping {
 
-	public Index() {
+	public Ping() {
+		// Do nothing
 	}
-
 
 	@GET
 	public String handleGet() {
