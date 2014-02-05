@@ -340,6 +340,12 @@ public class SolrSearchEngine implements SearchEngine {
 			QueryResponse response = server.query(query);
 			SolrDocumentList docs = response.getResults();
 
+			// Attempt to ensure we always return at least one batch of results
+			if (docs.getNumFound() == 0) {
+				LOGGER.debug("No tweets found in text batch - running again without filters");
+				docs = runQueryWithoutFilters(query, termsConfig.getFilters());
+			}
+
 			List<Tweet> tweets = new ArrayList<Tweet>(docs.size());
 			for (SolrDocument doc : docs) {
 				Tweet tweet = new Tweet();
@@ -354,6 +360,30 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		return results;
+	}
+
+	/**
+	 * Run the given query, removing the given list of filters from the query itself.
+	 * @param query the query to be run.
+	 * @param filters the list of filters to remove.
+	 * @return a list of documents returned from the query.
+	 * @throws SolrServerException if a problem occurs accessing Solr.
+	 */
+	private SolrDocumentList runQueryWithoutFilters(SolrQuery query, List<String> filters) throws SolrServerException {
+		for (String fq : filters) {
+			// Re-query without the filter queries set
+			query.removeFilterQuery(fq);
+		}
+		QueryResponse response = server.query(query);
+		SolrDocumentList docs = response.getResults();
+
+		// Set numFound to the results list size, avoid reading every tweet in
+		// the search engine
+		if (docs.getNumFound() > 0) {
+			docs.setNumFound(docs.size());
+		}
+
+		return docs;
 	}
 
 }
