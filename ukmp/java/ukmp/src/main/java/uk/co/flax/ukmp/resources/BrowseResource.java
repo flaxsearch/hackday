@@ -47,7 +47,7 @@ public class BrowseResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public SearchResults handleGet(@QueryParam("p") int page, @QueryParam("q") String queryString,
 			@QueryParam("fq") List<String> filters, @QueryParam("sortby") String sortField,
-			@QueryParam("sortasc") boolean sortAsc) {
+			@QueryParam("sortasc") boolean sortAsc, @QueryParam("hl") String hl) {
 		SearchResults results;
 
 		try {
@@ -60,7 +60,13 @@ public class BrowseResource {
 				sortAsc = false;
 			}
 
-			Query query = new Query(qString, filters, sortField, sortAsc, Query.DEFAULT_PAGE_SIZE, page);
+			// Set highlight value - default should be true
+			boolean highlight = true;
+			if (StringUtils.isNotBlank(hl)) {
+				highlight = Boolean.parseBoolean(hl);
+			}
+
+			Query query = new Query(qString, filters, sortField, sortAsc, Query.DEFAULT_PAGE_SIZE, page, highlight);
 			results = searchEngine.search(query);
 		} catch (SearchEngineException e) {
 			results = new SearchResults(e.getMessage());

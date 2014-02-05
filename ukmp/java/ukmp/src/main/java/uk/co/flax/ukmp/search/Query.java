@@ -35,18 +35,20 @@ public class Query {
 	private final boolean sortAscending;
 	private final int pageSize;
 	private final int pageNumber;
+	private final boolean highlightingEnabled;
 
 	public Query(String query) {
-		this(query, null, DEFAULT_SORT_FIELD, false, DEFAULT_PAGE_SIZE, 0);
+		this(query, null, DEFAULT_SORT_FIELD, false, DEFAULT_PAGE_SIZE, 0, true);
 	}
 
-	public Query(String query, List<String> filters, String sort, boolean asc, int pgSize, int pgNum) {
+	public Query(String query, List<String> filters, String sort, boolean asc, int pgSize, int pgNum, boolean hl) {
 		this.query = query;
 		this.filters = filters;
 		this.sortField = sort;
 		this.sortAscending = asc;
 		this.pageSize = pgSize;
 		this.pageNumber = pgNum;
+		this.highlightingEnabled = hl;
 	}
 
 	/**
@@ -90,6 +92,13 @@ public class Query {
 	 */
 	public int getPageNumber() {
 		return pageNumber;
+	}
+
+	/**
+	 * @return the highlightingEnabled
+	 */
+	public boolean isHighlightingEnabled() {
+		return highlightingEnabled;
 	}
 
 }
