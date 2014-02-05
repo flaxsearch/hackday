@@ -1039,9 +1039,10 @@
        <!-- Highlighting defaults -->
        <str name="hl">on</str>
        <str name="hl.fl">text</str>
-       <str name="hl.encoder">html</str>
-       <str name="hl.simple.pre">&lt;b&gt;</str>
-       <str name="hl.simple.post">&lt;/b&gt;</str>
+       <!-- Use default hl.encoder
+       <str name="hl.encoder">html</str>-->
+       <str name="hl.simple.pre">&lt;span class="hl"&gt;</str>
+       <str name="hl.simple.post">&lt;/span&gt;</str>
        <str name="hl.snippets">1</str>
        <str name="hl.fragsize">300</str>
        <str name="hl.alternateField">text</str>
