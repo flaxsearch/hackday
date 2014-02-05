@@ -123,7 +123,13 @@ public class TermsManagerThread extends Thread {
 
 					// Update the public term list - needs to be locked
 					synchronized (terms) {
-						terms = termList.subList(0, termsConfig.getLimit());
+						// Check the endpoint, in case there aren't enough terms
+						int end = termsConfig.getLimit();
+						if (termList.size() < end) {
+							end = termList.size();
+						}
+
+						terms = termList.subList(0, end);
 					}
 
 					lastRunTime = System.currentTimeMillis();
