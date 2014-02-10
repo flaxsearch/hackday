@@ -2,7 +2,6 @@
  * General page styling *
  ************************/
 body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 	/* Padding at the top to push body below title bar */
 	padding-top: 68px;
 	padding-bottom: 20px;
@@ -121,10 +120,17 @@ span.hl {
 	cursor: pointer;
 }
 
+.tweet img {
+    border: 1px solid white;
+}
+
 .logo {
     width: 25px;
     height: 25px;
-    border: 1px solid white;
+}
+
+.tweet_bird {
+	height: 16px;
 }
 
 .sentiment {

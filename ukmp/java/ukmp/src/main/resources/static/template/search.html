@@ -32,7 +32,7 @@
 				<div class="tweet">
 					<img ng-src="img/{{tweet.party}}_20x20.jpg" class="logo" ng-if="tweet.party != 'Other'"/>
 					<strong><a ng-href="http://twitter.com/{{tweet.userScreenName}}" target="_tweets">@{{tweet.userScreenName}}</a></strong>
-					{{tweet.userName}} ({{tweet.party}}) 
+					{{tweet.userName}} ({{tweet.party}}) <img src="img/bird_blue_32.png" class="tweet_bird" />
 					<br />
 					<span ng-bind-html="tweet.text"></span><br />
 					<span class="tweet_date"><a ng-href="http://twitter.com/{{tweet.userScreenName}}/status/{{tweet.id}}" target="_tweets">{{tweet.created | date:'HH:mm:ss, d MMM yyyy'}}</a></span>
