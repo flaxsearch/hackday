@@ -66,6 +66,7 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 		var sortAscending = (details[1] == 'asc');
 		
 		var params = {
+			p: 0,
 			sortby: details[0],
 			sortasc: sortAscending
 		}
@@ -77,34 +78,41 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	}
 	
 	$scope.filter = function(facet) {
-		var params = {}
+		var params = { p: 0 }
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
 			params.sortby = $scope.searchState.sortField;
 			params.sortasc = $scope.searchState.sortAscending;
 			self.copyFilters(params);
-			if (facet.value.charAt(0) == '[') {
-				// This is a facetQuery - don't quote the terms
-				params.fq.push(facet.field + ":" + facet.value);
-			} else {
-				// This is a straight facet - quote the value
-				params.fq.push(facet.field + ':"' + facet.value + '"')
-			}
+			var fq = self.createFilterQuery(facet.field, facet.value);
+			params.fq.push(fq);
 		}
 		
 		self.updateModel(params);
 	}
 	
 	$scope.remove_filter = function(field, value) {
-		var params = {}
+		var params = { p: 0 }
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
 			params.sortby = $scope.searchState.sortField;
 			params.sortasc = $scope.searchState.sortAscending;
-			self.copyFilters(params, field + ':"' + value + '"');
+			
+			// Need to skip the value being removed
+			self.copyFilters(params, self.createFilterQuery(field, value));
 		}
 		
 		self.updateModel(params);
+	}
+	
+	this.createFilterQuery = function(field, value) {
+		var fq = field + ':';
+		if (value.charAt(0) == '[') {
+			fq = fq + value;
+		} else {
+			fq = fq + '"' + value + '"';
+		}
+		return fq;
 	}
 	
 	$scope.change_highlighting = function() {
@@ -131,7 +139,7 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 					var field = fields[i];
 					var filters = $scope.searchState.appliedFilters[field].facets;
 					for (var j = 0; j < filters.length; j ++) {
-						var fq = field + ':"' + filters[j].value + '"';
+						var fq = self.createFilterQuery(field, filters[j].value);
 						if (fq !== skip) {
 							params.fq.push(fq);
 						}
