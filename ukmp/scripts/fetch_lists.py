@@ -104,6 +104,7 @@ for party in config['party_lists']:
                     owner_screen_name=party_config['twitter_screen_name'], 
                     since_id=since_id, 
                     count=config['twitter']['tweet_count'],
+                    include_rts=False,
                 )
                 logger.info("Got {2} tweets for {0} since {1}".format(
                     slug, since_id, len(stats)))
