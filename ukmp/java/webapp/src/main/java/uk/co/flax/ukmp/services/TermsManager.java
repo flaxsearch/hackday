@@ -15,6 +15,8 @@
  */
 package uk.co.flax.ukmp.services;
 
+import io.dropwizard.lifecycle.Managed;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -24,8 +26,6 @@ import org.slf4j.LoggerFactory;
 import uk.co.flax.ukmp.api.Term;
 import uk.co.flax.ukmp.config.TermsConfiguration;
 import uk.co.flax.ukmp.search.SearchEngine;
-
-import com.yammer.dropwizard.lifecycle.Managed;
 
 /**
  * Manager class for handling the terms list.

@@ -15,11 +15,11 @@
  */
 package uk.co.flax.ukmp;
 
-import uk.co.flax.ukmp.config.StanfordConfiguration;
+import io.dropwizard.Configuration;
 import uk.co.flax.ukmp.config.SolrConfiguration;
+import uk.co.flax.ukmp.config.StanfordConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.yammer.dropwizard.config.Configuration;
 
 /**
  * Configuration details for the UKMP application/indexer.

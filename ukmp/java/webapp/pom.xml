@@ -64,9 +64,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.yammer.dropwizard</groupId>
+			<groupId>io.dropwizard</groupId>
 			<artifactId>dropwizard-core</artifactId>
-			<version>0.6.2</version>
+			<version>0.7.1</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.stanford.nlp</groupId>
@@ -118,6 +118,11 @@
 			<groupId>org.webjars</groupId>
 			<artifactId>d3js</artifactId>
 			<version>3.3.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.dropwizard</groupId>
+			<artifactId>dropwizard-assets</artifactId>
+			<version>0.7.1</version>
 		</dependency>
 	</dependencies>
 </project>

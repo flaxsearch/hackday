@@ -15,10 +15,10 @@
  */
 package uk.co.flax.ukmp.health;
 
+import com.codahale.metrics.health.HealthCheck;
+
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.SearchEngineException;
-
-import com.yammer.metrics.core.HealthCheck;
 
 /**
  * Health check to see if Solr server is up and running.
@@ -31,7 +31,6 @@ public class SolrHealthCheck extends HealthCheck {
 	 * Default constructor.
 	 */
 	public SolrHealthCheck(SearchEngine engine) {
-		super("solr");
 		this.searchEngine = engine;
 	}
 

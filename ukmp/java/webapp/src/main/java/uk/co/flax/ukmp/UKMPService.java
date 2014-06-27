@@ -15,6 +15,10 @@
  */
 package uk.co.flax.ukmp;
 
+import io.dropwizard.Application;
+import io.dropwizard.assets.AssetsBundle;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import uk.co.flax.ukmp.health.SolrHealthCheck;
 import uk.co.flax.ukmp.resources.BrowseResource;
 import uk.co.flax.ukmp.resources.EntityExtractor;
@@ -28,15 +32,11 @@ import uk.co.flax.ukmp.services.EntityExtractionService;
 import uk.co.flax.ukmp.services.SentimentAnalysisService;
 import uk.co.flax.ukmp.services.TermsManager;
 
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.assets.AssetsBundle;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
 
 /**
  * Main service class for the UKMP Tweet indexer/web application.
  */
-public class UKMPService extends Service<UKMPConfiguration> {
+public class UKMPService extends Application<UKMPConfiguration> {
 
 	@Override
 	public void initialize(Bootstrap<UKMPConfiguration> bootstrap) {
@@ -57,18 +57,18 @@ public class UKMPService extends Service<UKMPConfiguration> {
 		// Create the terms manager
 		// Uses the environment's lifecycle management to start/shutdown the threads.
 		TermsManager termsManager = new TermsManager(engine, configuration.getSolrConfiguration().getTermsConfiguration());
-		environment.manage(termsManager);
+		environment.lifecycle().manage(termsManager);
 
-		environment.addResource(new Ping());
-		environment.addResource(new EntityExtractor(entityService));
-		environment.addResource(new SentimentAnalyzer(sentimentService));
-		environment.addResource(new StanfordNLP(entityService, sentimentService));
+		environment.jersey().register(new Ping());
+		environment.jersey().register(new EntityExtractor(entityService));
+		environment.jersey().register(new SentimentAnalyzer(sentimentService));
+		environment.jersey().register(new StanfordNLP(entityService, sentimentService));
 
-		environment.addResource(new BrowseResource(engine));
-		environment.addResource(new TermsHandler(termsManager));
+		environment.jersey().register(new BrowseResource(engine));
+		environment.jersey().register(new TermsHandler(termsManager));
 
 		// Add health checks
-		environment.addHealthCheck(new SolrHealthCheck(engine));
+		environment.healthChecks().register("solr", new SolrHealthCheck(engine));
 	}
 
 	public static void main(String[] args) throws Exception {
