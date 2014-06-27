@@ -1,0 +1,32 @@
+
+# Path to authentication file
+authenticationFile: /home/mlp/.twitter.oauth
+
+# Path to data directory
+dataDirectory: /home/mlp/ukmp/data
+
+# Path to archive directory
+archiveDirectory: /home/mlp/ukmp/archive
+
+# Parties
+parties: 
+  labour:
+    displayName: Labour
+    twitterScreenName: tweetminster
+    twitterListSlug: labour
+
+  conservative:
+    displayName: Conservative
+    twitterScreenName: tweetminster
+    twitterListSlug: conservatives
+
+  libdem:
+    displayName: Liberal Democrat
+    twitterScreenName: tweetminster
+    twitterListSlug: libdems
+
+  other:
+    displayName: Other
+    twitterScreenName: tweetminster
+    twitterListSlug: others
+    
