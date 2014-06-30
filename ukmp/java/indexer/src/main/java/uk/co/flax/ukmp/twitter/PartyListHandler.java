@@ -15,7 +15,9 @@
  */
 package uk.co.flax.ukmp.twitter;
 
-import java.awt.print.Pageable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,8 +26,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Sets;
 
 import twitter4j.PagableResponseList;
 import twitter4j.Twitter;
@@ -37,22 +37,28 @@ import twitter4j.auth.AuthorizationFactory;
 import twitter4j.conf.Configuration;
 import uk.co.flax.ukmp.config.PartyConfiguration;
 
+import com.google.common.collect.Sets;
+
 /**
  * @author Matt Pearce
  */
-public class TwitterPartyListHandler {
+public class PartyListHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TwitterPartyListHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(PartyListHandler.class);
+
+	private static final long REFRESH_TIME = 6 * 60 * 60 * 1000;
 
 	private final Configuration twitterConfig;
 	private final Map<String, PartyConfiguration> parties;
 
 	private boolean hasChanged;
+	private Date updateTime;
 
 
 	private Map<String, Set<Long>> partyMemberIds = new HashMap<>();
+	private Map<Long, String> memberParties = new HashMap<>();
 
-	public TwitterPartyListHandler(Configuration twitterConfig, Map<String, PartyConfiguration> parties) {
+	public PartyListHandler(Configuration twitterConfig, Map<String, PartyConfiguration> parties) {
 		this.twitterConfig = twitterConfig;
 		this.parties = parties;
 	}
@@ -80,6 +86,11 @@ public class TwitterPartyListHandler {
 				}
 			}
 		}
+
+		if (hasChanged) {
+			updateTime = new Date();
+			memberParties.clear();
+		}
 	}
 
 	private Set<Long> readPartyIds(Twitter twitter, String screenName, String slug, String party) {
@@ -106,6 +117,40 @@ public class TwitterPartyListHandler {
 
 	public boolean listsChanged() {
 		return hasChanged;
+	}
+
+
+	public boolean isTimeToUpdate() {
+		return updateTime.before(new Date(new Date().getTime() - REFRESH_TIME));
+	}
+
+	public Collection<Long> getPartyMemberIds(String party) {
+		return partyMemberIds.get(party);
+	}
+
+	public List<Long> getAllPartyMemberIds() {
+		List<Long> ids = new ArrayList<>();
+
+		for (Set<Long> memberIds : partyMemberIds.values()) {
+			ids.addAll(memberIds);
+		}
+
+		return ids;
+	}
+
+	public Map<Long, String> getMemberParties() {
+		if (memberParties == null || memberParties.size() == 0) {
+			synchronized (memberParties) {
+				// Initialise member parties map
+				for (String party : partyMemberIds.keySet()) {
+					for (Long memberId : partyMemberIds.get(party)) {
+						memberParties.put(memberId, party);
+					}
+				}
+			}
+		}
+
+		return memberParties;
 	}
 
 }

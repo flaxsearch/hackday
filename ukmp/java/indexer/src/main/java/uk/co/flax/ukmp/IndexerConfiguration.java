@@ -15,7 +15,6 @@
  */
 package uk.co.flax.ukmp;
 
-import java.util.List;
 import java.util.Map;
 
 import uk.co.flax.ukmp.config.PartyConfiguration;
@@ -29,6 +28,9 @@ public class IndexerConfiguration {
 	private String authenticationFile;
 	private String dataDirectory;
 	private String archiveDirectory;
+	private int numListeners;
+	private int numThreads;
+	private int messageQueueSize;
 
 	private Map<String, PartyConfiguration> parties;
 
@@ -88,6 +90,46 @@ public class IndexerConfiguration {
 		this.archiveDirectory = archiveDirectory;
 	}
 
+	/**
+	 * @return the numListeners
+	 */
+	public int getNumListeners() {
+		return numListeners;
+	}
 
+	/**
+	 * @param numListeners the numListeners to set
+	 */
+	public void setNumListeners(int numListeners) {
+		this.numListeners = numListeners;
+	}
+
+	/**
+	 * @return the messageQueueSize
+	 */
+	public int getMessageQueueSize() {
+		return messageQueueSize;
+	}
+
+	/**
+	 * @param messageQueueSize the messageQueueSize to set
+	 */
+	public void setMessageQueueSize(int messageQueueSize) {
+		this.messageQueueSize = messageQueueSize;
+	}
+
+	/**
+	 * @return the numThreads
+	 */
+	public int getNumThreads() {
+		return numThreads;
+	}
+
+	/**
+	 * @param numThreads the numThreads to set
+	 */
+	public void setNumThreads(int numThreads) {
+		this.numThreads = numThreads;
+	}
 
 }

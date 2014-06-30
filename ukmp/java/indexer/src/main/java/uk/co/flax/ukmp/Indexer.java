@@ -17,16 +17,15 @@ package uk.co.flax.ukmp;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.yaml.snakeyaml.Yaml;
 
 import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationFactory;
 import twitter4j.conf.PropertyConfiguration;
-import uk.co.flax.ukmp.twitter.TwitterPartyListHandler;
+import uk.co.flax.ukmp.twitter.PartyListHandler;
 
 /**
  * @author Matt Pearce
@@ -37,31 +36,48 @@ public class Indexer {
 	private final Configuration twitterConfig;
 
 	public Indexer(String configFile) throws Exception {
+		// Read the configuration details
 		config = readConfiguration(configFile);
 		twitterConfig = readTwitterConfiguration(config.getAuthenticationFile());
-		System.out.println(config.getParties().get("labour").getTwitterListSlug());
 	}
 
-	private IndexerConfiguration readConfiguration(String configFile) throws FileNotFoundException {
+	private IndexerConfiguration readConfiguration(String configFile) throws IOException {
 		IndexerConfiguration ret = null;
+		BufferedReader br = null;
 
-		Yaml yaml = new Yaml();
-		BufferedReader br = new BufferedReader(new FileReader(configFile));
-		ret = yaml.loadAs(br, IndexerConfiguration.class);
+		try {
+			Yaml yaml = new Yaml();
+			br = new BufferedReader(new FileReader(configFile));
+			ret = yaml.loadAs(br, IndexerConfiguration.class);
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+		}
 
 		return ret;
 	}
 
 
-	private Configuration readTwitterConfiguration(String twitterConfigFile) throws FileNotFoundException {
-		InputStream is = new FileInputStream(config.getAuthenticationFile());
-		Configuration twitterConfig = new PropertyConfiguration(is);
+	private Configuration readTwitterConfiguration(String twitterConfigFile) throws IOException {
+		Configuration twitterConfig = null;
+		InputStream is = null;
+
+		try {
+			is = new FileInputStream(config.getAuthenticationFile());
+			twitterConfig = new PropertyConfiguration(is);
+		} finally {
+			if (is != null) {
+				is.close();
+			}
+		}
+
 		return twitterConfig;
 	}
 
 
 	public void run() {
-		TwitterPartyListHandler listHandler = new TwitterPartyListHandler(twitterConfig, config.getParties());
+		PartyListHandler listHandler = new PartyListHandler(twitterConfig, config.getParties());
 		listHandler.refreshLists();
 	}
 

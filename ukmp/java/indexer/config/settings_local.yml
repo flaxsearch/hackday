@@ -8,6 +8,15 @@ dataDirectory: /home/mlp/ukmp/data
 # Path to archive directory
 archiveDirectory: /home/mlp/ukmp/archive
 
+# Number of listeners to run
+numListeners: 4
+
+# Number of processor threads
+numThreads: 4
+
+# Size of incoming message queue
+messageQueueSize: 1000
+
 # Parties
 parties: 
   labour:
