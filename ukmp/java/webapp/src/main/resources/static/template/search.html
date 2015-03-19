@@ -43,9 +43,9 @@
 			</li>
 		</ul>
 
-		<pagination boundary-links="true" total-items="totalItems" page="$parent.currentPage" 
+		<pagination boundary-links="true" total-items="totalItems" ng-model="$parent.currentPage" 
 			previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" 
-			last-text="&raquo;" on-select-page="setPage(page)" max-size="5"></pagination>
+			last-text="&raquo;" ng-change="setPage()" max-size="5"></pagination>
 	</div>
 	
 	<div id="facets" class="col-md-2">

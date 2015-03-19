@@ -24,9 +24,13 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	
 	var self = this;
 	
-	$scope.setPage = function(page) {
+	$scope.setPage = function() {
+	    if ($scope.currentPage == undefined) {
+	        $scope.currentPage = 1;
+	    }
+	    
 		var params = {
-			p: page - 1
+			p: $scope.currentPage - 1
 		};
 		if ($scope.searchState) {
 			params.q = $scope.searchState.query;
@@ -52,7 +56,9 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	// Event handler to catch browse link - reset search
 	$scope.$on('Browse', function() {
 		$scope.searchState = {};
-		$scope.setPage(1);
+		console.log("onBrowse(): resetting current page to 1");
+		$scope.currentPage = 1;
+		$scope.setPage();
 		// Reset the search form
 		if ($scope.query) {
 			// Have to reset the query in the parent scope...
@@ -214,6 +220,8 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 	}
 	
 	this.init = function() {
+	    $scope.currentPage = 1;
+	    
 		// Check for a value in the search form - if present, search on it
 		// (we are coming in from another page via the search event)
 		if ($scope.query) {
@@ -225,7 +233,7 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 			$location.path('/search');
 		} else {
 			// User has clicked the browse link - just grab first page of tweets
-			$scope.setPage(1);
+			$scope.setPage();
 		}
 	}
 	
