@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -402,6 +403,31 @@ public class SolrSearchEngine implements SearchEngine {
 		}
 
 		return docs;
+	}
+
+	@Override
+	public void indexTweets(List<Tweet> tweets) throws SearchEngineException {
+		try {
+			server.addBeans(tweets);
+		} catch (SolrServerException e) {
+			throw new SearchEngineException(e);
+		} catch (IOException e) {
+			throw new SearchEngineException(e);
+		}
+	}
+
+	@Override
+	public void deleteTweets(List<Long> deleteIds) throws SearchEngineException {
+		// Convert longs to strings
+		List<String> ids = deleteIds.stream().map(id -> id.toString()).collect(Collectors.toList());
+
+		try {
+			server.deleteById(ids);
+		} catch (SolrServerException e) {
+			throw new SearchEngineException(e);
+		} catch (IOException e) {
+			throw new SearchEngineException(e);
+		}
 	}
 
 }

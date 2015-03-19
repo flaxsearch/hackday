@@ -16,27 +16,68 @@
 package uk.co.flax.ukmp.api;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.solr.client.solrj.beans.Field;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * POJO representing a single tweet.
+ * Java bean representing a single tweet.
  */
 public class Tweet {
 
+	@Field("id")
 	private String id;
+
+	@Field("text")
 	private String text;
+
+	@Field("party")
 	private String party;
+
+	@Field("created_at")
 	private Date created;
+
+	@Field("place_country")
 	private String country;
+
+	@Field("place_full_name")
 	private String placeName;
+
+	@Field("user_screen_name")
 	private String userScreenName;
+
+	@Field("user_full_name")
 	private String userName;
+
 	@JsonProperty("reply")
 	private String inReplyTo;
+
+	@Field("sentiment")
 	private int sentiment;
+
+	@Field("retweet_count")
 	private int retweetCount;
+
+	@Field("favorite_count")
 	private int favouriteCount;
+
+	@Field("*_ner")
+	private Map<String, Object> entities;
+
+	@Field("ent_mentions_screen_name")
+	private List<String> mentionScreenNames;
+
+	@Field("ent_mentions_full_name")
+	private List<String> mentionFullNames;
+
+	@Field("ent_hashtags")
+	private List<String> hashtags;
+
+	@Field("ent_urls")
+	private List<String> urls;
 
 	/**
 	 * @return the id
@@ -204,6 +245,76 @@ public class Tweet {
 	 */
 	public void setFavouriteCount(int favouriteCount) {
 		this.favouriteCount = favouriteCount;
+	}
+
+	/**
+	 * @return the entities
+	 */
+	public Map<String, Object> getEntities() {
+		return entities;
+	}
+
+	/**
+	 * @param entities the entities to set
+	 */
+	public void setEntities(Map<String, Object> entities) {
+		this.entities = entities;
+	}
+
+	/**
+	 * @return the mentionScreenNames
+	 */
+	public List<String> getMentionScreenNames() {
+		return mentionScreenNames;
+	}
+
+	/**
+	 * @param mentionScreenNames the mentionScreenNames to set
+	 */
+	public void setMentionScreenNames(List<String> mentionScreenNames) {
+		this.mentionScreenNames = mentionScreenNames;
+	}
+
+	/**
+	 * @return the mentionFullNames
+	 */
+	public List<String> getMentionFullNames() {
+		return mentionFullNames;
+	}
+
+	/**
+	 * @param mentionFullNames the mentionFullNames to set
+	 */
+	public void setMentionFullNames(List<String> mentionFullNames) {
+		this.mentionFullNames = mentionFullNames;
+	}
+
+	/**
+	 * @return the hashtags
+	 */
+	public List<String> getHashtags() {
+		return hashtags;
+	}
+
+	/**
+	 * @param hashtags the hashtags to set
+	 */
+	public void setHashtags(List<String> hashtags) {
+		this.hashtags = hashtags;
+	}
+
+	/**
+	 * @return the urls
+	 */
+	public List<String> getUrls() {
+		return urls;
+	}
+
+	/**
+	 * @param urls the urls to set
+	 */
+	public void setUrls(List<String> urls) {
+		this.urls = urls;
 	}
 
 }

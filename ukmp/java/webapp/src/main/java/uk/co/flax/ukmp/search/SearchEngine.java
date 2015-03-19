@@ -15,7 +15,10 @@
  */
 package uk.co.flax.ukmp.search;
 
+import java.util.List;
+
 import uk.co.flax.ukmp.api.SearchResults;
+import uk.co.flax.ukmp.api.Tweet;
 import uk.co.flax.ukmp.config.TermsConfiguration;
 
 
@@ -61,5 +64,9 @@ public interface SearchEngine {
 	 * @throws SearchEngineException if there are problems executing the search.
 	 */
 	public SearchResults getTextBatch(int batchNum) throws SearchEngineException;
+
+    public void indexTweets(List<Tweet> tweets) throws SearchEngineException;
+
+    public void deleteTweets(List<Long> deleteIds) throws SearchEngineException;
 
 }

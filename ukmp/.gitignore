@@ -13,5 +13,9 @@ matt_config.yml
 target
 .pydevproject
 
+# IntelliJ project files
+.idea
+*.iml
+
 # Vim swap files
 *.swp
