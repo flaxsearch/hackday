@@ -126,3 +126,42 @@ stanford:
   # Java properties for sentiment analysis
   sentimentProperties:
     annotators: "tokenize, ssplit, parse, sentiment"
+
+    
+# Twitter details
+twitter:
+
+  # Is the twitter client enabled?
+  enabled: true
+
+  # Location of the auth config file
+  authConfigFile: conf/example.auth
+  
+  # Status batch size (default=100)
+  statusBatchSize: 100
+  # Deletion batch size (default=50)
+  deletionBatchSize: 25
+  
+  # Details of individual lists for party MPs.
+  # Keys will be used by indexer to flag party affiliation.
+  lists:
+    
+    - displayName: Labour
+      twitter_screen_name: tweetminster
+      twitter_list_slug: labour
+  
+    - displayName: Conservative
+      twitter_screen_name: tweetminster
+      twitter_list_slug: conservatives
+  
+    - displayName: LibDem
+      twitter_screen_name: tweetminster
+      twitter_list_slug: libdems
+  
+    - displayName: Other
+      twitter_screen_name: tweetminster
+      twitter_list_slug: others
+  
+  # How often to check the lists for membership updates (in hours)
+  updateCheckHours: 24
+

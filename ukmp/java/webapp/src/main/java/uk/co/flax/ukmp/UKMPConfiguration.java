@@ -18,6 +18,7 @@ package uk.co.flax.ukmp;
 import io.dropwizard.Configuration;
 import uk.co.flax.ukmp.config.SolrConfiguration;
 import uk.co.flax.ukmp.config.StanfordConfiguration;
+import uk.co.flax.ukmp.config.TwitterConfiguration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -30,6 +31,8 @@ public class UKMPConfiguration extends Configuration {
 	private SolrConfiguration solrConfiguration;
 	@JsonProperty("stanford")
 	private StanfordConfiguration stanfordConfiguration;
+	@JsonProperty("twitter")
+	private TwitterConfiguration twitterConfiguration;
 
 	/**
 	 * @return the Solr configuration details.
@@ -43,6 +46,13 @@ public class UKMPConfiguration extends Configuration {
 	 */
 	public StanfordConfiguration getStanfordConfiguration() {
 		return stanfordConfiguration;
+	}
+
+	/**
+	 * @return the Twitter configuration details.
+	 */
+	public TwitterConfiguration getTwitterConfiguration() {
+		return twitterConfiguration;
 	}
 
 }

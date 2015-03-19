@@ -31,6 +31,8 @@ import uk.co.flax.ukmp.search.solr.SolrSearchEngine;
 import uk.co.flax.ukmp.services.EntityExtractionService;
 import uk.co.flax.ukmp.services.SentimentAnalysisService;
 import uk.co.flax.ukmp.services.TermsManager;
+import uk.co.flax.ukmp.twitter.ManagedTwitterClient;
+import uk.co.flax.ukmp.twitter.TwitterListManager;
 
 
 /**
@@ -41,9 +43,9 @@ public class UKMPService extends Application<UKMPConfiguration> {
 	@Override
 	public void initialize(Bootstrap<UKMPConfiguration> bootstrap) {
 		// Add bundle for static asset directories
-		bootstrap.addBundle(new AssetsBundle("/static", "/", "index.html"));
+		bootstrap.addBundle(new AssetsBundle("/static", "/", "index.html", "static"));
 		// Add webjars AssetsBundle, to include bootstrap, etc.
-	    bootstrap.addBundle(new AssetsBundle("/META-INF/resources/webjars", "/webjars"));
+	    bootstrap.addBundle(new AssetsBundle("/META-INF/resources/webjars", "/webjars", "", "webjars"));
 	}
 
 	@Override
@@ -58,6 +60,15 @@ public class UKMPService extends Application<UKMPConfiguration> {
 		// Uses the environment's lifecycle management to start/shutdown the threads.
 		TermsManager termsManager = new TermsManager(engine, configuration.getSolrConfiguration().getTermsConfiguration());
 		environment.lifecycle().manage(termsManager);
+
+		if (configuration.getTwitterConfiguration().isEnabled()) {
+			// Create the twitter managers
+			TwitterListManager listManager = new TwitterListManager(configuration.getTwitterConfiguration());
+			environment.lifecycle().manage(listManager);
+			ManagedTwitterClient twitterClient = new ManagedTwitterClient(configuration.getTwitterConfiguration(),
+					engine, entityService, listManager);
+			environment.lifecycle().manage(twitterClient);
+		}
 
 		environment.jersey().register(new Ping());
 		environment.jersey().register(new EntityExtractor(entityService));

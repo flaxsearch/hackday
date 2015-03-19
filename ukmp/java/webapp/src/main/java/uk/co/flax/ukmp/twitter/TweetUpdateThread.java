@@ -46,6 +46,8 @@ public class TweetUpdateThread extends Thread {
 
 	private boolean running;
 
+	private Map<Long, String> partyListIds;
+
 	public TweetUpdateThread(SearchEngine searchEngine, Queue<Status> statusQueue, int batchSize, EntityExtractionService ees) {
 		this.searchEngine = searchEngine;
 		this.statusQueue = statusQueue;
@@ -56,6 +58,14 @@ public class TweetUpdateThread extends Thread {
 	@Override
 	public void run() {
 		LOGGER.info("Starting twitter update thread.");
+		while (partyListIds == null) {
+			try {
+				LOGGER.debug("No party list IDs - waiting...");
+				Thread.sleep(QUEUE_CHECK_TIME);
+			} catch (InterruptedException e) {
+				LOGGER.error("Interrupted waiting for party list IDs: {}", e.getMessage());
+			}
+		}
 		running = true;
 
 		while (running) {
@@ -111,14 +121,18 @@ public class TweetUpdateThread extends Thread {
 		String text = status.getText();
 
 		Tweet tweet = new Tweet();
+		tweet.setId("" + status.getId());
 		tweet.setText(text);
 		tweet.setUserScreenName(status.getUser().getScreenName());
 		tweet.setUserName(status.getUser().getName());
 		tweet.setCreated(status.getCreatedAt());
-		tweet.setPlaceName(status.getPlace().getFullName());
-		tweet.setCountry(status.getPlace().getCountry());
+		if (status.getPlace() != null) {
+			tweet.setPlaceName(status.getPlace().getFullName());
+			tweet.setCountry(status.getPlace().getCountry());
+		}
 		tweet.setRetweetCount(status.getRetweetCount());
 		tweet.setFavouriteCount(status.getFavoriteCount());
+		tweet.setParty(partyListIds.get(status.getUser().getId()));
 
 		if (status.getUserMentionEntities() != null) {
 			List<String> screenNames = new ArrayList<>(status.getUserMentionEntities().length);
@@ -154,6 +168,13 @@ public class TweetUpdateThread extends Thread {
 		}
 
 		return tweet;
+	}
+
+	/**
+	 * @param partyListIds the partyListIds to set
+	 */
+	public void setPartyListIds(Map<Long, String> partyListIds) {
+		this.partyListIds = partyListIds;
 	}
 
 }

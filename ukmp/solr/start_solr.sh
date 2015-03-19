@@ -1,8 +1,8 @@
 #!/bin/bash
 
-APP_ROOT=/home/mlp/flax/hackday/ukmp
+APP_ROOT=/home/mlp/workspace/hackday/ukmp
 
-SOLR_ROOT=/home/mlp/flax/solr-4.6.0
+SOLR_ROOT=/home/mlp/apps/solr-4.10.1
 CONF_ROOT=$APP_ROOT/solr/collection1/conf
 
 cd $SOLR_ROOT/example

@@ -13,32 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.co.flax.ukmp.config;
+package uk.co.flax.ukmp.twitter;
+
+import java.util.List;
+import java.util.Map;
 
 /**
- * Created by mlp on 16/03/15.
+ * Interface for classes which need to be notified when the twitter update lists
+ * change.
+ *
+ * @author Matt Pearce
  */
-public class TwitterListConfiguration {
-
-    private String screenName;
-
-    private String slug;
-
-    private String displayName;
-
-    public String getScreenName() {
-        return screenName;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
+public interface TwitterListListener {
 
 	/**
-	 * @return the displayName
+	 * Notify the listener class that the list IDs have changed.
+	 * @param listIds the new map of list IDs.
 	 */
-	public String getDisplayName() {
-		return displayName;
-	}
+	public void notify(Map<String, List<Long>> listIds);
 
 }

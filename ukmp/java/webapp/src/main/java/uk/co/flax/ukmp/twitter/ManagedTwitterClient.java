@@ -17,26 +17,23 @@ package uk.co.flax.ukmp.twitter;
 
 import io.dropwizard.lifecycle.Managed;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import twitter4j.FilterQuery;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
-import twitter4j.conf.ConfigurationBuilder;
 import uk.co.flax.ukmp.config.TwitterConfiguration;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.services.EntityExtractionService;
@@ -44,35 +41,35 @@ import uk.co.flax.ukmp.services.EntityExtractionService;
 /**
  * Created by mlp on 14/03/15.
  */
-public class ManagedTwitterClient implements Managed {
+public class ManagedTwitterClient extends AbstractTwitterClient implements Managed, TwitterListListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagedTwitterClient.class);
 
-    private static final String CONSUMER_KEY = "consumer_key";
-    private static final String CONSUMER_SECRET = "consumer_secret";
-    private static final String ACCESS_TOKEN = "access_token_key";
-    private static final String ACCESS_SECRET = "access_token_secret";
-
     private final TwitterConfiguration config;
     private final SearchEngine searchEngine;
-    private final EntityExtractionService entityExtraction;
 
     private final Queue<Status> statusQueue;
     private final Queue<StatusDeletionNotice> deletionQueue;
 
     private TwitterStream stream;
-    private List<String> filters;
+    private List<Long> filterIds;
 
     private TweetDeletionThread deletionThread;
     private TweetUpdateThread updateThread;
 
-    public ManagedTwitterClient(TwitterConfiguration config, SearchEngine search, EntityExtractionService entityExtraction) {
+	public ManagedTwitterClient(TwitterConfiguration config, SearchEngine search,
+			EntityExtractionService entityExtraction, TwitterListManager listManager) {
         this.config = config;
         this.searchEngine = search;
-        this.entityExtraction = entityExtraction;
 
         this.statusQueue = new ConcurrentLinkedQueue<>();
         this.deletionQueue = new ConcurrentLinkedQueue<>();
+
+        this.deletionThread = new TweetDeletionThread(searchEngine, deletionQueue, config.getDeletionBatchSize());
+        this.updateThread = new TweetUpdateThread(searchEngine, statusQueue, config.getStatusBatchSize(), entityExtraction);
+
+        // Register ourselves as a listener with the list manager
+        listManager.registerListener(this);
     }
 
     @Override
@@ -85,12 +82,8 @@ public class ManagedTwitterClient implements Managed {
         StatusListener statusListener = new UKMPStatusListener(statusQueue, deletionQueue);
         stream.addListener(statusListener);
 
-//        updateFilters();
-
         // Start the update and delete threads
-        this.deletionThread = new TweetDeletionThread(searchEngine, deletionQueue, config.getDeletionBatchSize());
         deletionThread.start();
-        this.updateThread = new TweetUpdateThread(searchEngine, statusQueue, config.getStatusBatchSize(), entityExtraction);
         updateThread.start();
     }
 
@@ -102,40 +95,44 @@ public class ManagedTwitterClient implements Managed {
         updateThread.closeDown();
     }
 
-    private Configuration buildConfiguration() throws IOException {
-        Map<String, String> authMap = readAuthConfiguration();
-
-        ConfigurationBuilder cb = new ConfigurationBuilder();
-        cb.setOAuthAccessToken(authMap.get(ACCESS_TOKEN));
-        cb.setOAuthAccessTokenSecret(authMap.get(ACCESS_SECRET));
-        cb.setOAuthConsumerKey(authMap.get(CONSUMER_KEY));
-        cb.setOAuthConsumerSecret(authMap.get(CONSUMER_SECRET));
-
-        return cb.build();
+    @Override
+	protected TwitterConfiguration getConfig() {
+    	return config;
     }
 
-    private Map<String, String> readAuthConfiguration() throws IOException {
-        Map<String, String> ret = new HashMap<>();
+	@Override
+	public void notify(Map<String, List<Long>> listIds) {
+		List<Long> ids = new ArrayList<>();
+		listIds.keySet().forEach(party -> ids.addAll(listIds.get(party)));
+		updateFilterIds(ids);
 
-        BufferedReader br = null;
+		// Invert the map for the update thread
+		Map<Long, String> userPartyMap = new HashMap<>();
+		for (String party : listIds.keySet()) {
+			listIds.get(party).forEach(userId -> userPartyMap.put(userId, party));
+		}
+		updateThread.setPartyListIds(userPartyMap);
+	}
 
-        try {
-            br = new BufferedReader(new FileReader(config.getAuthConfigFile()));
-            String line;
+	private void updateFilterIds(List<Long> updatedIds) {
+		if (!updatedIds.equals(filterIds)) {
+			LOGGER.debug("Updating filter IDs");
+			if (this.filterIds != null) {
+				// Stop the stream listener
+				stream.cleanUp();
+			}
 
-            while ((line = br.readLine()) != null) {
-                if (StringUtils.isNotBlank(line.trim()) && !line.startsWith("#")) {
-                    String[] parts = line.split(":");
-                    ret.put(parts[0].trim(), parts[1].trim());
-                }
-            }
-        } finally {
-            if (br != null) {
-                br.close();
-            }
-        }
+			// Convert filterIds to long[]
+			long[] ids = new long[updatedIds.size()];
+			for (int i = 0; i < updatedIds.size(); i ++) {
+				ids[i] = updatedIds.get(i);
+			}
+			FilterQuery filterQuery = new FilterQuery().follow(ids);
+			// Start filtering by the new query
+			stream.filter(filterQuery);
 
-        return ret;
-    }
+			this.filterIds = updatedIds;
+		}
+	}
 
 }
