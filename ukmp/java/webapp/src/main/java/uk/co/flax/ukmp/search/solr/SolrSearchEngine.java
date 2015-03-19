@@ -409,6 +409,7 @@ public class SolrSearchEngine implements SearchEngine {
 	public void indexTweets(List<Tweet> tweets) throws SearchEngineException {
 		try {
 			server.addBeans(tweets);
+			server.commit();
 		} catch (SolrServerException e) {
 			throw new SearchEngineException(e);
 		} catch (IOException e) {
@@ -423,6 +424,7 @@ public class SolrSearchEngine implements SearchEngine {
 
 		try {
 			server.deleteById(ids);
+			server.commit();
 		} catch (SolrServerException e) {
 			throw new SearchEngineException(e);
 		} catch (IOException e) {
