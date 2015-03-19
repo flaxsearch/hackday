@@ -2,6 +2,7 @@
 data
 archive
 log
+_*.json
 
 # Keep personal twitter data secret
 matt_config.yml
