@@ -15,6 +15,12 @@
  */
 package uk.co.flax.ukmp.twitter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +31,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import twitter4j.HashtagEntity;
 import twitter4j.Status;
 import twitter4j.UserMentionEntity;
 import uk.co.flax.ukmp.api.Tweet;
+import uk.co.flax.ukmp.config.TwitterConfiguration;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.SearchEngineException;
 import uk.co.flax.ukmp.services.EntityExtractionService;
@@ -37,22 +48,27 @@ public class TweetUpdateThread extends Thread {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TweetUpdateThread.class);
 
+	private static final DateFormat DATA_DIR_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
 	private static final long QUEUE_CHECK_TIME = 500;
 
 	private final SearchEngine searchEngine;
 	private final Queue<Status> statusQueue;
 	private final int batchSize;
-	private final EntityExtractionService entityExtractionService;
+	private final EntityExtractionService entityExtraction;
+	private final TwitterConfiguration config;
 
 	private boolean running;
 
 	private Map<Long, String> partyListIds;
 
-	public TweetUpdateThread(SearchEngine searchEngine, Queue<Status> statusQueue, int batchSize, EntityExtractionService ees) {
+	public TweetUpdateThread(SearchEngine searchEngine, Queue<Status> statusQueue, int batchSize,
+			EntityExtractionService ees, TwitterConfiguration config) {
 		this.searchEngine = searchEngine;
 		this.statusQueue = statusQueue;
 		this.batchSize = batchSize;
-		this.entityExtractionService = ees;
+		this.entityExtraction = ees;
+		this.config = config;
 	}
 
 	@Override
@@ -111,8 +127,13 @@ public class TweetUpdateThread extends Thread {
 
 				searchEngine.indexTweets(tweets);
 				LOGGER.debug("Indexed {} tweets", updates.size());
+
+				// Store the tweets
+				storeTweets(tweets);
 			} catch (SearchEngineException e) {
 				LOGGER.error("Could not index {} tweets: {}", updates.size(), e.getMessage());
+			} catch (IOException e) {
+				LOGGER.error("Could not store tweets: {}", e.getMessage());
 			}
 		}
 	}
@@ -157,7 +178,7 @@ public class TweetUpdateThread extends Thread {
 		}
 
 		// Call the entity extraction service
-		Map<String, List<String>> entities = entityExtractionService.getEntities(text);
+		Map<String, List<String>> entities = entityExtraction.getEntities(text);
 		if (entities != null && !entities.isEmpty()) {
 			Map<String, Object> tweetEntities = new HashMap<String, Object>();
 			for (String type : entities.keySet()) {
@@ -168,6 +189,46 @@ public class TweetUpdateThread extends Thread {
 		}
 
 		return tweet;
+	}
+
+	private void storeTweets(List<Tweet> tweets) throws IOException {
+		File dataDir = new File(config.getDataDirectory());
+		ObjectMapper mapper = new ObjectMapper();
+
+		for (Tweet tweet : tweets) {
+			OutputStream out = null;
+
+			File tweetDir = new File(dataDir, DATA_DIR_FORMAT.format(tweet.getCreated()));
+			if (!tweetDir.exists()) {
+				if (!tweetDir.mkdirs()) {
+					LOGGER.error("Could not create data directory {}", tweetDir);
+				}
+			}
+
+			try {
+				File tweetFile = new File(tweetDir, tweet.getId() + ".json");
+				out = new FileOutputStream(tweetFile);
+
+				mapper.writeValue(out, tweet);
+
+				out.flush();
+			} catch (JsonGenerationException e) {
+				LOGGER.error("Could not generate JSON for tweet: {}", e.getMessage());
+			} catch (JsonMappingException e) {
+				LOGGER.error("JSON mapping issue for tweet: {}", e.getMessage());
+			} catch (IOException e) {
+				throw e;
+			} finally {
+				if (out != null) {
+					try {
+						out.close();
+					} catch (IOException e) {
+						LOGGER.error("Could not close tweet output stream: {}", e.getMessage());
+						throw e;
+					}
+				}
+			}
+		}
 	}
 
 	/**

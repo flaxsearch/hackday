@@ -65,8 +65,9 @@ public class ManagedTwitterClient extends AbstractTwitterClient implements Manag
         this.statusQueue = new ConcurrentLinkedQueue<>();
         this.deletionQueue = new ConcurrentLinkedQueue<>();
 
-        this.deletionThread = new TweetDeletionThread(searchEngine, deletionQueue, config.getDeletionBatchSize());
-        this.updateThread = new TweetUpdateThread(searchEngine, statusQueue, config.getStatusBatchSize(), entityExtraction);
+		this.deletionThread = new TweetDeletionThread(searchEngine, deletionQueue, config.getDeletionBatchSize());
+		this.updateThread = new TweetUpdateThread(searchEngine, statusQueue, config.getStatusBatchSize(),
+				entityExtraction, config);
 
         // Register ourselves as a listener with the list manager
         listManager.registerListener(this);

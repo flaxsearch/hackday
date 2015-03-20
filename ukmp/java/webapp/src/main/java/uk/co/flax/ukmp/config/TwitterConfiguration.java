@@ -17,6 +17,8 @@ package uk.co.flax.ukmp.config;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Created by mlp on 14/03/15.
  */
@@ -33,6 +35,9 @@ public class TwitterConfiguration {
     private List<TwitterListConfiguration> lists;
 
     private int updateCheckHours;
+
+    @NotNull
+    private String dataDirectory;
 
     public boolean isEnabled() {
         return enabled;
@@ -57,5 +62,12 @@ public class TwitterConfiguration {
     public int getUpdateCheckHours() {
         return updateCheckHours;
     }
+
+	/**
+	 * @return the dataDirectory
+	 */
+	public String getDataDirectory() {
+		return dataDirectory;
+	}
 
 }

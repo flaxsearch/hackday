@@ -134,6 +134,9 @@ twitter:
   # Is the twitter client enabled?
   enabled: true
 
+  # Data directory
+  dataDirectory: /data/ukmp
+
   # Location of the auth config file
   authConfigFile: conf/example.auth
   
