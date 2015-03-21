@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -77,7 +77,7 @@ public class SolrSearchEngine implements SearchEngine {
 	 * Static instance of the Solr server - should be only one of these per
 	 * running application.
 	 */
-	private static SolrServer server;
+	private static SolrClient server;
 	/** The Solr configuration details */
 	private SolrConfiguration config;
 
@@ -90,7 +90,7 @@ public class SolrSearchEngine implements SearchEngine {
 	 * Unit testing constructor.
 	 * @param server mock server instance.
 	 */
-	SolrSearchEngine(SolrServer server, SolrConfiguration config) {
+	SolrSearchEngine(SolrClient server, SolrConfiguration config) {
 		SolrSearchEngine.server = server;
 		this.config = config;
 	}
@@ -100,7 +100,7 @@ public class SolrSearchEngine implements SearchEngine {
 	 */
 	private static void initialiseServer(SolrConfiguration config) {
 		// Instantiate the server link
-		server = new HttpSolrServer(config.getBaseUrl());
+		server = new HttpSolrClient(config.getBaseUrl());
 	}
 
 	@Override
