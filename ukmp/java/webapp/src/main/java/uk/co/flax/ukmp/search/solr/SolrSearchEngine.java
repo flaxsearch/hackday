@@ -17,6 +17,7 @@ package uk.co.flax.ukmp.search.solr;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,6 +58,8 @@ import uk.co.flax.ukmp.search.SearchEngineException;
 public class SolrSearchEngine implements SearchEngine {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SolrSearchEngine.class);
+
+	public static final int COMMIT_WITHIN_MS = 15000;
 
 	public static final String ID_FIELD = "id";
 	public static final String TEXT_FIELD = "text";
@@ -177,7 +180,7 @@ public class SolrSearchEngine implements SearchEngine {
 				Map<String, Object> fieldMap = doc.getFieldValueMap();
 
 				Tweet tweet = new Tweet();
-				String id = (String)fieldMap.get(ID_FIELD);
+				Long id = (Long)fieldMap.get(ID_FIELD);
 				tweet.setId(id);
 
 				String text = (String)fieldMap.get(TEXT_FIELD);
@@ -408,8 +411,7 @@ public class SolrSearchEngine implements SearchEngine {
 	@Override
 	public void indexTweets(List<Tweet> tweets) throws SearchEngineException {
 		try {
-			server.addBeans(tweets);
-			server.commit();
+			server.addBeans(tweets, COMMIT_WITHIN_MS);
 		} catch (SolrServerException e) {
 			throw new SearchEngineException(e);
 		} catch (IOException e) {
@@ -418,13 +420,12 @@ public class SolrSearchEngine implements SearchEngine {
 	}
 
 	@Override
-	public void deleteTweets(List<Long> deleteIds) throws SearchEngineException {
+	public void deleteTweets(Collection<Long> deleteIds) throws SearchEngineException {
 		// Convert longs to strings
 		List<String> ids = deleteIds.stream().map(id -> id.toString()).collect(Collectors.toList());
 
 		try {
-			server.deleteById(ids);
-			server.commit();
+			server.deleteById(ids, COMMIT_WITHIN_MS);
 		} catch (SolrServerException e) {
 			throw new SearchEngineException(e);
 		} catch (IOException e) {

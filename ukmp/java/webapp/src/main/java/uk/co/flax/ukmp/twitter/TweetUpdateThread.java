@@ -142,7 +142,7 @@ public class TweetUpdateThread extends Thread {
 		String text = status.getText();
 
 		Tweet tweet = new Tweet();
-		tweet.setId("" + status.getId());
+		tweet.setId(status.getId());
 		tweet.setText(text);
 		tweet.setUserScreenName(status.getUser().getScreenName());
 		tweet.setUserName(status.getUser().getName());

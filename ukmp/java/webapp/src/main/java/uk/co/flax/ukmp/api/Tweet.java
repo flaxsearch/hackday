@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class Tweet {
 
 	@Field("id")
-	private String id;
+	private long id;
 
 	@Field("text")
 	private String text;
@@ -82,14 +82,14 @@ public class Tweet {
 	/**
 	 * @return the id
 	 */
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
