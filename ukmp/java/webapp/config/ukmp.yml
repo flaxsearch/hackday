@@ -1,20 +1,25 @@
 # HTTP-specific options
-http:
-
-  port: 8080
-  adminPort: 8081
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
 
   rootPath: /service/*
 
   requestLog:
-    console:
-      enabled: false
-    
-    file:
-      enabled: true
-      currentLogFilename: log/access.log
-      archive: true
-      archivedLogFilenamePattern: log/access-%d.log
+    appenders:
+      - type: console
+        timeZone: UTC
+        target: stdout
+      
+      - type: file
+        timeZone: UTC
+        currentLogFilename: log/access.log
+        archive: true
+        archivedLogFilenamePattern: log/access-%d.log
 
 # Logging
 logging:
@@ -25,32 +30,34 @@ logging:
     # Set debug logging for our code
     "uk.co.flax": TRACE
     
-  console:
-    enabled: false
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
     
-  file:
-    enabled: true
-    
-    # The file to which statements will be logged.
-    currentLogFilename: log/ukmp.log
-
-    # If true, log files are rotated and archived.
-    archive: true
-
-    # When the log file rolls over, the file will be archived to
-    # app-2012-03-15.log, example.log will be truncated,
-    # and new statements written to it.
-    # To automatically gzip archive, add .gz to end of filename
-    #
-    # If archive is true, this must be specified.
-    archivedLogFilenamePattern: log/api-%d.log
+    - type: file
+      
+      # The file to which statements will be logged.
+      currentLogFilename: log/ukmp.log
+  
+      # If true, log files are rotated and archived.
+      archive: true
+  
+      # When the log file rolls over, the file will be archived to
+      # app-2012-03-15.log, example.log will be truncated,
+      # and new statements written to it.
+      # To automatically gzip archive, add .gz to end of filename
+      #
+      # If archive is true, this must be specified.
+      archivedLogFilenamePattern: log/ukmp-%d.log
 
 
 # Solr configuration
 solr:
 
   # The base URL for the solr server.
-  baseUrl: http://localhost:8983/solr/
+  baseUrl: http://localhost:8983/solr/collection1/
   
   # The default query handler
   queryHandler: /morris
