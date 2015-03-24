@@ -106,7 +106,7 @@
       trailing underscores (e.g. _version_) are reserved.
    -->
         
-   <field name="id" type="long" indexed="true" stored="true" required="true" multiValued="false" />
+   <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
    <field name="text" type="text_en" indexed="true" stored="true" />
    <field name="text_terms" type="text_general" indexed="true" stored="false" />
    <!--field name="ent_symbols" type="string" indexed="true" stored="true" multiValued="true" /-->

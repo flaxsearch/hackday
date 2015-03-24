@@ -15,7 +15,6 @@
  */
 package uk.co.flax.ukmp.search;
 
-import java.util.Collection;
 import java.util.List;
 
 import uk.co.flax.ukmp.api.SearchResults;
@@ -34,8 +33,6 @@ public interface SearchEngine {
 		FAILURE,
 		NO_OPERATION
 	}
-
-	public static final String ID_FIELD = "id";
 
 	/**
 	 * Test the readiness of the search engine.
@@ -70,6 +67,6 @@ public interface SearchEngine {
 
     public void indexTweets(List<Tweet> tweets) throws SearchEngineException;
 
-    public void deleteTweets(Collection<Long> deleteIds) throws SearchEngineException;
+    public void deleteTweets(List<Long> deleteIds) throws SearchEngineException;
 
 }

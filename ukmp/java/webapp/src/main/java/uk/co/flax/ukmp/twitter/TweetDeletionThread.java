@@ -16,21 +16,14 @@
 package uk.co.flax.ukmp.twitter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import twitter4j.StatusDeletionNotice;
-import uk.co.flax.ukmp.api.SearchResults;
-import uk.co.flax.ukmp.api.Tweet;
-import uk.co.flax.ukmp.search.Query;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.SearchEngineException;
 
@@ -100,52 +93,19 @@ public class TweetDeletionThread extends Thread {
 		List<Long> deletedIds = new ArrayList<>();
 
 		try {
-			// Get the statuses that have actually been stored
-			List<Long> deleteIds = deleteList.stream().map(StatusDeletionNotice::getStatusId).collect(Collectors.toList());
-			Set<Long> statusIds = getStoredTweetIds(deleteIds);
-
-			if (statusIds.size() > 0) {
-				// Try to delete them
-				searchEngine.deleteTweets(statusIds);
-				LOGGER.debug("Deleted {} tweets", statusIds.size());
-
-				// Get the statuses which are still in the index, if any
-				Set<Long> notDeletedIds = getStoredTweetIds(statusIds);
-
-				// Remove the not deleted IDs from the status list
-				statusIds.removeAll(notDeletedIds);
-
-				deletedIds = new ArrayList<>(statusIds);
+			List<Long> statusIds = new ArrayList<>(deleteList.size());
+			for (StatusDeletionNotice sdn : deleteList) {
+				statusIds.add(sdn.getStatusId());
 			}
+
+			searchEngine.deleteTweets(statusIds);
+			LOGGER.debug("Deleted {} tweets", statusIds.size());
+			deletedIds = statusIds;
 		} catch (SearchEngineException e) {
 			LOGGER.error("Could not delete {} IDs - {}", deleteList.size(), e.getMessage());
 		}
 
 		return deletedIds;
-	}
-
-	private Set<Long> getStoredTweetIds(Collection<Long> statusIds) throws SearchEngineException {
-		Query query = new Query(Query.DEFAULT_SEARCH, Arrays.asList(buildIdFilter(statusIds)));
-		SearchResults results = searchEngine.search(query);
-
-		Set<Long> storedIds = results.getTweets().stream().map(Tweet::getId).collect(Collectors.toSet());
-
-		return storedIds;
-	}
-
-	private String buildIdFilter(Collection<Long> ids) {
-		StringBuilder filterBuilder = new StringBuilder();
-
-		int count = 0;
-		for (Long id : ids) {
-			if (count > 0) {
-				filterBuilder.append(" OR ");
-			}
-			filterBuilder.append(SearchEngine.ID_FIELD).append(":").append(id);
-			count ++;
-		}
-
-		return filterBuilder.toString();
 	}
 
 	private void removeDeletedFromQueue(List<Long> deletedIds, List<StatusDeletionNotice> deleteList) {

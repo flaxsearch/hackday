@@ -41,10 +41,6 @@ public class Query {
 		this(query, null, DEFAULT_SORT_FIELD, false, DEFAULT_PAGE_SIZE, 0, true);
 	}
 
-	public Query(String query, List<String> filters) {
-		this(query, filters, DEFAULT_SORT_FIELD, false, DEFAULT_PAGE_SIZE, 0, true);
-	}
-
 	public Query(String query, List<String> filters, String sort, boolean asc, int pgSize, int pgNum, boolean hl) {
 		this.query = query;
 		this.filters = filters;
