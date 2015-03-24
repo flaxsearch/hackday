@@ -34,6 +34,8 @@ public interface SearchEngine {
 		NO_OPERATION
 	}
 
+	public static final String ID_FIELD = "id";
+
 	/**
 	 * Test the readiness of the search engine.
 	 * @return <code>true</code> if the search engine is available,
@@ -67,6 +69,6 @@ public interface SearchEngine {
 
     public void indexTweets(List<Tweet> tweets) throws SearchEngineException;
 
-    public void deleteTweets(List<Long> deleteIds) throws SearchEngineException;
+    public void deleteTweets(List<String> deleteIds) throws SearchEngineException;
 
 }

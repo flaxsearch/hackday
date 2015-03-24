@@ -16,14 +16,22 @@
 package uk.co.flax.ukmp.twitter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import twitter4j.StatusDeletionNotice;
+import uk.co.flax.ukmp.api.SearchResults;
+import uk.co.flax.ukmp.api.Tweet;
+import uk.co.flax.ukmp.search.Query;
 import uk.co.flax.ukmp.search.SearchEngine;
 import uk.co.flax.ukmp.search.SearchEngineException;
 
@@ -57,7 +65,7 @@ public class TweetDeletionThread extends Thread {
 			}
 
 			if (!deleteList.isEmpty()) {
-				List<Long> deletedIds = deleteTweets(deleteList);
+				List<String> deletedIds = deleteTweets(deleteList);
 				removeDeletedFromQueue(deletedIds, deleteList);
 			}
 
@@ -81,7 +89,7 @@ public class TweetDeletionThread extends Thread {
 			LOGGER.debug("Trying to clear {} items from delete queue", deleteQueue.size());
 
 			List<StatusDeletionNotice> deletions = new ArrayList<>(deleteQueue);
-			List<Long> deletedIds = deleteTweets(deletions);
+			List<String> deletedIds = deleteTweets(deletions);
 
 			LOGGER.debug("Deleted {} / {} tweets", deletedIds.size(), deletions.size());
 		}
@@ -89,18 +97,27 @@ public class TweetDeletionThread extends Thread {
 		LOGGER.info("Twitter deletion thread shut down.");
 	}
 
-	private List<Long> deleteTweets(List<StatusDeletionNotice> deleteList) {
-		List<Long> deletedIds = new ArrayList<>();
+	private List<String> deleteTweets(List<StatusDeletionNotice> deleteList) {
+		List<String> deletedIds = new ArrayList<>();
 
 		try {
-			List<Long> statusIds = new ArrayList<>(deleteList.size());
-			for (StatusDeletionNotice sdn : deleteList) {
-				statusIds.add(sdn.getStatusId());
-			}
+			// Get the statuses that have actually been stored
+			Set<String> deleteIds = getStringIds(deleteList);
+			Set<String> statusIds = getStoredTweetIds(deleteIds);
 
-			searchEngine.deleteTweets(statusIds);
-			LOGGER.debug("Deleted {} tweets", statusIds.size());
-			deletedIds = statusIds;
+			if (statusIds.size() > 0) {
+				// Try to delete them
+				searchEngine.deleteTweets(new ArrayList<String>(statusIds));
+				LOGGER.debug("Deleted {} tweets", statusIds.size());
+
+				// Get the statuses which are still in the index, if any
+				Set<String> notDeletedIds = getStoredTweetIds(statusIds);
+
+				// Remove the not deleted IDs from the status list
+				statusIds.removeAll(notDeletedIds);
+
+				deletedIds = new ArrayList<>(statusIds);
+			}
 		} catch (SearchEngineException e) {
 			LOGGER.error("Could not delete {} IDs - {}", deleteList.size(), e.getMessage());
 		}
@@ -108,11 +125,41 @@ public class TweetDeletionThread extends Thread {
 		return deletedIds;
 	}
 
-	private void removeDeletedFromQueue(List<Long> deletedIds, List<StatusDeletionNotice> deleteList) {
+	private Set<String> getStringIds(List<StatusDeletionNotice> deleteList) {
+		Set<String> ids = new HashSet<>(deleteList.size());
+		deleteList.forEach(sdn -> ids.add("" + sdn.getStatusId()));
+		return ids;
+	}
+
+	private Set<String> getStoredTweetIds(Collection<String> statusIds) throws SearchEngineException {
+		Query query = new Query(Query.DEFAULT_SEARCH, Arrays.asList(buildIdFilter(statusIds)));
+		SearchResults results = searchEngine.search(query);
+
+		Set<String> storedIds = results.getTweets().stream().map(Tweet::getId).collect(Collectors.toSet());
+
+		return storedIds;
+	}
+
+	private String buildIdFilter(Collection<String> ids) {
+		StringBuilder filterBuilder = new StringBuilder();
+
+		int count = 0;
+		for (String id : ids) {
+			if (count > 0) {
+				filterBuilder.append(" OR ");
+			}
+			filterBuilder.append(SearchEngine.ID_FIELD).append(":").append(id);
+			count ++;
+		}
+
+		return filterBuilder.toString();
+	}
+
+	private void removeDeletedFromQueue(List<String> deletedIds, List<StatusDeletionNotice> deleteList) {
 		// Remove the deleted IDs from the delete list
 		for (Iterator<StatusDeletionNotice> it = deleteList.iterator(); it.hasNext(); ) {
 			StatusDeletionNotice sdn = it.next();
-			if (deletedIds.contains(sdn.getStatusId())) {
+			if (deletedIds.contains("" + sdn.getStatusId())) {
 				it.remove();
 			}
 		}
