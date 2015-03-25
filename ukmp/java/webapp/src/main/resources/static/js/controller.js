@@ -19,8 +19,8 @@ ukmpControllers.controller('UKMP_PageCtrl', [ '$scope', '$location', function($s
  * Search Controller. Handles all functions on the search page, plus
  * access through the search form in the navbar.
  */
-ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', '$routeParams', 
-                                                function($scope, $http, $location, $routeParams) {
+ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', '$routeParams', '$document',
+                                                function($scope, $http, $location, $routeParams, $document) {
 	
 	var self = this;
 	
@@ -197,6 +197,8 @@ ukmpControllers.controller('UKMP_SearchCtrl', [ '$scope', '$http', '$location', 
 				$scope.searched = $scope.searchState.query !== "*";
 				$scope.filtered = Object.keys($scope.searchState.appliedFilters).length > 0;
 			}
+			
+			$document.scrollTopAnimated(0, 500);
 		});
 	}
 	

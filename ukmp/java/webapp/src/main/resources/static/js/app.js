@@ -1,4 +1,4 @@
-var ukmpApp = angular.module('ukmpApp', [ 'ngRoute', 'ukmpControllers' ]);
+var ukmpApp = angular.module('ukmpApp', [ 'ngRoute', 'ukmpControllers', 'duScroll' ]);
 
 ukmpApp.config([ '$routeProvider', 
 	function($routeProvider) {
