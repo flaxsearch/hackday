@@ -181,10 +181,7 @@ public class TweetUpdateThread extends Thread {
 		Map<String, List<String>> entities = entityExtraction.getEntities(text);
 		if (entities != null && !entities.isEmpty()) {
 			Map<String, Object> tweetEntities = new HashMap<String, Object>();
-			for (String type : entities.keySet()) {
-				String nerType = type.toLowerCase() + "_ner";
-				tweetEntities.put(nerType, entities.get(type));
-			}
+			entities.keySet().forEach(type -> tweetEntities.put(type, entities.get(type)));
 			tweet.setEntities(tweetEntities);
 		}
 
